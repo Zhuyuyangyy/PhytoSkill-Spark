@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from demo.fixture_workspace import fixture_registry
+from demo.fixture_workspace import SKILL_NAMES, fixture_registry
 from harness.ab import AbRunner
 from harness.agent import BASE_SYSTEM_PROMPT, AgentHarness
 from harness.config import (HarnessConfig, parse_dotenv)
@@ -366,10 +366,18 @@ class TestTaskSet:
         tasks = build_tasks()
         kinds = {task.kind for task in tasks}
         assert {"positive_trigger", "negative_trigger", "missing_context", "end_to_end"} <= kinds
-        assert len([t for t in tasks if t.kind == "positive_trigger"]) == 4
-        assert len([t for t in tasks if t.kind == "negative_trigger"]) == 4
-        assert len([t for t in tasks if t.kind == "missing_context"]) == 4
+        # One positive trigger per professional Skill plus the audit Skill.
+        assert len([t for t in tasks if t.kind == "positive_trigger"]) == 5
+        # One negative trigger per professional Skill, plus the audit Skill's
+        # two: skipping the audit must not bypass middleware interception.
+        assert len([t for t in tasks if t.kind == "negative_trigger"]) == 5
+        assert len([t for t in tasks if t.kind == "missing_context"]) == 5
         assert all(task.prompt for task in tasks)
+
+    def test_every_professional_skill_ships_a_trigger_task(self):
+        tasks = build_tasks()
+        for name in SKILL_NAMES:
+            assert any(task.task_id.startswith(f"{name}:") for task in tasks), name
 
     def test_negative_and_missing_context_tasks_forbid_their_own_skill(self):
         for task in build_tasks():
@@ -393,8 +401,8 @@ class TestAbRunner:
 
         assert report["scope"] == "agent_ab_real_model_fixture_tools"
         assert set(report["arms_summary"]) == {"without_skill", "with_skill"}
-        assert report["task_count"] == 14
-        assert len(report["scored"]) == 28
+        assert report["task_count"] == 17
+        assert len(report["scored"]) == 34
         assert report["agent_model_called"] is True
         assert report["skill_mode"] == "fixture"
         assert report["dgx_hardware_used"] is False

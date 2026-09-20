@@ -10,7 +10,8 @@ from registry.signer import generate_keypair, sign_package
 from sdk.manifest import verify_manifest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SKILL_NAMES = ("plant_vision", "growth_risk", "herbal_knowledge", "evidence_fusion")
+SKILL_NAMES = ("plant_vision", "growth_risk", "herbal_knowledge", "evidence_fusion",
+               "agentshield_audit")
 
 
 @contextmanager

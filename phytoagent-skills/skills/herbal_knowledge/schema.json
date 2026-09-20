@@ -19,7 +19,8 @@
       },
       "query": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "description": "检索问题；fixture 模式必须与已发布合成案例逐字匹配。"
       }
     }
   },
@@ -58,7 +59,10 @@
         ],
         "properties": {
           "data_origin": {
-            "const": "synthetic_fixture"
+            "enum": [
+              "synthetic_fixture",
+              "local_corpus"
+            ]
           },
           "skill": {
             "const": "herbal_knowledge"
@@ -68,6 +72,18 @@
           },
           "model_called": {
             "const": false
+          },
+          "corpus_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "corpus_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "retriever": {
+            "type": "string",
+            "minLength": 1
           }
         }
       },
@@ -90,7 +106,10 @@
               "minLength": 1
             },
             "source_kind": {
-              "const": "synthetic_fixture"
+              "enum": [
+                "synthetic_fixture",
+                "local_corpus"
+              ]
             },
             "source_title": {
               "type": "string",
@@ -111,6 +130,18 @@
               "type": "number",
               "minimum": 0,
               "maximum": 1
+            },
+            "source_file": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_location": {
+              "type": "string",
+              "minLength": 1
+            },
+            "corpus_version": {
+              "type": "string",
+              "minLength": 1
             }
           }
         }

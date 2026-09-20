@@ -13,18 +13,24 @@
   "capabilities": [
     "growth_risk"
   ],
+  "permissions": {
+    "filesystem": [
+      "case_workspace:read"
+    ],
+    "network": "deny"
+  },
   "files": {
     "BENCHMARK.md": "0f0898610d3b29a6da5ec33c2395f6c6d2f67eee669d0a7bd99b50bbc2936478",
     "SKILL.md": "2ef3abfbff2c057d226d17b8e8b39120c6e62a49bc394a24be09f1daa8cbfb5e",
     "evals/evals.json": "33b04b8dbd04fdd71568c5dfcf73f792136be47f6310a78c749c218029d3b1ef",
     "examples/request.json": "456d978ca57520f32103941be1cf38c19230580b10363d57b8f22b7e48a5c562",
     "fixture.json": "f4a659987a7376062a386202b6b3be819c8d32175c1a4e7957e0f48ba629ea15",
-    "metadata.json": "27e9e2c585d81bbac004258fd1237a7ced28e112848abf69963aa867b639fa50",
+    "metadata.json": "0613ccd9c8505bb21512ddc21937307ab0b906539a225eb2afcda8a1bbd1a6b6",
     "references/contract.md": "6a23bbcd5ab562be0effc3c30724355eb5c98f5e98ab083d58f2cd2cdd1083df",
     "schema.json": "4fe927eeb020adee5568d25d93d2ef4f33ea340623d22f4fb36834924fa4c3ae",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "3d21a2b56d84254ec65a225b6b2cf10c9e59b6248246b165ff2fcfc12140e8c0",
     "skill.py": "a618db735c738549547398e331b0550049c775522e743dac46c051c2e04aca41"
   },
-  "manifest_sha256": "a6470acbff555319ceec9edc55420a02dce809482cc06b60b8a145860a8ee2e1"
+  "manifest_sha256": "efeb510775b5c5778bc122b484b6557872305312d441138b69d53d8f449f89bf"
 }

@@ -91,6 +91,10 @@ class SkillRegistry:
         return [{"name": name, "description": record["manifest"]["description"]}
                 for name, record in self._records.items()]
 
+    def catalog_names(self) -> list[str]:
+        """Names only, for registry bookkeeping in tests and reports."""
+        return sorted(self._records)
+
     def load_skill(self, name: str) -> dict:
         """Second disclosure level: expand only the selected Skill."""
         record = self.verify_entry(name)

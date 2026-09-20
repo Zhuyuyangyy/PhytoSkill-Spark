@@ -27,3 +27,23 @@ class UnsupportedModeError(SkillError):
 
 class FixtureMismatchError(SkillError):
     """Synthetic data cannot answer a request for a different case."""
+
+
+class CompileError(SkillError):
+    """A request cannot be compiled into a constrained Skill, or the result is unsafe."""
+
+
+class ShieldError(SkillError):
+    """Base error for the AgentShield runtime."""
+
+
+class PermissionViolation(ShieldError):
+    """A tool call exceeded the permissions declared in the Skill package."""
+
+
+class BudgetExceeded(ShieldError):
+    """A session exceeded its declared call budget."""
+
+
+class TraceError(ShieldError):
+    """A tool call reached the runtime without the trace identifiers it requires."""

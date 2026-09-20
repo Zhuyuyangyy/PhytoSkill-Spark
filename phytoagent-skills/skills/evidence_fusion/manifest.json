@@ -13,18 +13,24 @@
   "capabilities": [
     "evidence_fusion"
   ],
+  "permissions": {
+    "filesystem": [
+      "package:read"
+    ],
+    "network": "deny"
+  },
   "files": {
     "BENCHMARK.md": "19d81bb92297f93158643c9f663b2eff89bb321c05412cefcd0fa5b9fa7baab0",
     "SKILL.md": "b37f8e64f9baa630c86fe458717e6579b6bc3d4c5a6a55c8191a6309606d54a2",
     "evals/evals.json": "419b0efd63ff347b2e6b71655d67ab64a45452a8de4c3aca8704b35c17ee9108",
     "examples/request.json": "314cac9e6add6b8cede400759a35afbf80ac0662d7095d577f2639f0494cd16f",
     "fixture.json": "770f4d0e394fb34b160ef54680d9ad2467ac61a139664e44a900ddc799cce276",
-    "metadata.json": "7b6c53c62340a25f2cca77ef03db7646cc92525f20f7a609dfa0ee998c888677",
+    "metadata.json": "3444d40ee9b1266df67e8d01d65b7e5b0bf4b6aa22a4de2f91de3f5ab7dd7cbc",
     "references/contract.md": "60992d9528f12af42be5412da8a41a276f8d469eb4f25bd097188233ddf42dd8",
-    "schema.json": "f37580ebecb3339ad4bdd5d2c97cafdc2843fec7abf4d102baf153263f9ceeb1",
+    "schema.json": "fdcc2b032e06c2a6991925e8662830a9c735b15683f557de87a5b6946ebe7d25",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "b4773340f81a12dc0577e1b25a51b0140048f4415c8631f3f668de1d211334ea",
     "skill.py": "80c93834770e1c61922f117c7070288d647b8445a127ba025cb4dce291707fba"
   },
-  "manifest_sha256": "4d0dfc576c64dc786da4086bbdaf0f467ec2829e4b85b5bcf76f2e9df7790e02"
+  "manifest_sha256": "008462df5ef32433d82afa229751e817ee8f55d77dc48e43e5f185513dfc411b"
 }

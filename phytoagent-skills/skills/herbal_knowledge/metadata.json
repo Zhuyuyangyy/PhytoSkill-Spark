@@ -8,9 +8,16 @@
   "input_schema": "schema.json#/input",
   "output_schema": "schema.json#/output",
   "supported_modes": [
-    "fixture"
+    "fixture",
+    "corpus"
   ],
   "capabilities": [
     "herbal_knowledge"
-  ]
+  ],
+  "permissions": {
+    "filesystem": [
+      "corpus:read"
+    ],
+    "network": "deny"
+  }
 }

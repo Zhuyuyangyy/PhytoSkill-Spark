@@ -15,6 +15,10 @@
       "event": "catalog_discovered",
       "catalog": [
         {
+          "name": "agentshield_audit",
+          "description": "注册前与输出前的可信审计：校验Skill包完整性、权限最小化、Claim-Evidence关联与越权调用。本Skill只是可调用的审计入口，真正的权限拦截位于Runtime Middleware，Agent无法通过不调用本Skill绕过治理。"
+        },
+        {
           "name": "evidence_fusion",
           "description": "按案例和物种合并已取得的视觉、环境与知识JSON，保留证据ID和缺失项。原始图片分析、凭空补证据、Agent规划或确定病因不使用。"
         },
@@ -35,14 +39,14 @@
     {
       "event": "skill_loaded",
       "name": "plant_vision",
-      "manifest_sha256": "a603b209ce487361db51d2c6a90bfffe971ebb5a5a6d7485265ec0f4bc7b1f3e"
+      "manifest_sha256": "c35b84694338222de262d5bf661f27689a55155fc476429e03622923d156a01d"
     },
     {
       "event": "tool_result",
       "tool_call_id": "fixture-call-1",
       "name": "plant_vision",
       "mode": "fixture",
-      "duration_ms": 237.402,
+      "duration_ms": 204.907,
       "status": "success",
       "data": {
         "status": "success",
@@ -82,14 +86,14 @@
     {
       "event": "skill_loaded",
       "name": "growth_risk",
-      "manifest_sha256": "a6470acbff555319ceec9edc55420a02dce809482cc06b60b8a145860a8ee2e1"
+      "manifest_sha256": "efeb510775b5c5778bc122b484b6557872305312d441138b69d53d8f449f89bf"
     },
     {
       "event": "tool_result",
       "tool_call_id": "fixture-call-2",
       "name": "growth_risk",
       "mode": "fixture",
-      "duration_ms": 249.705,
+      "duration_ms": 205.503,
       "status": "success",
       "data": {
         "status": "success",
@@ -134,14 +138,14 @@
     {
       "event": "skill_loaded",
       "name": "herbal_knowledge",
-      "manifest_sha256": "a218fb346e46f06bf50be7b684c1765fe5404fad54cbda19bbeb90c22b37b55e"
+      "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc"
     },
     {
       "event": "tool_result",
       "tool_call_id": "fixture-call-3",
       "name": "herbal_knowledge",
       "mode": "fixture",
-      "duration_ms": 221.286,
+      "duration_ms": 199.946,
       "status": "success",
       "data": {
         "status": "success",
@@ -175,14 +179,14 @@
     {
       "event": "skill_loaded",
       "name": "evidence_fusion",
-      "manifest_sha256": "4d0dfc576c64dc786da4086bbdaf0f467ec2829e4b85b5bcf76f2e9df7790e02"
+      "manifest_sha256": "008462df5ef32433d82afa229751e817ee8f55d77dc48e43e5f185513dfc411b"
     },
     {
       "event": "tool_result",
       "tool_call_id": "fixture-call-4",
       "name": "evidence_fusion",
       "mode": "fixture",
-      "duration_ms": 395.301,
+      "duration_ms": 364.467,
       "status": "success",
       "data": {
         "status": "success",

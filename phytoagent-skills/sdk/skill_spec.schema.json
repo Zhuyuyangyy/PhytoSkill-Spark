@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phytoagent-skills.local/schemas/skill-spec-1.json",
+  "title": "PhytoForge SkillSpec",
+  "description": "Compiler output contract: a constrained, auditable request for one domain Skill package.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "name", "inputs", "capabilities", "permissions",
+               "evidence_policy", "refusal_policy", "workflow"],
+  "properties": {
+    "spec_version": {"const": 1},
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 63
+    },
+    "display_name": {"type": "string", "minLength": 1, "maxLength": 200},
+    "species": {"type": "string", "minLength": 1, "maxLength": 100},
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "enum": ["image", "telemetry", "question", "knowledge_query"]}
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["plant_vision", "growth_risk", "herbal_knowledge", "evidence_fusion"]
+      }
+    },
+    "permissions": {"$ref": "#/$defs/permissions"},
+    "evidence_policy": {"const": "every_claim_requires_evidence"},
+    "refusal_policy": {"const": "insufficient_evidence"},
+    "workflow": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/workflow_step"}
+    },
+    "negative_evals": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/negative_eval"}
+    },
+    "provenance": {"$ref": "#/$defs/provenance"}
+  },
+  "$defs": {
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["filesystem", "network"],
+      "properties": {
+        "filesystem": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["case_workspace:read", "corpus:read", "package:read"]
+          }
+        },
+        "network": {"const": "deny"},
+        "tools": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"}
+        }
+      }
+    },
+    "workflow_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "capability", "input_map"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"},
+        "capability": {
+          "type": "string",
+          "enum": ["plant_vision", "growth_risk", "herbal_knowledge", "evidence_fusion"]
+        },
+        "input_map": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"type": "string", "pattern": "^\\$\\.[A-Za-z0-9_.]+$"}
+        },
+        "optional": {"type": "boolean"},
+        "on_missing": {"enum": ["record_and_continue", "abort"]}
+      }
+    },
+    "negative_eval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "expect"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 100},
+        "kind": {
+          "type": "string",
+          "enum": ["missing_input", "cross_case_mismatch", "unsupported_claim",
+                   "permission_violation", "unverifiable_source", "blurry_image"]
+        },
+        "expect": {"type": "string", "minLength": 1, "maxLength": 200}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compiler", "intent_source", "model_called"],
+      "properties": {
+        "compiler": {"type": "string", "minLength": 1},
+        "intent_source": {"const": "natural_language_request"},
+        "model_called": {"const": false}
+      }
+    }
+  }
+}

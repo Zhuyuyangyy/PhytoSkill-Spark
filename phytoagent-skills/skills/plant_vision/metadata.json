@@ -12,5 +12,11 @@
   ],
   "capabilities": [
     "plant_vision"
-  ]
+  ],
+  "permissions": {
+    "filesystem": [
+      "case_workspace:read"
+    ],
+    "network": "deny"
+  }
 }

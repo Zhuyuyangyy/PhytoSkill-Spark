@@ -1,0 +1,179 @@
+{
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "audit_id",
+      "stage",
+      "subject"
+    ],
+    "properties": {
+      "audit_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "stage": {
+        "enum": [
+          "pre_registration",
+          "pre_output"
+        ]
+      },
+      "subject": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "skill_package",
+              "report"
+            ]
+          },
+          "manifest": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "evals": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "report": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "trace": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "declared_permissions": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "status",
+      "audit_id",
+      "stage",
+      "verdict",
+      "checks",
+      "trust_level",
+      "violations",
+      "provenance",
+      "limitations"
+    ],
+    "properties": {
+      "status": {
+        "enum": [
+          "success",
+          "refused"
+        ]
+      },
+      "audit_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "stage": {
+        "enum": [
+          "pre_registration",
+          "pre_output"
+        ]
+      },
+      "verdict": {
+        "enum": [
+          "PASS",
+          "QUARANTINE",
+          "INSUFFICIENT",
+          "INCOMPLETE"
+        ]
+      },
+      "checks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "status"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "enum": [
+                "passed",
+                "failed",
+                "not_run"
+              ]
+            },
+            "detail": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "trust_level": {
+        "enum": [
+          "SUPPORTED",
+          "LIMITED",
+          "INSUFFICIENT"
+        ]
+      },
+      "violations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "provenance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_origin",
+          "skill",
+          "version",
+          "model_called"
+        ],
+        "properties": {
+          "data_origin": {
+            "const": "local_audit"
+          },
+          "skill": {
+            "const": "agentshield_audit"
+          },
+          "version": {
+            "const": "0.3.0"
+          },
+          "model_called": {
+            "const": false
+          }
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "request": "创建一个黄芪健康研判Skill，根据叶片图片、环境参数和知识库分析异常原因，并要求每个结论给出证据。",
+  "agent_model_called": false,
+  "dgx_hardware_used": false,
+  "nvidia_verified": false,
+  "demo_key_generated_this_run": true,
+  "skill": "huangqi-health-assessment",
+  "capabilities": [
+    "plant_vision",
+    "growth_risk",
+    "herbal_knowledge",
+    "evidence_fusion"
+  ],
+  "package_files": [
+    "SKILL.md",
+    "skill-card.md",
+    "skill_spec.json",
+    "workflow.json",
+    "schema.json",
+    "evals/evals.json",
+    "examples/request.json",
+    "skill.py",
+    "metadata.json",
+    "references/contract.md",
+    "BENCHMARK.md"
+  ],
+  "gate": {
+    "skill": "huangqi-health-assessment",
+    "verdict": "PASS",
+    "checks": [
+      {
+        "name": "manifest_integrity",
+        "status": "passed",
+        "detail": "manifest_sha256=5ba46e6eb66c6da5590128666b93ec0972e7286b519598c53e8b039867deccbc"
+      },
+      {
+        "name": "schema_conformance",
+        "status": "passed",
+        "detail": "input and output schemas parse"
+      },
+      {
+        "name": "permission_least_privilege",
+        "status": "passed",
+        "detail": "network denied; no wildcard or write scope"
+      },
+      {
+        "name": "negative_eval_coverage",
+        "status": "passed",
+        "detail": "positive, missing-parameter and negative cases present"
+      },
+      {
+        "name": "hidden_instruction_scan",
+        "status": "passed",
+        "detail": "no hidden instructions or dangerous patterns"
+      },
+      {
+        "name": "project_signature",
+        "status": "passed",
+        "detail": "Ed25519 signature verified"
+      }
+    ],
+    "quarantined": false
+  },
+  "positive_report": {
+    "status": "success",
+    "case_id": "demo-huangqi-001",
+    "species": "黄芪",
+    "workflow": "huangqi_health_assessment",
+    "steps": [
+      {
+        "id": "plant_vision",
+        "provider_skill": "plant_vision",
+        "status": "success",
+        "evidence_ids": [
+          "obs-yellow-01"
+        ]
+      },
+      {
+        "id": "growth_risk",
+        "provider_skill": "growth_risk",
+        "status": "success",
+        "evidence_ids": [
+          "factor-temperature-01",
+          "factor-ph-01"
+        ]
+      },
+      {
+        "id": "herbal_knowledge",
+        "provider_skill": "herbal_knowledge",
+        "status": "success",
+        "evidence_ids": [
+          "fixture-evidence-01"
+        ]
+      },
+      {
+        "id": "evidence_fusion",
+        "provider_skill": "evidence_fusion",
+        "status": "success",
+        "evidence_ids": []
+      }
+    ],
+    "claims": [
+      {
+        "text": "观察到叶缘黄化区域",
+        "evidence_ids": [
+          "obs-yellow-01"
+        ],
+        "status": "supported"
+      }
+    ],
+    "missing_inputs": [],
+    "unlinked_evidence_ids": [],
+    "limitations": [
+      "本包是编译器生成的工作流Skill；专业能力由已审核的提供方Skill实现。",
+      "共同出现不等于因果关系；本包不合成疾病概率或药效下降比例。"
+    ],
+    "refused_claims": [],
+    "violations": [],
+    "evidence_ids": [
+      "obs-yellow-01"
+    ],
+    "trust_level": "SUPPORTED",
+    "trace_id": "trace-demo-001",
+    "provenance": {
+      "workflow_skill": "huangqi_health_assessment",
+      "workflow_version": "0.3.0",
+      "compiler": "phyto-skill-compiler@0.3.0",
+      "agent_model_called": false,
+      "dgx_hardware_used": false
+    }
+  },
+  "negative_report": {
+    "status": "refused",
+    "case_id": "demo-huangqi-001",
+    "species": "黄芪",
+    "workflow": "huangqi_health_assessment",
+    "steps": [
+      {
+        "id": "plant_vision",
+        "provider_skill": "plant_vision",
+        "status": "failed",
+        "detail": "FixtureMismatchError"
+      },
+      {
+        "id": "growth_risk",
+        "provider_skill": "growth_risk",
+        "status": "skipped",
+        "detail": "required input missing; recorded, not fabricated"
+      },
+      {
+        "id": "herbal_knowledge",
+        "provider_skill": "herbal_knowledge",
+        "status": "failed",
+        "detail": "FixtureMismatchError"
+      },
+      {
+        "id": "evidence_fusion",
+        "provider_skill": "evidence_fusion",
+        "status": "success",
+        "evidence_ids": []
+      }
+    ],
+    "claims": [],
+    "missing_inputs": [
+      "plant_vision",
+      "growth_risk",
+      "herbal_knowledge"
+    ],
+    "unlinked_evidence_ids": [],
+    "limitations": [
+      "本包是编译器生成的工作流Skill；专业能力由已审核的提供方Skill实现。",
+      "共同出现不等于因果关系；本包不合成疾病概率或药效下降比例。",
+      "缺失来源：plant_vision, growth_risk, herbal_knowledge",
+      "请求要求给出确定病因；按 insufficient_evidence 拒绝。",
+      "图像质量门未通过；未据此产生任何表型结论。",
+      "没有可引用证据ID；所有事实性结论按 every_claim_requires_evidence 拒绝。"
+    ],
+    "refused_claims": [
+      "图像不可用，不能陈述任何表型观察",
+      "要求给出确定病因，但证据不足"
+    ],
+    "violations": [
+      "unsupported claim refused: 图像不可用，不能陈述任何表型观察",
+      "over-certain claim refused: 要求给出确定病因，但证据不足"
+    ],
+    "evidence_ids": [],
+    "trust_level": "INSUFFICIENT",
+    "trace_id": "trace-demo-001",
+    "provenance": {
+      "workflow_skill": "huangqi_health_assessment",
+      "workflow_version": "0.3.0",
+      "compiler": "phyto-skill-compiler@0.3.0",
+      "agent_model_called": false,
+      "dgx_hardware_used": false
+    }
+  },
+  "closed_loop": {
+    "skill": "huangqi_health_assessment",
+    "plan_matches": true,
+    "repeat_claims_match": true,
+    "total_tool_calls": 8
+  },
+  "outcome": "pass",
+  "trace": {
+    "trace_id": "trace-demo-001",
+    "scope": "agentshield_runtime_local",
+    "agent_model_called": false,
+    "dgx_hardware_used": false,
+    "nvidia_verified": false,
+    "calls": [
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-1:step1",
+        "skill": "plant_vision",
+        "manifest_sha256": "c35b84694338222de262d5bf661f27689a55155fc476429e03622923d156a01d",
+        "status": "success",
+        "duration_ms": 191.801,
+        "permissions_used": [
+          "case_workspace:read"
+        ],
+        "evidence_ids": [
+          "obs-yellow-01"
+        ],
+        "detail": ""
+      },
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-1:step2",
+        "skill": "growth_risk",
+        "manifest_sha256": "efeb510775b5c5778bc122b484b6557872305312d441138b69d53d8f449f89bf",
+        "status": "success",
+        "duration_ms": 199.128,
+        "permissions_used": [
+          "case_workspace:read"
+        ],
+        "evidence_ids": [
+          "factor-temperature-01",
+          "factor-ph-01"
+        ],
+        "detail": ""
+      },
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-1:step3",
+        "skill": "herbal_knowledge",
+        "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc",
+        "status": "success",
+        "duration_ms": 198.076,
+        "permissions_used": [
+          "corpus:read"
+        ],
+        "evidence_ids": [
+          "fixture-evidence-01"
+        ],
+        "detail": ""
+      },
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-2:step1",
+        "skill": "plant_vision",
+        "manifest_sha256": "c35b84694338222de262d5bf661f27689a55155fc476429e03622923d156a01d",
+        "status": "failed",
+        "duration_ms": 188.685,
+        "permissions_used": [
+          "case_workspace:read"
+        ],
+        "evidence_ids": [],
+        "detail": "FixtureMismatchError"
+      },
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-2:step3",
+        "skill": "herbal_knowledge",
+        "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc",
+        "status": "failed",
+        "duration_ms": 195.566,
+        "permissions_used": [
+          "corpus:read"
+        ],
+        "evidence_ids": [],
+        "detail": "FixtureMismatchError"
+      },
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-3:step1",
+        "skill": "plant_vision",
+        "manifest_sha256": "c35b84694338222de262d5bf661f27689a55155fc476429e03622923d156a01d",
+        "status": "success",
+        "duration_ms": 187.139,
+        "permissions_used": [
+          "case_workspace:read"
+        ],
+        "evidence_ids": [
+          "obs-yellow-01"
+        ],
+        "detail": ""
+      },
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-3:step2",
+        "skill": "growth_risk",
+        "manifest_sha256": "efeb510775b5c5778bc122b484b6557872305312d441138b69d53d8f449f89bf",
+        "status": "success",
+        "duration_ms": 200.139,
+        "permissions_used": [
+          "case_workspace:read"
+        ],
+        "evidence_ids": [
+          "factor-temperature-01",
+          "factor-ph-01"
+        ],
+        "detail": ""
+      },
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-3:step3",
+        "skill": "herbal_knowledge",
+        "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc",
+        "status": "success",
+        "duration_ms": 192.069,
+        "permissions_used": [
+          "corpus:read"
+        ],
+        "evidence_ids": [
+          "fixture-evidence-01"
+        ],
+        "detail": ""
+      }
+    ],
+    "blocked": []
+  }
+}

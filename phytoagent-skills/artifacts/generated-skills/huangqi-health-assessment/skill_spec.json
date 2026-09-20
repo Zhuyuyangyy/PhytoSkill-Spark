@@ -1,0 +1,125 @@
+{
+  "spec_version": 1,
+  "name": "huangqi-health-assessment",
+  "display_name": "黄芪healthassessment",
+  "species": "黄芪",
+  "inputs": [
+    "image",
+    "telemetry",
+    "knowledge_query"
+  ],
+  "capabilities": [
+    "plant_vision",
+    "growth_risk",
+    "herbal_knowledge",
+    "evidence_fusion"
+  ],
+  "permissions": {
+    "filesystem": [
+      "case_workspace:read",
+      "corpus:read",
+      "package:read"
+    ],
+    "network": "deny",
+    "tools": [
+      "plant_vision",
+      "growth_risk",
+      "herbal_knowledge",
+      "evidence_fusion"
+    ]
+  },
+  "evidence_policy": "every_claim_requires_evidence",
+  "refusal_policy": "insufficient_evidence",
+  "workflow": [
+    {
+      "id": "plant_vision",
+      "capability": "plant_vision",
+      "input_map": {
+        "case_id": "$.case_id",
+        "species": "$.species",
+        "image_path": "$.image"
+      },
+      "optional": true,
+      "on_missing": "record_and_continue"
+    },
+    {
+      "id": "growth_risk",
+      "capability": "growth_risk",
+      "input_map": {
+        "case_id": "$.case_id",
+        "species": "$.species",
+        "telemetry": "$.telemetry"
+      },
+      "optional": true,
+      "on_missing": "record_and_continue"
+    },
+    {
+      "id": "herbal_knowledge",
+      "capability": "herbal_knowledge",
+      "input_map": {
+        "case_id": "$.case_id",
+        "species": "$.species",
+        "query": "$.question"
+      },
+      "optional": true,
+      "on_missing": "record_and_continue"
+    },
+    {
+      "id": "evidence_fusion",
+      "capability": "evidence_fusion",
+      "input_map": {
+        "case_id": "$.case_id",
+        "species": "$.species"
+      },
+      "optional": true,
+      "on_missing": "record_and_continue"
+    }
+  ],
+  "negative_evals": [
+    {
+      "id": "missing_input-workflow",
+      "kind": "missing_input",
+      "expect": "missing source recorded; trust_level LIMITED at most"
+    },
+    {
+      "id": "cross_case_mismatch-workflow",
+      "kind": "cross_case_mismatch",
+      "expect": "ContractError; no cross-case fusion"
+    },
+    {
+      "id": "unsupported_claim-workflow",
+      "kind": "unsupported_claim",
+      "expect": "claim without evidence id refused"
+    },
+    {
+      "id": "permission_violation-workflow",
+      "kind": "permission_violation",
+      "expect": "middleware blocks the call before execution"
+    },
+    {
+      "id": "unverifiable_source-workflow",
+      "kind": "unverifiable_source",
+      "expect": "no fabricated citation; empty evidence is reported"
+    },
+    {
+      "id": "blurry_image-plant_vision",
+      "kind": "blurry_image",
+      "expect": "image quality gate FAILED; cause assessment REFUSED"
+    },
+    {
+      "id": "blurry_image-growth_risk",
+      "kind": "blurry_image",
+      "expect": "image quality gate FAILED; cause assessment REFUSED"
+    },
+    {
+      "id": "blurry_image-herbal_knowledge",
+      "kind": "blurry_image",
+      "expect": "image quality gate FAILED; cause assessment REFUSED"
+    }
+  ],
+  "provenance": {
+    "compiler": "phyto-skill-compiler@0.3.0",
+    "intent_source": "natural_language_request",
+    "model_called": false
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "huangqi_health_assessment",
+  "version": "0.3.0",
+  "description": "黄芪健康研判工作流Skill：按声明顺序调用专业Skill，每个结论必须关联证据ID，证据不足时拒绝判断。",
+  "author": "PhytoForge Spark compiler",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:WorkflowSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": [
+    "fixture"
+  ],
+  "capabilities": [
+    "plant_vision",
+    "growth_risk",
+    "herbal_knowledge",
+    "evidence_fusion"
+  ],
+  "permissions": {
+    "filesystem": [
+      "case_workspace:read",
+      "corpus:read",
+      "package:read"
+    ],
+    "network": "deny"
+  }
+}

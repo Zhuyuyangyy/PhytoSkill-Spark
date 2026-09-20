@@ -7,15 +7,29 @@
 
 | 评分项 | 权重 | 本轮落实 | 尚缺的提交证据 |
 | --- | --- | --- | --- |
-| 实用性、行业价值、创新 | 25% | 单任务Skill、物种/案例一致性、证据ID与缺失传播 | 真实种植案例、专业人员复核、真实数据效果 |
-| 智能体与模型优化深度 | 25% | 渐进式加载、四个契约可组合、负向触发任务集 | StepFun真实Tool Calling、同一Agent带/不带Skill的A/B |
-| 完整性 | 20% | CLI、四个包、可重复fixture组合、失败降级、测试 | 真实模型适配器、任务输入与trace展示界面、稳定性实测 |
-| 平台适配 | 15% | SDK及适配边界已明确 | DGX Spark ARM64实机日志、NVIDIA GPU实际调用、StepFun使用记录 |
-| 演示效果 | 10% | 正常与失败两条可运行脚本，JSON trace | 真实Agent自动选Skill的录屏、B站视频URL |
-| 十日谈 | 5% | 第一天开发记录 | 后续真实日志与公开文章URL |
+| 实用性、行业价值、创新 | 25% | Skill Compiler 把一次 Prompt 变成带版本/契约/触发边界/评测的可复用 Skill；本地语料检索带文件位置与语料版本 | 真实种植案例、专业人员复核、真实数据效果 |
+| 智能体与模型优化深度 | 25% | 渐进式加载、五个契约可组合、负向触发任务集、AgentShield 编译门禁与 Runtime 拦截 | StepFun真实Tool Calling、同一Agent带/不带Skill的A/B |
+| 完整性 | 20% | CLI、五个包、生成→门禁→注册→执行→审计闭环、失败降级、Claim-Evidence审计、230项测试 | 真实模型适配器、任务输入与trace展示界面、稳定性实测 |
+| 平台适配 | 15% | SDK及适配边界已明确；语料与检索在本地 | DGX Spark ARM64实机日志、NVIDIA GPU实际调用、StepFun使用记录 |
+| 演示效果 | 10% | `demo.phytoforge_demo` 三分钟七幕闭环，六项门禁与负向拒绝均从运行结果读取 | 真实Agent自动选Skill的录屏、B站视频URL |
+| 十日谈 | 5% | 第一天与第四天开发记录 | 后续真实日志与公开文章URL |
 
 资料写明：预赛截至9月29日23:59；提交开源仓库URL、500字以上项目说明、部署与技术栈说明、B站演示视频以及团队合影，鼓励提交开发征文URL。
 本轮不自动发布仓库、投稿或上传资料。开源许可、团队资料和正式提交由项目所有者确认。
+
+## 0.3.0 相对 0.2.0 的落点
+
+| 新增 | 文件 | 对评分的实际贡献 |
+| --- | --- | --- |
+| Skill Compiler | `compiler/` | 智能体深度：元 Skill 生成受约束 Skill，不生成任意代码 |
+| 编译门禁 | `shield/gate.py` | 完整性：六项检查 + 隔离 + 可操作修复项 |
+| Runtime 中间件 | `runtime/shield.py` | 智能体深度：权限/网络/工具白名单/预算实时拦截，Agent 无法绕过 |
+| Claim-Evidence 审计 | `runtime/shield.py` | 实用性：每条结论可追溯到证据 ID |
+| 可调用审计 Skill | `skills/agentshield_audit/` | 完整性：审计入口与拦截点分离 |
+| 本地语料检索 | `corpus/` | 行业价值：可核实来源带文件位置与语料版本 |
+| 三分钟演示 | `demo/phytoforge_demo.py` | 演示效果：七幕闭环，无硬编码输出 |
+
+详见 [PhytoForge Spark 架构](phytoforge-architecture.md) 与 [AgentShield 门禁手册](agentshield-gate.md)。
 
 ## 三份技术分享带来的调整
 

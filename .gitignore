@@ -18,6 +18,7 @@ dist/
 
 # 工具本地状态
 .workbuddy/
+.reasonix/
 
 # 临时归档
 /*.zip

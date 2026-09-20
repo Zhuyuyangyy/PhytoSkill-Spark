@@ -1,0 +1,41 @@
+{
+  "name": "huangqi_health_assessment",
+  "version": "0.3.0",
+  "description": "黄芪健康研判工作流Skill：按声明顺序调用专业Skill，每个结论必须关联证据ID，证据不足时拒绝判断。",
+  "author": "PhytoForge Spark compiler",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:WorkflowSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": [
+    "fixture"
+  ],
+  "capabilities": [
+    "plant_vision",
+    "growth_risk",
+    "herbal_knowledge",
+    "evidence_fusion"
+  ],
+  "permissions": {
+    "filesystem": [
+      "case_workspace:read",
+      "corpus:read",
+      "package:read"
+    ],
+    "network": "deny"
+  },
+  "files": {
+    "BENCHMARK.md": "5fc4f9f23a226672e6608a23b15e668dfc71fb693126522c00c5fbfa02c9e8b7",
+    "SKILL.md": "f470677c4ea06bf04cf171a2942c744821eb9ea6c9849b82e77beed3177dd5ae",
+    "evals/evals.json": "b93589338221ff4f57d204eb38bb0a34b74840a31d89f676947f6c785cb3152f",
+    "examples/request.json": "b7b2607e049359475307dbb79e9049bb904eb6523b42da66d83a2a262bd1105e",
+    "metadata.json": "f8c79947816d1dcc998535472751922066df99ca3072814053b345be55322241",
+    "references/contract.md": "e2569c6c87bfd448bb851ab361e0ce88b3d712dc2155afd1f5ac1e4bab478cc8",
+    "schema.json": "730fcbf3d502866ef6453e901fbc66e3dc41ead3e4723856cc5a1275b6497cb6",
+    "skill-card.md": "49057567e8890947751f7136489011a52a31b36868021df7d113ec78fc90f716",
+    "skill.py": "154e8a9236637a30cc4a40a7ee1f6da6e79553ee39ddcbd7f82987749f5664b3",
+    "skill_spec.json": "8ed69b4a754e47dcb45092ce85e10b350ee5967dca6511ea4720a400f8c5b722",
+    "workflow.json": "10fd39911cef13ccf9aafa96385d1ae0d2fb26b148795057af08629e551cf0cb"
+  },
+  "manifest_sha256": "5ba46e6eb66c6da5590128666b93ec0972e7286b519598c53e8b039867deccbc"
+}

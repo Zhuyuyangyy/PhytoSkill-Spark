@@ -1,0 +1,241 @@
+{
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "case_id",
+      "species"
+    ],
+    "properties": {
+      "case_id": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "species": {
+        "type": "string",
+        "const": "黄芪"
+      },
+      "image": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1
+      },
+      "telemetry": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "additionalProperties": false,
+        "required": [
+          "temperature_c",
+          "relative_humidity_pct",
+          "soil_ph",
+          "npk"
+        ],
+        "properties": {
+          "temperature_c": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -30,
+            "maximum": 70
+          },
+          "relative_humidity_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "soil_ph": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 14
+          },
+          "npk": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "nitrogen_mg_kg",
+                  "phosphorus_mg_kg",
+                  "potassium_mg_kg"
+                ],
+                "properties": {
+                  "nitrogen_mg_kg": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "phosphorus_mg_kg": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "potassium_mg_kg": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "question": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    }
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "status",
+      "case_id",
+      "species",
+      "workflow",
+      "steps",
+      "trust_level",
+      "claims",
+      "refused_claims",
+      "missing_inputs",
+      "limitations"
+    ],
+    "properties": {
+      "status": {
+        "enum": [
+          "success",
+          "refused",
+          "no_conclusion"
+        ]
+      },
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "workflow": {
+        "type": "string",
+        "minLength": 1
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "provider_skill",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "provider_skill": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "enum": [
+                "success",
+                "failed",
+                "skipped",
+                "refused",
+                "not_delegated"
+              ]
+            },
+            "tool_call_id": {
+              "type": "string"
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "detail": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "trust_level": {
+        "enum": [
+          "SUPPORTED",
+          "LIMITED",
+          "INSUFFICIENT"
+        ]
+      },
+      "claims": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text",
+            "evidence_ids",
+            "status"
+          ],
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            "status": {
+              "enum": [
+                "supported",
+                "refused"
+              ]
+            }
+          }
+        }
+      },
+      "refused_claims": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "missing_inputs": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      }
+    }
+  }
+}

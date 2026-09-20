@@ -16,10 +16,13 @@ test = ["pytest>=8,<10"]
 phyto-registry = "registry.__main__:main"
 
 [tool.setuptools.packages.find]
-include = ["sdk*", "registry*", "runtime*"]
+include = ["sdk*", "registry*", "runtime*", "compiler*", "shield*", "corpus*"]
 
 [tool.setuptools.package-data]
 registry = ["registry.json"]
+sdk = ["skill_spec.schema.json"]
+compiler = ["templates/*.py"]
+corpus = ["index.json", "README.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "name": "huangqi_health_assessment",
+  "evidence_policy": "every_claim_requires_evidence",
+  "refusal_policy": "insufficient_evidence",
+  "inputs": [
+    "image",
+    "telemetry",
+    "knowledge_query"
+  ],
+  "permissions": {
+    "filesystem": [
+      "case_workspace:read",
+      "corpus:read",
+      "package:read"
+    ],
+    "network": "deny",
+    "tools": [
+      "plant_vision",
+      "growth_risk",
+      "herbal_knowledge",
+      "evidence_fusion"
+    ]
+  },
+  "steps": [
+    {
+      "id": "plant_vision",
+      "provider_skill": "plant_vision",
+      "input_map": {
+        "case_id": "$.case_id",
+        "species": "$.species",
+        "image_path": "$.image"
+      },
+      "optional": true,
+      "on_missing": "record_and_continue",
+      "failure_mode": "缺少可用图片时记录 image_quality_gate FAILED，不猜测表型。",
+      "expected_outputs": [
+        "observations"
+      ]
+    },
+    {
+      "id": "growth_risk",
+      "provider_skill": "growth_risk",
+      "input_map": {
+        "case_id": "$.case_id",
+        "species": "$.species",
+        "telemetry": "$.telemetry"
+      },
+      "optional": true,
+      "on_missing": "record_and_continue",
+      "failure_mode": "缺少带单位测量时记录 missing_context，不用空气湿度冒充土壤水分。",
+      "expected_outputs": [
+        "factors"
+      ]
+    },
+    {
+      "id": "herbal_knowledge",
+      "provider_skill": "herbal_knowledge",
+      "input_map": {
+        "case_id": "$.case_id",
+        "species": "$.species",
+        "query": "$.question"
+      },
+      "optional": true,
+      "on_missing": "record_and_continue",
+      "failure_mode": "检索不到可核实来源时返回空 evidence 并记 limitations，不编造引用。",
+      "expected_outputs": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "evidence_fusion",
+      "provider_skill": "evidence_fusion",
+      "input_map": {
+        "case_id": "$.case_id",
+        "species": "$.species"
+      },
+      "optional": true,
+      "on_missing": "record_and_continue",
+      "failure_mode": "来源案例或物种不一致时拒绝融合，不借用其他案例结果。",
+      "expected_outputs": [
+        "evidence_chain"
+      ]
+    }
+  ],
+  "provenance": {
+    "compiler": "phyto-skill-compiler@0.3.0",
+    "intent_source": "natural_language_request",
+    "model_called": false
+  }
+}

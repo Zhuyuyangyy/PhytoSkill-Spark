@@ -1,12 +1,341 @@
 {
   "scope": "fixture_contracts_only",
-  "total": 19,
-  "passed": 19,
+  "total": 28,
+  "passed": 28,
   "failed": 0,
   "skills": [
     {
+      "skill": "agentshield_audit",
+      "manifest_sha256": "346ec3ac6b5e2944210b212710c8fcee9f5ae7450852430e557905e74d895983",
+      "cases": [
+        {
+          "id": "audit_clean_package",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:agentshield_audit:audit_clean_package",
+            "name": "agentshield_audit",
+            "mode": "fixture",
+            "duration_ms": 192.527,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "audit_id": "audit-001",
+              "stage": "pre_registration",
+              "verdict": "PASS",
+              "checks": [
+                {
+                  "name": "permission_least_privilege",
+                  "status": "passed",
+                  "detail": "package:read"
+                },
+                {
+                  "name": "network_denied",
+                  "status": "passed",
+                  "detail": "network deny"
+                },
+                {
+                  "name": "negative_eval_present",
+                  "status": "passed",
+                  "detail": "negative case present in evals/evals.json"
+                },
+                {
+                  "name": "manifest_inventory",
+                  "status": "passed",
+                  "detail": "3 hashed files"
+                },
+                {
+                  "name": "trace_complete",
+                  "status": "passed",
+                  "detail": "1 traced calls"
+                }
+              ],
+              "trust_level": "SUPPORTED",
+              "violations": [],
+              "provenance": {
+                "data_origin": "local_audit",
+                "skill": "agentshield_audit",
+                "version": "0.3.0",
+                "model_called": false
+              },
+              "limitations": [
+                "本Skill是可调用的审计入口；权限拦截位于Runtime Middleware，不依赖Agent调用本Skill。",
+                "审计结论基于本地确定性规则，不调用语言模型，也不构成NVIDIA官方认证。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "audit_package_with_network_permission",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:agentshield_audit:audit_package_with_network_permission",
+            "name": "agentshield_audit",
+            "mode": "fixture",
+            "duration_ms": 201.083,
+            "status": "success",
+            "data": {
+              "status": "refused",
+              "audit_id": "audit-002",
+              "stage": "pre_registration",
+              "verdict": "QUARANTINE",
+              "checks": [
+                {
+                  "name": "permission_least_privilege",
+                  "status": "failed",
+                  "detail": "forbidden permission in ['filesystem:write', 'network']"
+                },
+                {
+                  "name": "network_denied",
+                  "status": "failed",
+                  "detail": "network='allow'"
+                },
+                {
+                  "name": "negative_eval_present",
+                  "status": "not_run",
+                  "detail": "evals/evals.json in manifest inventory, but its contents were not supplied"
+                },
+                {
+                  "name": "manifest_inventory",
+                  "status": "failed",
+                  "detail": "2 hashed files"
+                },
+                {
+                  "name": "trace_complete",
+                  "status": "not_run",
+                  "detail": "no trace supplied"
+                }
+              ],
+              "trust_level": "LIMITED",
+              "violations": [
+                "permission_least_privilege: forbidden permission in ['filesystem:write', 'network']",
+                "network_denied: network='allow'",
+                "manifest_inventory: fewer than three hashed files"
+              ],
+              "provenance": {
+                "data_origin": "local_audit",
+                "skill": "agentshield_audit",
+                "version": "0.3.0",
+                "model_called": false
+              },
+              "limitations": [
+                "本Skill是可调用的审计入口；权限拦截位于Runtime Middleware，不依赖Agent调用本Skill。",
+                "审计结论基于本地确定性规则，不调用语言模型，也不构成NVIDIA官方认证。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "audit_report_with_unsupported_claim",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:agentshield_audit:audit_report_with_unsupported_claim",
+            "name": "agentshield_audit",
+            "mode": "fixture",
+            "duration_ms": 194.222,
+            "status": "success",
+            "data": {
+              "status": "refused",
+              "audit_id": "audit-003",
+              "stage": "pre_output",
+              "verdict": "INSUFFICIENT",
+              "checks": [
+                {
+                  "name": "claim_evidence_linkage",
+                  "status": "failed",
+                  "detail": "1/2 claims cite evidence"
+                },
+                {
+                  "name": "evidence_verifiable",
+                  "status": "passed",
+                  "detail": "1 cited ids all resolvable"
+                },
+                {
+                  "name": "trace_present",
+                  "status": "passed",
+                  "detail": "1 traced calls"
+                }
+              ],
+              "trust_level": "INSUFFICIENT",
+              "violations": [
+                "claim_evidence_linkage: '病原已确定，是黄萎病菌' has no evidence id"
+              ],
+              "provenance": {
+                "data_origin": "local_audit",
+                "skill": "agentshield_audit",
+                "version": "0.3.0",
+                "model_called": false
+              },
+              "limitations": [
+                "本Skill是可调用的审计入口；权限拦截位于Runtime Middleware，不依赖Agent调用本Skill。",
+                "审计结论基于本地确定性规则，不调用语言模型，也不构成NVIDIA官方认证。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "audit_report_without_trace",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:agentshield_audit:audit_report_without_trace",
+            "name": "agentshield_audit",
+            "mode": "fixture",
+            "duration_ms": 189.901,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "audit_id": "audit-004",
+              "stage": "pre_output",
+              "verdict": "INCOMPLETE",
+              "checks": [
+                {
+                  "name": "claim_evidence_linkage",
+                  "status": "passed",
+                  "detail": "1/1 claims cite evidence"
+                },
+                {
+                  "name": "evidence_verifiable",
+                  "status": "passed",
+                  "detail": "1 cited ids all resolvable"
+                },
+                {
+                  "name": "trace_present",
+                  "status": "not_run",
+                  "detail": "no trace supplied to the audit"
+                }
+              ],
+              "trust_level": "LIMITED",
+              "violations": [],
+              "provenance": {
+                "data_origin": "local_audit",
+                "skill": "agentshield_audit",
+                "version": "0.3.0",
+                "model_called": false
+              },
+              "limitations": [
+                "本Skill是可调用的审计入口；权限拦截位于Runtime Middleware，不依赖Agent调用本Skill。",
+                "审计结论基于本地确定性规则，不调用语言模型，也不构成NVIDIA官方认证。",
+                "以下检查未执行：trace_present；结论不构成完整审计。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "audit_report_citing_an_unresolvable_evidence_id",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:agentshield_audit:audit_report_citing_an_unresolvable_evidence_id",
+            "name": "agentshield_audit",
+            "mode": "fixture",
+            "duration_ms": 195.78,
+            "status": "success",
+            "data": {
+              "status": "refused",
+              "audit_id": "audit-005",
+              "stage": "pre_output",
+              "verdict": "INSUFFICIENT",
+              "checks": [
+                {
+                  "name": "claim_evidence_linkage",
+                  "status": "passed",
+                  "detail": "1/1 claims cite evidence"
+                },
+                {
+                  "name": "evidence_verifiable",
+                  "status": "failed",
+                  "detail": "unknown evidence id: obs-yellow-01"
+                },
+                {
+                  "name": "trace_present",
+                  "status": "passed",
+                  "detail": "1 traced calls"
+                }
+              ],
+              "trust_level": "INSUFFICIENT",
+              "violations": [
+                "evidence_verifiable: unknown evidence id obs-yellow-01"
+              ],
+              "provenance": {
+                "data_origin": "local_audit",
+                "skill": "agentshield_audit",
+                "version": "0.3.0",
+                "model_called": false
+              },
+              "limitations": [
+                "本Skill是可调用的审计入口；权限拦截位于Runtime Middleware，不依赖Agent调用本Skill。",
+                "审计结论基于本地确定性规则，不调用语言模型，也不构成NVIDIA官方认证。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "audit_package_without_trace_is_incomplete_not_pass",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:agentshield_audit:audit_package_without_trace_is_incomplete_not_pass",
+            "name": "agentshield_audit",
+            "mode": "fixture",
+            "duration_ms": 203.512,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "audit_id": "audit-006",
+              "stage": "pre_registration",
+              "verdict": "INCOMPLETE",
+              "checks": [
+                {
+                  "name": "permission_least_privilege",
+                  "status": "passed",
+                  "detail": "package:read"
+                },
+                {
+                  "name": "network_denied",
+                  "status": "passed",
+                  "detail": "network deny"
+                },
+                {
+                  "name": "negative_eval_present",
+                  "status": "passed",
+                  "detail": "negative case present in evals/evals.json"
+                },
+                {
+                  "name": "manifest_inventory",
+                  "status": "passed",
+                  "detail": "3 hashed files"
+                },
+                {
+                  "name": "trace_complete",
+                  "status": "not_run",
+                  "detail": "no trace supplied"
+                }
+              ],
+              "trust_level": "LIMITED",
+              "violations": [],
+              "provenance": {
+                "data_origin": "local_audit",
+                "skill": "agentshield_audit",
+                "version": "0.3.0",
+                "model_called": false
+              },
+              "limitations": [
+                "本Skill是可调用的审计入口；权限拦截位于Runtime Middleware，不依赖Agent调用本Skill。",
+                "审计结论基于本地确定性规则，不调用语言模型，也不构成NVIDIA官方认证。",
+                "以下检查未执行：trace_complete；结论不构成完整审计。"
+              ]
+            },
+            "error": null
+          }
+        }
+      ],
+      "agent_behavior_cases_supplied": 3
+    },
+    {
       "skill": "evidence_fusion",
-      "manifest_sha256": "4d0dfc576c64dc786da4086bbdaf0f467ec2829e4b85b5bcf76f2e9df7790e02",
+      "manifest_sha256": "008462df5ef32433d82afa229751e817ee8f55d77dc48e43e5f185513dfc411b",
       "cases": [
         {
           "id": "valid_fixture",
@@ -15,7 +344,7 @@
             "tool_call_id": "eval:evidence_fusion:valid_fixture",
             "name": "evidence_fusion",
             "mode": "fixture",
-            "duration_ms": 467.299,
+            "duration_ms": 375.403,
             "status": "success",
             "data": {
               "status": "success",
@@ -83,7 +412,7 @@
             "tool_call_id": "eval:evidence_fusion:missing_species",
             "name": "evidence_fusion",
             "mode": "fixture",
-            "duration_ms": 237.053,
+            "duration_ms": 180.934,
             "status": "failed",
             "data": null,
             "error": {
@@ -99,7 +428,7 @@
             "tool_call_id": "eval:evidence_fusion:live_has_no_fixture_fallback",
             "name": "evidence_fusion",
             "mode": "live",
-            "duration_ms": 257.891,
+            "duration_ms": 182.781,
             "status": "failed",
             "data": null,
             "error": {
@@ -115,7 +444,7 @@
             "tool_call_id": "eval:evidence_fusion:reject_cross_case_fusion",
             "name": "evidence_fusion",
             "mode": "fixture",
-            "duration_ms": 569.412,
+            "duration_ms": 365.738,
             "status": "failed",
             "data": null,
             "error": {
@@ -131,7 +460,7 @@
             "tool_call_id": "eval:evidence_fusion:missing_knowledge_is_partial",
             "name": "evidence_fusion",
             "mode": "fixture",
-            "duration_ms": 491.354,
+            "duration_ms": 363.399,
             "status": "success",
             "data": {
               "status": "success",
@@ -196,7 +525,7 @@
             "tool_call_id": "eval:evidence_fusion:no_evidence_is_insufficient",
             "name": "evidence_fusion",
             "mode": "fixture",
-            "duration_ms": 512.29,
+            "duration_ms": 364.693,
             "status": "success",
             "data": {
               "status": "success",
@@ -241,7 +570,7 @@
     },
     {
       "skill": "growth_risk",
-      "manifest_sha256": "a6470acbff555319ceec9edc55420a02dce809482cc06b60b8a145860a8ee2e1",
+      "manifest_sha256": "efeb510775b5c5778bc122b484b6557872305312d441138b69d53d8f449f89bf",
       "cases": [
         {
           "id": "valid_fixture",
@@ -250,7 +579,7 @@
             "tool_call_id": "eval:growth_risk:valid_fixture",
             "name": "growth_risk",
             "mode": "fixture",
-            "duration_ms": 310.225,
+            "duration_ms": 199.609,
             "status": "success",
             "data": {
               "status": "success",
@@ -300,7 +629,7 @@
             "tool_call_id": "eval:growth_risk:missing_species",
             "name": "growth_risk",
             "mode": "fixture",
-            "duration_ms": 166.058,
+            "duration_ms": 97.39,
             "status": "failed",
             "data": null,
             "error": {
@@ -316,7 +645,7 @@
             "tool_call_id": "eval:growth_risk:live_has_no_fixture_fallback",
             "name": "growth_risk",
             "mode": "live",
-            "duration_ms": 164.315,
+            "duration_ms": 102.901,
             "status": "failed",
             "data": null,
             "error": {
@@ -332,7 +661,7 @@
             "tool_call_id": "eval:growth_risk:reject_unmatched_fixture",
             "name": "growth_risk",
             "mode": "fixture",
-            "duration_ms": 353.054,
+            "duration_ms": 216.481,
             "status": "failed",
             "data": null,
             "error": {
@@ -348,7 +677,7 @@
             "tool_call_id": "eval:growth_risk:invalid_humidity_units_or_range",
             "name": "growth_risk",
             "mode": "fixture",
-            "duration_ms": 163.846,
+            "duration_ms": 101.642,
             "status": "failed",
             "data": null,
             "error": {
@@ -362,7 +691,7 @@
     },
     {
       "skill": "herbal_knowledge",
-      "manifest_sha256": "a218fb346e46f06bf50be7b684c1765fe5404fad54cbda19bbeb90c22b37b55e",
+      "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc",
       "cases": [
         {
           "id": "valid_fixture",
@@ -371,7 +700,7 @@
             "tool_call_id": "eval:herbal_knowledge:valid_fixture",
             "name": "herbal_knowledge",
             "mode": "fixture",
-            "duration_ms": 300.305,
+            "duration_ms": 200.989,
             "status": "success",
             "data": {
               "status": "success",
@@ -410,7 +739,7 @@
             "tool_call_id": "eval:herbal_knowledge:missing_species",
             "name": "herbal_knowledge",
             "mode": "fixture",
-            "duration_ms": 147.277,
+            "duration_ms": 108.007,
             "status": "failed",
             "data": null,
             "error": {
@@ -426,7 +755,7 @@
             "tool_call_id": "eval:herbal_knowledge:live_has_no_fixture_fallback",
             "name": "herbal_knowledge",
             "mode": "live",
-            "duration_ms": 177.312,
+            "duration_ms": 98.98,
             "status": "failed",
             "data": null,
             "error": {
@@ -442,12 +771,149 @@
             "tool_call_id": "eval:herbal_knowledge:reject_unmatched_fixture",
             "name": "herbal_knowledge",
             "mode": "fixture",
-            "duration_ms": 315.095,
+            "duration_ms": 209.609,
             "status": "failed",
             "data": null,
             "error": {
               "code": "FixtureMismatchError",
               "message": "Input does not match the declared synthetic fixture; configure a live adapter for real data"
+            }
+          }
+        },
+        {
+          "id": "corpus_mode_returns_locatable_evidence",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:herbal_knowledge:corpus_mode_returns_locatable_evidence",
+            "name": "herbal_knowledge",
+            "mode": "corpus",
+            "duration_ms": 204.388,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "case_id": "demo-huangqi-001",
+              "species": "黄芪",
+              "provenance": {
+                "data_origin": "local_corpus",
+                "skill": "herbal_knowledge",
+                "version": "0.2.0",
+                "model_called": false,
+                "corpus_version": "tcm-mind-rag-data-2026-05-29",
+                "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+                "retriever": "deterministic_character_bigram_overlap"
+              },
+              "evidence": [
+                {
+                  "evidence_id": "corpus-460ddcb11091",
+                  "source_kind": "local_corpus",
+                  "source_title": "心脾两虚",
+                  "source_file": "synthetic_cases.json",
+                  "source_location": "synthetic_cases.json:285-292",
+                  "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+                  "supports_phenotypes": [],
+                  "retrieval_score": 0.75,
+                  "corpus_version": "tcm-mind-rag-data-2026-05-29"
+                },
+                {
+                  "evidence_id": "corpus-4bacfbc71332",
+                  "source_kind": "local_corpus",
+                  "source_title": "心脾两虚",
+                  "source_file": "synthetic_cases.json",
+                  "source_location": "synthetic_cases.json:2515-2521",
+                  "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+                  "supports_phenotypes": [],
+                  "retrieval_score": 0.75,
+                  "corpus_version": "tcm-mind-rag-data-2026-05-29"
+                },
+                {
+                  "evidence_id": "corpus-53c3a96a0162",
+                  "source_kind": "local_corpus",
+                  "source_title": "心脾两虚",
+                  "source_file": "synthetic_cases.json",
+                  "source_location": "synthetic_cases.json:1046-1052",
+                  "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+                  "supports_phenotypes": [],
+                  "retrieval_score": 0.75,
+                  "corpus_version": "tcm-mind-rag-data-2026-05-29"
+                },
+                {
+                  "evidence_id": "corpus-64f7c87c2617",
+                  "source_kind": "local_corpus",
+                  "source_title": "心脾两虚",
+                  "source_file": "syndromes.yaml",
+                  "source_location": "syndromes.yaml:92-96",
+                  "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+                  "supports_phenotypes": [],
+                  "retrieval_score": 0.75,
+                  "corpus_version": "tcm-mind-rag-data-2026-05-29"
+                },
+                {
+                  "evidence_id": "corpus-6518c5b3bcf0",
+                  "source_kind": "local_corpus",
+                  "source_title": "心脾两虚",
+                  "source_file": "synthetic_cases.json",
+                  "source_location": "synthetic_cases.json:5068-5075",
+                  "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+                  "supports_phenotypes": [],
+                  "retrieval_score": 0.75,
+                  "corpus_version": "tcm-mind-rag-data-2026-05-29"
+                }
+              ],
+              "limitations": [
+                "检索来自本地vendored语料，未调用Embedding模型或向量库；检索分数只反映字面重合度。",
+                "本草药性与证型知识不能替代栽培病理证据，也不能据此确诊病害。",
+                "语料为TCM-Mind-RAG知识数据的副本；未连接原项目的运行服务。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "corpus_mode_refuses_to_fabricate_a_citation",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:herbal_knowledge:corpus_mode_refuses_to_fabricate_a_citation",
+            "name": "herbal_knowledge",
+            "mode": "corpus",
+            "duration_ms": 204.505,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "case_id": "demo-huangqi-001",
+              "species": "黄芪",
+              "provenance": {
+                "data_origin": "local_corpus",
+                "skill": "herbal_knowledge",
+                "version": "0.2.0",
+                "model_called": false,
+                "corpus_version": "tcm-mind-rag-data-2026-05-29",
+                "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+                "retriever": "deterministic_character_bigram_overlap"
+              },
+              "evidence": [],
+              "limitations": [
+                "检索来自本地vendored语料，未调用Embedding模型或向量库；检索分数只反映字面重合度。",
+                "本草药性与证型知识不能替代栽培病理证据，也不能据此确诊病害。",
+                "语料为TCM-Mind-RAG知识数据的副本；未连接原项目的运行服务。",
+                "未检索到与问题有字面重合的条目；此处不给出来源，也不编造引用。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "corpus_mode_rejects_an_empty_query",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:herbal_knowledge:corpus_mode_rejects_an_empty_query",
+            "name": "herbal_knowledge",
+            "mode": "corpus",
+            "duration_ms": 193.641,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "ContractError",
+              "message": "corpus mode requires a non-empty query"
             }
           }
         }
@@ -456,7 +922,7 @@
     },
     {
       "skill": "plant_vision",
-      "manifest_sha256": "a603b209ce487361db51d2c6a90bfffe971ebb5a5a6d7485265ec0f4bc7b1f3e",
+      "manifest_sha256": "c35b84694338222de262d5bf661f27689a55155fc476429e03622923d156a01d",
       "cases": [
         {
           "id": "valid_fixture",
@@ -465,7 +931,7 @@
             "tool_call_id": "eval:plant_vision:valid_fixture",
             "name": "plant_vision",
             "mode": "fixture",
-            "duration_ms": 284.081,
+            "duration_ms": 199.424,
             "status": "success",
             "data": {
               "status": "success",
@@ -510,7 +976,7 @@
             "tool_call_id": "eval:plant_vision:missing_species",
             "name": "plant_vision",
             "mode": "fixture",
-            "duration_ms": 129.557,
+            "duration_ms": 96.683,
             "status": "failed",
             "data": null,
             "error": {
@@ -526,7 +992,7 @@
             "tool_call_id": "eval:plant_vision:live_has_no_fixture_fallback",
             "name": "plant_vision",
             "mode": "live",
-            "duration_ms": 129.915,
+            "duration_ms": 95.613,
             "status": "failed",
             "data": null,
             "error": {
@@ -542,7 +1008,7 @@
             "tool_call_id": "eval:plant_vision:reject_unmatched_fixture",
             "name": "plant_vision",
             "mode": "fixture",
-            "duration_ms": 287.952,
+            "duration_ms": 191.041,
             "status": "failed",
             "data": null,
             "error": {

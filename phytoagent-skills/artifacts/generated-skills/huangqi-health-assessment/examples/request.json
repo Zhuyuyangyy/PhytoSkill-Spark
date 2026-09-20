@@ -1,0 +1,12 @@
+{
+  "case_id": "huangqi-health-assessment-example",
+  "species": "黄芪",
+  "image": "case_workspace/leaf.jpg",
+  "telemetry": {
+    "temperature_c": null,
+    "relative_humidity_pct": null,
+    "soil_ph": null,
+    "npk": null
+  },
+  "knowledge_query": "黄芪叶片黄化可能原因及证据"
+}

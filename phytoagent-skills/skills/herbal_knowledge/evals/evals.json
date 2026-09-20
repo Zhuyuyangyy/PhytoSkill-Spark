@@ -55,6 +55,49 @@
         "status": "failed",
         "error_code": "FixtureMismatchError"
       }
+    },
+    {
+      "id": "corpus_mode_returns_locatable_evidence",
+      "mode": "corpus",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "query": "黄芪 心脾两虚 归脾汤"
+      },
+      "expect": {
+        "status": "success",
+        "values": {
+          "/provenance/data_origin": "local_corpus"
+        }
+      }
+    },
+    {
+      "id": "corpus_mode_refuses_to_fabricate_a_citation",
+      "mode": "corpus",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "query": "量子色动力学夸克胶子等离子体"
+      },
+      "expect": {
+        "status": "success",
+        "values": {
+          "/evidence": []
+        }
+      }
+    },
+    {
+      "id": "corpus_mode_rejects_an_empty_query",
+      "mode": "corpus",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "query": "   "
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "ContractError"
+      }
     }
   ],
   "agent_cases": [

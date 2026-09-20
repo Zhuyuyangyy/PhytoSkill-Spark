@@ -29,10 +29,18 @@ def evaluate() -> dict:
                 response = executor.call(name, case["input"], mode=case["mode"],
                                          tool_call_id=f"eval:{name}:{case['id']}")
                 expected = case["expect"]
-                passed = response["status"] == expected["status"]
+                # The tool-level status records whether the Skill ran; the
+                # payload status records whether it accepted the subject. A
+                # rejected subject is a successful run of the audit.
+                passed = response["status"] == "success"
                 if expected["status"] == "failed":
-                    passed = passed and response["error"]["code"] == expected["error_code"]
+                    passed = (response["status"] == "failed"
+                              and response["error"]["code"] == expected["error_code"])
+                elif expected["status"] == "refused":
+                    passed = passed and response["data"]["status"] == "refused"
                 else:
+                    passed = passed and response["data"]["status"] == expected["status"]
+                if "values" in expected:
                     try:
                         passed = passed and all(value_at(response["data"], key) == value
                                                 for key, value in expected["values"].items())

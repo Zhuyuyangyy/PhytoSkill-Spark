@@ -8,23 +8,30 @@
   "input_schema": "schema.json#/input",
   "output_schema": "schema.json#/output",
   "supported_modes": [
-    "fixture"
+    "fixture",
+    "corpus"
   ],
   "capabilities": [
     "herbal_knowledge"
   ],
+  "permissions": {
+    "filesystem": [
+      "corpus:read"
+    ],
+    "network": "deny"
+  },
   "files": {
     "BENCHMARK.md": "95a5d51dc04a703234f9d42f23aba0d8dc0c1bcfe468a89e530b8d28346e0414",
     "SKILL.md": "718347a0a9d366d08c681f486b00d9af0acb3d94606138589a48497408c8869b",
-    "evals/evals.json": "fcfdca04a467f3ef84c77ae530e0652fdc796f934d2b8a611b1cd35347e6c31f",
+    "evals/evals.json": "8cfba81346f031ef834802746fcffbfce083f8a18a67038a79f2c77c5549cea9",
     "examples/request.json": "a8879ce18be7aacc87b4906e8e8d1a05618f60afdad40d624831e6191a43e752",
     "fixture.json": "7114c61a7bb484ebf6f79e84e33eb41a743c03bfacb172b21f931d102aead32b",
-    "metadata.json": "c02917718850c93395b4089e0feed7b4634ff6b2e92535fedb83fd1d281530a2",
+    "metadata.json": "6a167bfb7e3653e44b2afaef638a71e94fa1d4ed37bf28f45ae3a25d9d1b0083",
     "references/contract.md": "51494f111e2f590196f9e1cff87fe19f78bba06137298a8e0b6f832433bbacd6",
-    "schema.json": "915f0c16c10611a022f24b2d8237aa50b340d06eb1048bf6ee0e3ac451c5198c",
+    "schema.json": "7b53ef33607704d94ec076f1a0b5a7b47aacf6bd46955675410d2568c9570557",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "47ed2d7530fdeb4e5e1ddd0d5689ac8367d8f3089ce36ad59423b3eaeb00468b",
-    "skill.py": "3858e23ceaa62987c7549b3fa967f53840850be94f8d8895c69c628cbb033357"
+    "skill.py": "fc4b0cec064eee87bb749e35368cd726b47233e422abae74a1ea725c684870b4"
   },
-  "manifest_sha256": "a218fb346e46f06bf50be7b684c1765fe5404fad54cbda19bbeb90c22b37b55e"
+  "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc"
 }

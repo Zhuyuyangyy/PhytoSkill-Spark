@@ -1,0 +1,23 @@
+{
+  "audit_id": "audit-001",
+  "stage": "pre_registration",
+  "subject": {
+    "kind": "skill_package",
+    "manifest": {
+      "name": "evidence_fusion",
+      "version": "0.2.0",
+      "permissions": {
+        "filesystem": ["package:read"],
+        "network": "deny"
+      },
+      "files": {
+        "SKILL.md": "a",
+        "skill.py": "b",
+        "evals/evals.json": "c"
+      }
+    },
+    "trace": [
+      {"tool_call_id": "call-1", "skill": "evidence_fusion", "status": "success"}
+    ]
+  }
+}

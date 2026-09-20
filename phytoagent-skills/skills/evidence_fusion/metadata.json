@@ -12,5 +12,11 @@
   ],
   "capabilities": [
     "evidence_fusion"
-  ]
+  ],
+  "permissions": {
+    "filesystem": [
+      "package:read"
+    ],
+    "network": "deny"
+  }
 }

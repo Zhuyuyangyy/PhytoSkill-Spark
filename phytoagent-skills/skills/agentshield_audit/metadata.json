@@ -1,0 +1,22 @@
+{
+  "name": "agentshield_audit",
+  "version": "0.3.0",
+  "description": "注册前与输出前的可信审计：校验Skill包完整性、权限最小化、Claim-Evidence关联与越权调用。本Skill只是可调用的审计入口，真正的权限拦截位于Runtime Middleware，Agent无法通过不调用本Skill绕过治理。",
+  "author": "PhytoForge Spark contributors",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:AgentShieldAuditSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": [
+    "fixture"
+  ],
+  "capabilities": [
+    "agentshield_audit"
+  ],
+  "permissions": {
+    "filesystem": [
+      "package:read"
+    ],
+    "network": "deny"
+  }
+}

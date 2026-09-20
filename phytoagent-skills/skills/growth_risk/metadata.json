@@ -12,5 +12,11 @@
   ],
   "capabilities": [
     "growth_risk"
-  ]
+  ],
+  "permissions": {
+    "filesystem": [
+      "case_workspace:read"
+    ],
+    "network": "deny"
+  }
 }

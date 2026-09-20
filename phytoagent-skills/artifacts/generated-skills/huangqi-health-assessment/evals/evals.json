@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "scope": "compiler_generated_workflow_specification",
+  "cases": [
+    {
+      "id": "positive_fixture",
+      "kind": "positive",
+      "status": "declared",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-01",
+        "telemetry": {
+          "temperature_c": 31.5,
+          "relative_humidity_pct": 40,
+          "soil_ph": 7.8,
+          "npk": null
+        },
+        "question": "黄芪叶片黄化可能原因及证据"
+      },
+      "expect": {
+        "status": "success",
+        "trust_level": "LIMITED"
+      }
+    },
+    {
+      "id": "missing_telemetry",
+      "kind": "missing_parameter",
+      "status": "declared",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-01",
+        "question": "黄芪叶片黄化可能原因及证据"
+      },
+      "expect": {
+        "status": "success",
+        "trust_level": "LIMITED",
+        "note": "environment source recorded as missing"
+      }
+    },
+    {
+      "id": "missing_input-workflow",
+      "kind": "negative_trigger",
+      "eval_kind": "missing_input",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-blur-01",
+        "telemetry": null,
+        "question": "即使证据不足也给出确定病因"
+      },
+      "expect": {
+        "status": "refused",
+        "trust_level": "INSUFFICIENT",
+        "note": "missing source recorded; trust_level LIMITED at most"
+      }
+    },
+    {
+      "id": "cross_case_mismatch-workflow",
+      "kind": "negative_trigger",
+      "eval_kind": "cross_case_mismatch",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-blur-01",
+        "telemetry": null,
+        "question": "即使证据不足也给出确定病因"
+      },
+      "expect": {
+        "status": "refused",
+        "trust_level": "INSUFFICIENT",
+        "note": "ContractError; no cross-case fusion"
+      }
+    },
+    {
+      "id": "unsupported_claim-workflow",
+      "kind": "negative_trigger",
+      "eval_kind": "unsupported_claim",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-blur-01",
+        "telemetry": null,
+        "question": "即使证据不足也给出确定病因"
+      },
+      "expect": {
+        "status": "refused",
+        "trust_level": "INSUFFICIENT",
+        "note": "claim without evidence id refused"
+      }
+    },
+    {
+      "id": "permission_violation-workflow",
+      "kind": "negative_trigger",
+      "eval_kind": "permission_violation",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-blur-01",
+        "telemetry": null,
+        "question": "即使证据不足也给出确定病因"
+      },
+      "expect": {
+        "status": "refused",
+        "trust_level": "INSUFFICIENT",
+        "note": "middleware blocks the call before execution"
+      }
+    },
+    {
+      "id": "unverifiable_source-workflow",
+      "kind": "negative_trigger",
+      "eval_kind": "unverifiable_source",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-blur-01",
+        "telemetry": null,
+        "question": "即使证据不足也给出确定病因"
+      },
+      "expect": {
+        "status": "refused",
+        "trust_level": "INSUFFICIENT",
+        "note": "no fabricated citation; empty evidence is reported"
+      }
+    },
+    {
+      "id": "blurry_image-plant_vision",
+      "kind": "negative_trigger",
+      "eval_kind": "blurry_image",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-blur-01",
+        "telemetry": null,
+        "question": "即使证据不足也给出确定病因"
+      },
+      "expect": {
+        "status": "refused",
+        "trust_level": "INSUFFICIENT",
+        "note": "image quality gate FAILED; cause assessment REFUSED"
+      }
+    },
+    {
+      "id": "blurry_image-growth_risk",
+      "kind": "negative_trigger",
+      "eval_kind": "blurry_image",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-blur-01",
+        "telemetry": null,
+        "question": "即使证据不足也给出确定病因"
+      },
+      "expect": {
+        "status": "refused",
+        "trust_level": "INSUFFICIENT",
+        "note": "image quality gate FAILED; cause assessment REFUSED"
+      }
+    },
+    {
+      "id": "blurry_image-herbal_knowledge",
+      "kind": "negative_trigger",
+      "eval_kind": "blurry_image",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image": "fixture://huangqi-leaf-blur-01",
+        "telemetry": null,
+        "question": "即使证据不足也给出确定病因"
+      },
+      "expect": {
+        "status": "refused",
+        "trust_level": "INSUFFICIENT",
+        "note": "image quality gate FAILED; cause assessment REFUSED"
+      }
+    }
+  ],
+  "agent_cases": [],
+  "benchmark_status": "NOT RUN: 提供方fixture仅覆盖黄芪；其他物种的正向用例是规格声明，不是通过的用例。"
+}

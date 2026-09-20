@@ -116,13 +116,15 @@ def test_demo_failure_degrades_and_keeps_call_identity():
 
 def test_embedded_contract_evaluations_pass_without_claiming_agent_benchmarks():
     report = evaluate()
-    assert report["total"] == report["passed"] == 19
+    # 19 contract cases across the four professional Skills, 6 audit cases and
+    # 3 corpus-mode cases.
+    assert report["total"] == report["passed"] == 28
     assert report["failed"] == 0
     assert report["agent_ab"]["status"] == "not_run"
     assert report["dgx_hardware_used"] is False
     for skill in report["skills"]:
         assert len(skill["manifest_sha256"]) == 64
-        assert skill["agent_behavior_cases_supplied"] == 3
+        assert skill["agent_behavior_cases_supplied"] >= 3
 
 
 def test_skill_scripts_are_usable_from_copied_package(tmp_path):

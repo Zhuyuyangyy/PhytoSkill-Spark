@@ -11,7 +11,7 @@
 | 规划与选工具 | **真实**：StepFun chat/completions，真实 tool_calls 往返 |
 | 参数构造 | **真实**：模型自己拼 `case_id` / `species` / `image_path` |
 | 延迟与 token | **真实**：逐调用记录，含 `reasoning_tokens` |
-| 工具返回的内容 | **仍是 fixture**：四个 Skill 跑在 `fixture` 模式，返回合成观察 |
+| 工具返回的内容 | **仍是 fixture**：五个 Skill 跑在 `fixture` 模式，返回合成观察或本地审计结论 |
 | 农学准确性 | **未测**：合成输入无法支撑真实诊断结论 |
 | DGX GPU 推理 | **未用**：`dgx_hardware_used` 记录本次是否触及 GPU |
 
@@ -25,7 +25,7 @@ harness/
 ├── config.py       环境变量与 .env 读取；密钥永不进报告
 ├── transport.py    stdlib HTTP，429/5xx 指数退避，记录 model_returned
 ├── agent.py        工具调用循环；两臂之间唯一的差别是 system prompt
-├── tasks.py        从四个包的 agent_cases 生成任务集
+├── tasks.py        从五个包的 agent_cases 生成任务集
 ├── scoring.py      规则化判定（不用 LLM judge）
 ├── ab.py           交错 A/B 与报告生成
 └── __main__.py     preflight / smoke / ab / dry-run
@@ -85,7 +85,7 @@ ssh <dgx>
 git clone https://github.com/Zhuyuyangyy/PhytoSkill-Spark.git && cd PhytoSkill-Spark/phytoagent-skills
 python3 -m venv .venv && . .venv/bin/activate
 python -m pip install -e '.[test]'
-python -m pytest -q                       # 先确认 129 项离线测试全绿
+python -m pytest -q                       # 先确认 230 项离线测试全绿
 cp .env.example .env && chmod 600 .env && $EDITOR .env
 python -m harness dry-run
 python -m harness preflight

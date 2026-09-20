@@ -24,11 +24,24 @@ MANIFEST_SCHEMA = {
         "input_schema": {"type": "string", "minLength": 1},
         "output_schema": {"type": "string", "minLength": 1},
         "supported_modes": {"type": "array", "minItems": 1, "uniqueItems": True,
-                            "items": {"enum": ["fixture", "replay", "live"]}},
+                            "items": {"enum": ["fixture", "corpus", "replay", "live"]}},
         "capabilities": {"type": "array", "uniqueItems": True, "items": {"type": "string"}},
+        "permissions": {"$ref": "#/$defs/permissions"},
         "files": {"type": "object", "minProperties": 3,
                   "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
         "manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    },
+    "$defs": {
+        "permissions": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["filesystem", "network"],
+            "properties": {
+                "filesystem": {"type": "array", "uniqueItems": True, "minItems": 1,
+                               "items": {"type": "string", "minLength": 1, "maxLength": 64}},
+                "network": {"enum": ["deny", "allow"]},
+            },
+        },
     },
 }
 
