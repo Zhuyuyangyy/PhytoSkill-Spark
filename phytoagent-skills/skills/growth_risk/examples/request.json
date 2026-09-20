@@ -1,0 +1,10 @@
+{
+  "case_id": "demo-huangqi-001",
+  "species": "黄芪",
+  "telemetry": {
+    "temperature_c": 31.5,
+    "relative_humidity_pct": 40,
+    "soil_ph": 7.8,
+    "npk": null
+  }
+}

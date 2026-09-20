@@ -1,0 +1,50 @@
+{
+  "input": {
+    "case_id": "demo-huangqi-001",
+    "species": "黄芪",
+    "telemetry": {
+      "temperature_c": 31.5,
+      "relative_humidity_pct": 40,
+      "soil_ph": 7.8,
+      "npk": null
+    }
+  },
+  "output": {
+    "status": "success",
+    "case_id": "demo-huangqi-001",
+    "species": "黄芪",
+    "provenance": {
+      "data_origin": "synthetic_fixture",
+      "skill": "growth_risk",
+      "version": "0.2.0",
+      "model_called": false
+    },
+    "risk_level": "undetermined",
+    "factors": [
+      {
+        "factor_id": "factor-temperature-01",
+        "metric": "temperature_c",
+        "observed_value": 31.5,
+        "possible_factor": "需结合生育期核对温度适宜范围",
+        "assessment": "requires_species_reference"
+      },
+      {
+        "factor_id": "factor-ph-01",
+        "metric": "soil_ph",
+        "observed_value": 7.8,
+        "possible_factor": "需结合物种和测量方法核对土壤pH",
+        "assessment": "requires_species_reference"
+      }
+    ],
+    "missing_context": [
+      "生育期与时间序列",
+      "土壤水分",
+      "经核实的物种环境阈值",
+      "N/P/K测量"
+    ],
+    "limitations": [
+      "本结果为合成fixture，没有经过农学阈值验证。",
+      "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。"
+    ]
+  }
+}

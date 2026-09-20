@@ -1,0 +1,564 @@
+{
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "case_id",
+      "species",
+      "vision",
+      "environment",
+      "knowledge"
+    ],
+    "properties": {
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "vision": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/vision"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "environment": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/environment"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "knowledge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/knowledge"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "$defs": {
+      "vision": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "case_id",
+          "species",
+          "provenance",
+          "observations",
+          "limitations"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "species": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "data_origin",
+              "skill",
+              "version",
+              "model_called"
+            ],
+            "properties": {
+              "data_origin": {
+                "const": "synthetic_fixture"
+              },
+              "skill": {
+                "const": "plant_vision"
+              },
+              "version": {
+                "const": "0.2.0"
+              },
+              "model_called": {
+                "const": false
+              }
+            }
+          },
+          "observations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "observation_id",
+                "phenotype",
+                "region",
+                "affected_area_fraction",
+                "area_basis",
+                "model_score"
+              ],
+              "properties": {
+                "observation_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "phenotype": {
+                  "enum": [
+                    "leaf_yellowing",
+                    "leaf_spot",
+                    "wilting",
+                    "unknown"
+                  ]
+                },
+                "region": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "label",
+                    "bbox_normalized"
+                  ],
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "bbox_normalized": {
+                      "type": "array",
+                      "items": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "minItems": 4,
+                      "maxItems": 4
+                    }
+                  }
+                },
+                "affected_area_fraction": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "area_basis": {
+                  "const": "visible_leaf_area"
+                },
+                "model_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        }
+      },
+      "environment": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "case_id",
+          "species",
+          "provenance",
+          "risk_level",
+          "factors",
+          "missing_context",
+          "limitations"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "species": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "data_origin",
+              "skill",
+              "version",
+              "model_called"
+            ],
+            "properties": {
+              "data_origin": {
+                "const": "synthetic_fixture"
+              },
+              "skill": {
+                "const": "growth_risk"
+              },
+              "version": {
+                "const": "0.2.0"
+              },
+              "model_called": {
+                "const": false
+              }
+            }
+          },
+          "risk_level": {
+            "const": "undetermined"
+          },
+          "factors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "factor_id",
+                "metric",
+                "observed_value",
+                "possible_factor",
+                "assessment"
+              ],
+              "properties": {
+                "factor_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "metric": {
+                  "enum": [
+                    "temperature_c",
+                    "soil_ph"
+                  ]
+                },
+                "observed_value": {
+                  "type": "number"
+                },
+                "possible_factor": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "assessment": {
+                  "const": "requires_species_reference"
+                }
+              }
+            }
+          },
+          "missing_context": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        }
+      },
+      "knowledge": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "case_id",
+          "species",
+          "provenance",
+          "evidence",
+          "limitations"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "species": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "data_origin",
+              "skill",
+              "version",
+              "model_called"
+            ],
+            "properties": {
+              "data_origin": {
+                "const": "synthetic_fixture"
+              },
+              "skill": {
+                "const": "herbal_knowledge"
+              },
+              "version": {
+                "const": "0.2.0"
+              },
+              "model_called": {
+                "const": false
+              }
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "evidence_id",
+                "source_kind",
+                "source_title",
+                "content",
+                "supports_phenotypes",
+                "retrieval_score"
+              ],
+              "properties": {
+                "evidence_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source_kind": {
+                  "const": "synthetic_fixture"
+                },
+                "source_title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "content": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "supports_phenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "retrieval_score": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "status",
+      "case_id",
+      "species",
+      "provenance",
+      "summary",
+      "completeness",
+      "conclusion_strength",
+      "missing_inputs",
+      "source_ids",
+      "evidence_chain",
+      "unlinked_evidence_ids",
+      "recommendations",
+      "limitations"
+    ],
+    "properties": {
+      "status": {
+        "const": "success"
+      },
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "provenance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_origin",
+          "skill",
+          "version",
+          "model_called"
+        ],
+        "properties": {
+          "data_origin": {
+            "const": "synthetic_fixture"
+          },
+          "skill": {
+            "const": "evidence_fusion"
+          },
+          "version": {
+            "const": "0.2.0"
+          },
+          "model_called": {
+            "const": false
+          }
+        }
+      },
+      "summary": {
+        "type": "string",
+        "minLength": 1
+      },
+      "completeness": {
+        "enum": [
+          "complete",
+          "partial",
+          "insufficient"
+        ]
+      },
+      "conclusion_strength": {
+        "const": "synthetic_only"
+      },
+      "missing_inputs": {
+        "type": "array",
+        "items": {
+          "enum": [
+            "vision",
+            "environment",
+            "knowledge"
+          ]
+        }
+      },
+      "source_ids": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "vision",
+          "environment",
+          "knowledge"
+        ],
+        "properties": {
+          "vision": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "environment": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "knowledge": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "evidence_chain": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "observation_id",
+            "phenotype",
+            "environment_factor_ids",
+            "knowledge_evidence_ids",
+            "relationship"
+          ],
+          "properties": {
+            "observation_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "phenotype": {
+              "type": "string",
+              "minLength": 1
+            },
+            "environment_factor_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "knowledge_evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "relationship": {
+              "const": "co_occurrence_only"
+            }
+          }
+        }
+      },
+      "unlinked_evidence_ids": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "recommendations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

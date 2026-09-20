@@ -1,0 +1,12 @@
+{
+  "name": "contract_probe",
+  "version": "0.1.0",
+  "description": "Exercise SDK contracts with synthetic fixture data; no plant diagnosis.",
+  "author": "PhytoSkill-Spark contributors",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:ContractProbeSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": ["fixture"],
+  "capabilities": ["sdk_contract_probe"]
+}

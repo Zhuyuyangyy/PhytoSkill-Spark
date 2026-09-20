@@ -1,0 +1,16 @@
+{
+  "name": "growth_risk",
+  "version": "0.2.0",
+  "description": "分析已给出的药用植物环境测量与待复核因素。需要带单位的温度、空气相对湿度、土壤pH及可选N/P/K；只有图片或天气闲聊不使用。",
+  "author": "PhytoSkill-Spark contributors",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:GrowthRiskSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": [
+    "fixture"
+  ],
+  "capabilities": [
+    "growth_risk"
+  ]
+}

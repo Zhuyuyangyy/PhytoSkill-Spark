@@ -1,0 +1,26 @@
+{
+  "tests": {
+    "tests": 91,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "contract_cases": 19,
+  "archives": [
+    {
+      "name": "phytoagent-skills-v0.2.0.zip",
+      "sha256": "7fcd34f811f8f0a096acf5491f4c53ebc3edce400d7c7850aeeed7cecee722e9",
+      "crc": "passed"
+    },
+    {
+      "name": "phytoagent-portable-skills-v0.2.0.zip",
+      "sha256": "c804370509952ae3e69bc138db4024857e24f4a355c4c102db492156857e68bb",
+      "crc": "passed"
+    }
+  ],
+  "source_files": 97,
+  "source_bytes_match": true,
+  "source_extracted_demo": "passed",
+  "portable_four_skill_scripts": "passed",
+  "wheel_isolated_runtime": "passed"
+}

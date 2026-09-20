@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+build/
+dist/
+.env
+.trust/
+*.private.pem
+
+# artifacts/ 保留：pytest/契约评测/release 校验记录属不可再生证据，需入库

@@ -1,0 +1,109 @@
+{
+  "schema_version": "0.1.0",
+  "request_id": "fixture_huangqi_001",
+  "status": "partial",
+  "vision": {
+    "quality": "usable",
+    "quality_issues": [],
+    "species_status": "user_declared_only",
+    "visible_findings": [
+      "示例叶片可见黄化；定位和面积均为契约测试数据。"
+    ],
+    "regions": [
+      {
+        "region_id": "v1",
+        "abnormality": "chlorosis",
+        "bbox_xywh_norm": [
+          0.2,
+          0.3,
+          0.25,
+          0.2
+        ],
+        "model_score": 0.86,
+        "score_meaning": "uncalibrated_model_score_not_disease_probability",
+        "mask_ref": "artifact://fixture_huangqi_001/v1.png"
+      }
+    ],
+    "visible_leaf_area_px": 100000,
+    "abnormal_area_px": 18000,
+    "abnormal_area_ratio": 0.18,
+    "area_basis": "union_of_abnormal_masks_intersect_visible_leaf_union_divided_by_visible_leaf_union",
+    "annotation_ref": "artifact://fixture_huangqi_001/overlay.png"
+  },
+  "environment": {
+    "status": "no_applicable_rule",
+    "risk_factors": [],
+    "unassessed_metrics": [
+      "temperature_c",
+      "relative_humidity_pct",
+      "soil_ph",
+      "soil_moisture_vwc_pct",
+      "npk"
+    ],
+    "temporal_scope": "provided_measurements_only_not_a_time_series_trend"
+  },
+  "knowledge": {
+    "status": "no_relevant_evidence",
+    "query": "黄芪 叶片黄化 鉴别原因 生长阶段 土壤水分 养分",
+    "evidence": []
+  },
+  "assessment": {
+    "conclusion_level": "insufficient_evidence",
+    "summary": "仅演示黄化观察；未加载真实领域证据与适用规则，暂不能判断原因。",
+    "hypotheses": [],
+    "confirmed_pathogen": false,
+    "medicinal_quality": {
+      "status": "not_measured",
+      "statement": "本次未检测药材成分或药效，不能由叶片图像推算药效下降比例。"
+    }
+  },
+  "recommendations": [
+    {
+      "recommendation_id": "a1",
+      "action": "补充整株、叶背和新老叶照片，并提供测量时间、生长期、土壤含水率及检测方法。",
+      "priority": "next",
+      "rationale": "当前信息不足以区分黄化原因。",
+      "evidence_ids": [],
+      "hypothesis_ids": [],
+      "kind": "collect_more_data"
+    }
+  ],
+  "missing_information": [
+    {
+      "field": "telemetry.soil_moisture_vwc_pct",
+      "reason": "空气湿度不能替代土壤水分测量。",
+      "priority": "helpful"
+    },
+    {
+      "field": "plant_context.growth_stage",
+      "reason": "环境规则需要匹配生长期。",
+      "priority": "helpful"
+    }
+  ],
+  "limitations": [
+    "本文件是人工构造的契约样例，不是模型推理、真实文献或 DGX Spark 运行结果。",
+    "0.18 是示例可见叶片掩膜的异常面积比例，不是整株病害比例或药效变化。",
+    "32°C、82% RH、pH 7.8 是示例输入；未提供来源规则，不能自动视为黄芪异常阈值。"
+  ],
+  "errors": [],
+  "provenance": {
+    "execution_mode": "fixture",
+    "executed_at": "2026-09-20T00:00:00Z",
+    "skill_version": "0.1.0",
+    "runtime_device": "not_executed",
+    "input_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "corpus_version": null,
+    "rule_version": null,
+    "components": [],
+    "timings_ms": {
+      "vision": null,
+      "environment": null,
+      "rag": null,
+      "fusion": null,
+      "total": null
+    },
+    "warnings": [
+      "哈希、面积和模型分数是构造数据；artifact:// 引用未对应真实图片。"
+    ]
+  }
+}

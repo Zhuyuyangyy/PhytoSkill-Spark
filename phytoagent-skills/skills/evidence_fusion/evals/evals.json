@@ -1,0 +1,702 @@
+{
+  "schema_version": 1,
+  "contract_cases": [
+    {
+      "id": "valid_fixture",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "vision": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "plant_vision",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "observations": [
+            {
+              "observation_id": "obs-yellow-01",
+              "phenotype": "leaf_yellowing",
+              "region": {
+                "label": "leaf edge",
+                "bbox_normalized": [
+                  0.2,
+                  0.15,
+                  0.8,
+                  0.85
+                ]
+              },
+              "affected_area_fraction": 0.21,
+              "area_basis": "visible_leaf_area",
+              "model_score": 0.92
+            }
+          ],
+          "limitations": [
+            "本结果来自合成fixture，未读取图片或执行模型推理。",
+            "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。"
+          ]
+        },
+        "environment": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "growth_risk",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "risk_level": "undetermined",
+          "factors": [
+            {
+              "factor_id": "factor-temperature-01",
+              "metric": "temperature_c",
+              "observed_value": 31.5,
+              "possible_factor": "需结合生育期核对温度适宜范围",
+              "assessment": "requires_species_reference"
+            },
+            {
+              "factor_id": "factor-ph-01",
+              "metric": "soil_ph",
+              "observed_value": 7.8,
+              "possible_factor": "需结合物种和测量方法核对土壤pH",
+              "assessment": "requires_species_reference"
+            }
+          ],
+          "missing_context": [
+            "生育期与时间序列",
+            "土壤水分",
+            "经核实的物种环境阈值",
+            "N/P/K测量"
+          ],
+          "limitations": [
+            "本结果为合成fixture，没有经过农学阈值验证。",
+            "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。"
+          ]
+        },
+        "knowledge": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "herbal_knowledge",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "evidence": [
+            {
+              "evidence_id": "fixture-evidence-01",
+              "source_kind": "synthetic_fixture",
+              "source_title": "接口联调合成条目（非真实文献）",
+              "content": "演示证据连接：叶片黄化表型需要结合环境测量和经过核实的资料复核，不能仅据图片确定病原。",
+              "supports_phenotypes": [
+                "leaf_yellowing"
+              ],
+              "retrieval_score": 0.83
+            }
+          ],
+          "limitations": [
+            "未连接TCM-Mind-RAG；此处没有真实文献检索结果。",
+            "检索分数不代表事实确定性；本草药性知识不能替代栽培病理证据。"
+          ]
+        }
+      },
+      "expect": {
+        "status": "success",
+        "values": {
+          "/status": "success",
+          "/provenance/data_origin": "synthetic_fixture",
+          "/provenance/model_called": false,
+          "/completeness": "complete"
+        }
+      }
+    },
+    {
+      "id": "missing_species",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "vision": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "plant_vision",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "observations": [
+            {
+              "observation_id": "obs-yellow-01",
+              "phenotype": "leaf_yellowing",
+              "region": {
+                "label": "leaf edge",
+                "bbox_normalized": [
+                  0.2,
+                  0.15,
+                  0.8,
+                  0.85
+                ]
+              },
+              "affected_area_fraction": 0.21,
+              "area_basis": "visible_leaf_area",
+              "model_score": 0.92
+            }
+          ],
+          "limitations": [
+            "本结果来自合成fixture，未读取图片或执行模型推理。",
+            "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。"
+          ]
+        },
+        "environment": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "growth_risk",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "risk_level": "undetermined",
+          "factors": [
+            {
+              "factor_id": "factor-temperature-01",
+              "metric": "temperature_c",
+              "observed_value": 31.5,
+              "possible_factor": "需结合生育期核对温度适宜范围",
+              "assessment": "requires_species_reference"
+            },
+            {
+              "factor_id": "factor-ph-01",
+              "metric": "soil_ph",
+              "observed_value": 7.8,
+              "possible_factor": "需结合物种和测量方法核对土壤pH",
+              "assessment": "requires_species_reference"
+            }
+          ],
+          "missing_context": [
+            "生育期与时间序列",
+            "土壤水分",
+            "经核实的物种环境阈值",
+            "N/P/K测量"
+          ],
+          "limitations": [
+            "本结果为合成fixture，没有经过农学阈值验证。",
+            "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。"
+          ]
+        },
+        "knowledge": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "herbal_knowledge",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "evidence": [
+            {
+              "evidence_id": "fixture-evidence-01",
+              "source_kind": "synthetic_fixture",
+              "source_title": "接口联调合成条目（非真实文献）",
+              "content": "演示证据连接：叶片黄化表型需要结合环境测量和经过核实的资料复核，不能仅据图片确定病原。",
+              "supports_phenotypes": [
+                "leaf_yellowing"
+              ],
+              "retrieval_score": 0.83
+            }
+          ],
+          "limitations": [
+            "未连接TCM-Mind-RAG；此处没有真实文献检索结果。",
+            "检索分数不代表事实确定性；本草药性知识不能替代栽培病理证据。"
+          ]
+        }
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "ContractError"
+      }
+    },
+    {
+      "id": "live_has_no_fixture_fallback",
+      "mode": "live",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "vision": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "plant_vision",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "observations": [
+            {
+              "observation_id": "obs-yellow-01",
+              "phenotype": "leaf_yellowing",
+              "region": {
+                "label": "leaf edge",
+                "bbox_normalized": [
+                  0.2,
+                  0.15,
+                  0.8,
+                  0.85
+                ]
+              },
+              "affected_area_fraction": 0.21,
+              "area_basis": "visible_leaf_area",
+              "model_score": 0.92
+            }
+          ],
+          "limitations": [
+            "本结果来自合成fixture，未读取图片或执行模型推理。",
+            "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。"
+          ]
+        },
+        "environment": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "growth_risk",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "risk_level": "undetermined",
+          "factors": [
+            {
+              "factor_id": "factor-temperature-01",
+              "metric": "temperature_c",
+              "observed_value": 31.5,
+              "possible_factor": "需结合生育期核对温度适宜范围",
+              "assessment": "requires_species_reference"
+            },
+            {
+              "factor_id": "factor-ph-01",
+              "metric": "soil_ph",
+              "observed_value": 7.8,
+              "possible_factor": "需结合物种和测量方法核对土壤pH",
+              "assessment": "requires_species_reference"
+            }
+          ],
+          "missing_context": [
+            "生育期与时间序列",
+            "土壤水分",
+            "经核实的物种环境阈值",
+            "N/P/K测量"
+          ],
+          "limitations": [
+            "本结果为合成fixture，没有经过农学阈值验证。",
+            "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。"
+          ]
+        },
+        "knowledge": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "herbal_knowledge",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "evidence": [
+            {
+              "evidence_id": "fixture-evidence-01",
+              "source_kind": "synthetic_fixture",
+              "source_title": "接口联调合成条目（非真实文献）",
+              "content": "演示证据连接：叶片黄化表型需要结合环境测量和经过核实的资料复核，不能仅据图片确定病原。",
+              "supports_phenotypes": [
+                "leaf_yellowing"
+              ],
+              "retrieval_score": 0.83
+            }
+          ],
+          "limitations": [
+            "未连接TCM-Mind-RAG；此处没有真实文献检索结果。",
+            "检索分数不代表事实确定性；本草药性知识不能替代栽培病理证据。"
+          ]
+        }
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "UnsupportedModeError"
+      }
+    },
+    {
+      "id": "reject_cross_case_fusion",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "vision": {
+          "status": "success",
+          "case_id": "different-case",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "plant_vision",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "observations": [
+            {
+              "observation_id": "obs-yellow-01",
+              "phenotype": "leaf_yellowing",
+              "region": {
+                "label": "leaf edge",
+                "bbox_normalized": [
+                  0.2,
+                  0.15,
+                  0.8,
+                  0.85
+                ]
+              },
+              "affected_area_fraction": 0.21,
+              "area_basis": "visible_leaf_area",
+              "model_score": 0.92
+            }
+          ],
+          "limitations": [
+            "本结果来自合成fixture，未读取图片或执行模型推理。",
+            "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。"
+          ]
+        },
+        "environment": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "growth_risk",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "risk_level": "undetermined",
+          "factors": [
+            {
+              "factor_id": "factor-temperature-01",
+              "metric": "temperature_c",
+              "observed_value": 31.5,
+              "possible_factor": "需结合生育期核对温度适宜范围",
+              "assessment": "requires_species_reference"
+            },
+            {
+              "factor_id": "factor-ph-01",
+              "metric": "soil_ph",
+              "observed_value": 7.8,
+              "possible_factor": "需结合物种和测量方法核对土壤pH",
+              "assessment": "requires_species_reference"
+            }
+          ],
+          "missing_context": [
+            "生育期与时间序列",
+            "土壤水分",
+            "经核实的物种环境阈值",
+            "N/P/K测量"
+          ],
+          "limitations": [
+            "本结果为合成fixture，没有经过农学阈值验证。",
+            "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。"
+          ]
+        },
+        "knowledge": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "herbal_knowledge",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "evidence": [
+            {
+              "evidence_id": "fixture-evidence-01",
+              "source_kind": "synthetic_fixture",
+              "source_title": "接口联调合成条目（非真实文献）",
+              "content": "演示证据连接：叶片黄化表型需要结合环境测量和经过核实的资料复核，不能仅据图片确定病原。",
+              "supports_phenotypes": [
+                "leaf_yellowing"
+              ],
+              "retrieval_score": 0.83
+            }
+          ],
+          "limitations": [
+            "未连接TCM-Mind-RAG；此处没有真实文献检索结果。",
+            "检索分数不代表事实确定性；本草药性知识不能替代栽培病理证据。"
+          ]
+        }
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "ContractError"
+      }
+    },
+    {
+      "id": "missing_knowledge_is_partial",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "vision": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "plant_vision",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "observations": [
+            {
+              "observation_id": "obs-yellow-01",
+              "phenotype": "leaf_yellowing",
+              "region": {
+                "label": "leaf edge",
+                "bbox_normalized": [
+                  0.2,
+                  0.15,
+                  0.8,
+                  0.85
+                ]
+              },
+              "affected_area_fraction": 0.21,
+              "area_basis": "visible_leaf_area",
+              "model_score": 0.92
+            }
+          ],
+          "limitations": [
+            "本结果来自合成fixture，未读取图片或执行模型推理。",
+            "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。"
+          ]
+        },
+        "environment": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "growth_risk",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "risk_level": "undetermined",
+          "factors": [
+            {
+              "factor_id": "factor-temperature-01",
+              "metric": "temperature_c",
+              "observed_value": 31.5,
+              "possible_factor": "需结合生育期核对温度适宜范围",
+              "assessment": "requires_species_reference"
+            },
+            {
+              "factor_id": "factor-ph-01",
+              "metric": "soil_ph",
+              "observed_value": 7.8,
+              "possible_factor": "需结合物种和测量方法核对土壤pH",
+              "assessment": "requires_species_reference"
+            }
+          ],
+          "missing_context": [
+            "生育期与时间序列",
+            "土壤水分",
+            "经核实的物种环境阈值",
+            "N/P/K测量"
+          ],
+          "limitations": [
+            "本结果为合成fixture，没有经过农学阈值验证。",
+            "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。"
+          ]
+        },
+        "knowledge": null
+      },
+      "expect": {
+        "status": "success",
+        "values": {
+          "/completeness": "partial",
+          "/missing_inputs": [
+            "knowledge"
+          ],
+          "/evidence_chain/0/knowledge_evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "no_evidence_is_insufficient",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "vision": null,
+        "environment": null,
+        "knowledge": null
+      },
+      "expect": {
+        "status": "success",
+        "values": {
+          "/completeness": "insufficient",
+          "/evidence_chain": []
+        }
+      }
+    }
+  ],
+  "agent_cases": [
+    {
+      "id": "positive_trigger",
+      "prompt": "合并同一黄芪案例的视觉、环境和知识JSON，保留证据链。",
+      "context": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "vision": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "plant_vision",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "observations": [
+            {
+              "observation_id": "obs-yellow-01",
+              "phenotype": "leaf_yellowing",
+              "region": {
+                "label": "leaf edge",
+                "bbox_normalized": [
+                  0.2,
+                  0.15,
+                  0.8,
+                  0.85
+                ]
+              },
+              "affected_area_fraction": 0.21,
+              "area_basis": "visible_leaf_area",
+              "model_score": 0.92
+            }
+          ],
+          "limitations": [
+            "本结果来自合成fixture，未读取图片或执行模型推理。",
+            "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。"
+          ]
+        },
+        "environment": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "growth_risk",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "risk_level": "undetermined",
+          "factors": [
+            {
+              "factor_id": "factor-temperature-01",
+              "metric": "temperature_c",
+              "observed_value": 31.5,
+              "possible_factor": "需结合生育期核对温度适宜范围",
+              "assessment": "requires_species_reference"
+            },
+            {
+              "factor_id": "factor-ph-01",
+              "metric": "soil_ph",
+              "observed_value": 7.8,
+              "possible_factor": "需结合物种和测量方法核对土壤pH",
+              "assessment": "requires_species_reference"
+            }
+          ],
+          "missing_context": [
+            "生育期与时间序列",
+            "土壤水分",
+            "经核实的物种环境阈值",
+            "N/P/K测量"
+          ],
+          "limitations": [
+            "本结果为合成fixture，没有经过农学阈值验证。",
+            "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。"
+          ]
+        },
+        "knowledge": {
+          "status": "success",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪",
+          "provenance": {
+            "data_origin": "synthetic_fixture",
+            "skill": "herbal_knowledge",
+            "version": "0.2.0",
+            "model_called": false
+          },
+          "evidence": [
+            {
+              "evidence_id": "fixture-evidence-01",
+              "source_kind": "synthetic_fixture",
+              "source_title": "接口联调合成条目（非真实文献）",
+              "content": "演示证据连接：叶片黄化表型需要结合环境测量和经过核实的资料复核，不能仅据图片确定病原。",
+              "supports_phenotypes": [
+                "leaf_yellowing"
+              ],
+              "retrieval_score": 0.83
+            }
+          ],
+          "limitations": [
+            "未连接TCM-Mind-RAG；此处没有真实文献检索结果。",
+            "检索分数不代表事实确定性；本草药性知识不能替代栽培病理证据。"
+          ]
+        }
+      },
+      "expected_call": true,
+      "skill": "evidence_fusion"
+    },
+    {
+      "id": "negative_trigger",
+      "prompt": "只有一张叶片图片，没有其他结果，请直接确诊并开农药处方。",
+      "context": null,
+      "expected_call": false,
+      "skill": "evidence_fusion"
+    },
+    {
+      "id": "missing_required_context",
+      "prompt": "合并同一黄芪案例的视觉、环境和知识JSON，保留证据链。",
+      "context": {},
+      "expected_call": false,
+      "expected_behavior": "ask_for_missing_context",
+      "skill": "evidence_fusion"
+    }
+  ],
+  "agent_ab": {
+    "status": "not_run",
+    "same_in_both_arms": [
+      "model",
+      "endpoint",
+      "tool_definitions",
+      "task_inputs",
+      "sampling",
+      "harness",
+      "rubric"
+    ],
+    "only_changed": "Skill instructions available versus unavailable",
+    "dimensions": [
+      "security",
+      "correctness",
+      "discoverability",
+      "effectiveness",
+      "efficiency"
+    ]
+  }
+}

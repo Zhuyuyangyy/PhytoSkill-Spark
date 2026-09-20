@@ -1,0 +1,23 @@
+{
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["message"],
+    "properties": {
+      "message": {"type": "string", "minLength": 1, "maxLength": 256}
+    }
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["status", "mode", "echo", "data_origin"],
+    "properties": {
+      "status": {"const": "success"},
+      "mode": {"const": "fixture"},
+      "echo": {"type": "string", "minLength": 1, "maxLength": 256},
+      "data_origin": {"const": "synthetic_fixture"}
+    }
+  }
+}

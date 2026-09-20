@@ -1,0 +1,16 @@
+{
+  "name": "herbal_knowledge",
+  "version": "0.2.0",
+  "description": "检索与药用植物问题有关的可核实资料并返回证据ID。适用于本草及栽培证据查询；图像定位、无来源断言或面向患者的处方不使用。",
+  "author": "PhytoSkill-Spark contributors",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:HerbalKnowledgeSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": [
+    "fixture"
+  ],
+  "capabilities": [
+    "herbal_knowledge"
+  ]
+}

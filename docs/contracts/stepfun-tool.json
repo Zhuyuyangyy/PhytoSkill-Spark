@@ -1,0 +1,242 @@
+{
+  "type": "function",
+  "function": {
+    "name": "phyto_diagnosis",
+    "description": "对已上传的药用植物图片进行异常研判，组合本地视觉、环境规则和 TCM-Mind-RAG，返回观察、候选原因、证据、建议及不确定性。MVP 支持黄芪叶片。缺失数据填 null；图片必须是当前任务的 asset:// 句柄。无植物图片、仅问一般中药知识时不调用。不能确诊病原或推算药效。",
+    "parameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image_path",
+        "target_species",
+        "user_question",
+        "plant_context",
+        "telemetry"
+      ],
+      "properties": {
+        "image_path": {
+          "type": "string",
+          "pattern": "^asset://[A-Za-z0-9_-]{8,80}$",
+          "description": "上传服务生成、绑定当前任务的本地资源句柄。不是磁盘路径或远程 URL。"
+        },
+        "target_species": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "用户声明的植物名称；MVP 支持黄芪，其他物种返回 unsupported。"
+        },
+        "user_question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "description": "药用植物异常研判问题。"
+        },
+        "plant_context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "growth_stage",
+            "affected_part",
+            "leaf_age",
+            "cultivation"
+          ],
+          "properties": {
+            "growth_stage": {
+              "type": "string",
+              "enum": [
+                "seedling",
+                "vegetative",
+                "flowering",
+                "fruiting",
+                "unknown"
+              ]
+            },
+            "affected_part": {
+              "type": "string",
+              "enum": [
+                "leaf",
+                "whole_plant",
+                "other",
+                "unknown"
+              ]
+            },
+            "leaf_age": {
+              "type": "string",
+              "enum": [
+                "young",
+                "mature",
+                "old",
+                "mixed",
+                "unknown"
+              ]
+            },
+            "cultivation": {
+              "type": "string",
+              "enum": [
+                "field",
+                "greenhouse",
+                "pot",
+                "unknown"
+              ]
+            }
+          }
+        },
+        "telemetry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "measured_at",
+            "source",
+            "temperature_c",
+            "relative_humidity_pct",
+            "soil_ph",
+            "soil_ph_method",
+            "soil_moisture_vwc_pct",
+            "npk"
+          ],
+          "properties": {
+            "measured_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time",
+              "description": "本组温湿度、pH、土壤水分测量时间，未知填 null；不同时间测量需由采集层分别记录。"
+            },
+            "source": {
+              "type": "string",
+              "enum": [
+                "manual",
+                "sensor",
+                "lab",
+                "unknown"
+              ]
+            },
+            "temperature_c": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "空气温度，摄氏度；范围仅为合法性边界，不是植物适宜范围。",
+              "minimum": -100,
+              "maximum": 100
+            },
+            "relative_humidity_pct": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "空气相对湿度百分数，不代表土壤水分。",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "soil_ph": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "土壤 pH。",
+              "minimum": 0,
+              "maximum": 14
+            },
+            "soil_ph_method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1,
+              "maxLength": 300,
+              "description": "测定标准、土水比等；未知为 null。"
+            },
+            "soil_moisture_vwc_pct": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "土壤体积含水率 VWC 百分数；需匹配土质和校准条件。",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "npk": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": false,
+              "required": [
+                "measured_at",
+                "available_n_mg_kg",
+                "available_p_mg_kg",
+                "available_k_mg_kg",
+                "n_method",
+                "p_method",
+                "k_method"
+              ],
+              "properties": {
+                "measured_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date-time"
+                },
+                "available_n_mg_kg": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "可利用态氮，干土基 mg/kg。",
+                  "minimum": 0
+                },
+                "available_p_mg_kg": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "可利用态磷，干土基 mg/kg。",
+                  "minimum": 0
+                },
+                "available_k_mg_kg": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "可利用态钾，干土基 mg/kg。",
+                  "minimum": 0
+                },
+                "n_method": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 300,
+                  "description": "氮提取/检测方法或标准编号。"
+                },
+                "p_method": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 300,
+                  "description": "磷提取/检测方法或标准编号。"
+                },
+                "k_method": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "minLength": 1,
+                  "maxLength": 300,
+                  "description": "钾提取/检测方法或标准编号。"
+                }
+              },
+              "description": "仅接收干土基可利用态 N/P/K，mg/kg；未知填 null。总量、水培 mg/L 或未校准估计不可直接填入。"
+            }
+          }
+        }
+      }
+    }
+  }
+}

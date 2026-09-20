@@ -1,0 +1,24 @@
+{
+  "source_type": "user_supplied_slide_and_rules_transcriptions",
+  "reviewed_on": "2026-09-20",
+  "archive_sha256": "87a61f0a59e3ec9e253279393ca3ad7d7c4927bb7f8a89fc0c6eb0484205bfcc",
+  "independently_verified_online": false,
+  "files": [
+    {
+      "name": "比赛细则+技术分享/NVIDIA Agent Skills 开发实战：基于 DGX Spark 构建高性能行业 Agent 应用.md",
+      "sha256": "a58fbba21f2a87f81d4898dca678154dbc5ec4a658932b757355f3058925897f"
+    },
+    {
+      "name": "比赛细则+技术分享/NVIDIA DGX Spark 本地视觉 Agent 技能开发实战.md",
+      "sha256": "a4110664396acf2419c706892fdb638a63d0b061b02dc2004eb3eef1edbb67a0"
+    },
+    {
+      "name": "比赛细则+技术分享/StepFun 多模态模型 × NVIDIA Agent Skills：Agent Harness 演进与实践.md",
+      "sha256": "4d2866fe2fd8fc620278e1548cd680c65c0bab16f7caf51420c89a06488f36d1"
+    },
+    {
+      "name": "比赛细则+技术分享/赛事规则.md",
+      "sha256": "444ff6a6a6fef1ae9f8cc35a82399fa9feec649ab13ba4d8ab7ceec2a2986322"
+    }
+  ]
+}

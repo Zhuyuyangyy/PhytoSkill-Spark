@@ -1,0 +1,66 @@
+{
+  "registry_version": "1.0",
+  "skills": [
+    {
+      "id": "phyto-diagnosis",
+      "name": "PhytoDiagnosis Skill",
+      "version": "0.1.0",
+      "contract_version": "0.1.0",
+      "description": "对已上传的药用植物图片进行异常研判，组合本地视觉、环境规则和 TCM-Mind-RAG，返回观察、候选原因、证据、建议及不确定性。MVP 支持黄芪叶片。缺失数据填 null；图片必须是当前任务的 asset:// 句柄。无植物图片、仅问一般中药知识时不调用。不能确诊病原或推算药效。",
+      "manifest_ref": "../skill-package/phyto-diagnosis/SKILL.md",
+      "function_schema_ref": "./stepfun-tool.json",
+      "input_schema_ref": "./input.schema.json",
+      "output_schema_ref": "./output.schema.json",
+      "entrypoint": {
+        "kind": "python_callable",
+        "value": "phyto_skill.handler:run"
+      },
+      "enabled": true,
+      "capabilities": [
+        "vision",
+        "tcm_rag",
+        "environment"
+      ],
+      "supported_scope": {
+        "species": [
+          "黄芪"
+        ],
+        "organ": [
+          "leaf"
+        ],
+        "task": "abnormality_triage"
+      },
+      "runtime": {
+        "target": "dgx-spark",
+        "os": "linux",
+        "architecture": "arm64",
+        "gpu": "nvidia",
+        "network": "local_execution_with_stepfun_cloud_agent"
+      },
+      "execution_policy": {
+        "timeout_ms": 60000,
+        "max_inflight": 1,
+        "max_agent_tool_rounds": 2
+      },
+      "permissions": {
+        "read_scopes": [
+          "task_assets",
+          "readonly_corpus",
+          "readonly_models",
+          "readonly_rules"
+        ],
+        "write_scopes": [
+          "task_artifacts",
+          "task_traces"
+        ],
+        "outbound_network": false
+      },
+      "distribution": {
+        "status": "design_contract_not_installed",
+        "skill_license": "TBD-before-release",
+        "model_licenses": "verify-before-packaging",
+        "corpus_licenses": "verify-before-packaging"
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+# 声明为二进制，避免 Git for Windows 的文本转换器让 diff/status 直接报错
+*.zip     binary
+*.whl     binary
+*.xlsx    binary
+*.xls     binary
+*.docx    binary
+*.doc     binary
+*.pdf     binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.glb     binary
+*.sqlite3 binary
+
+# shell 脚本固定 LF，否则无法在 Linux/ARM64 上执行
+*.sh      text eol=lf

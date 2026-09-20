@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "verified_at": "2026-09-20T13:07:33.932865+00:00",
+  "tests": {
+    "tests": 91,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "fixture_contracts": {
+    "passed": 19,
+    "failed": 0
+  },
+  "normal_demo": "passed",
+  "missing_knowledge_demo": "passed",
+  "skill_frontmatter_validation": "passed_for_all_four",
+  "wheel_build": "passed",
+  "portable_skills_with_extracted_wheel": "passed_for_all_four",
+  "manifest_sha256": {
+    "plant_vision": "a603b209ce487361db51d2c6a90bfffe971ebb5a5a6d7485265ec0f4bc7b1f3e",
+    "growth_risk": "a6470acbff555319ceec9edc55420a02dce809482cc06b60b8a145860a8ee2e1",
+    "herbal_knowledge": "a218fb346e46f06bf50be7b684c1765fe5404fad54cbda19bbeb90c22b37b55e",
+    "evidence_fusion": "4d0dfc576c64dc786da4086bbdaf0f467ec2829e4b85b5bcf76f2e9df7790e02"
+  },
+  "agent_model_called": false,
+  "agent_ab": "not_run",
+  "nvidia_oms": "not_run",
+  "dgx_hardware_used": false,
+  "source_archive_check": "see release-v0.2-verification.json"
+}

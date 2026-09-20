@@ -1,0 +1,128 @@
+{
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "case_id",
+      "species",
+      "query"
+    ],
+    "properties": {
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "query": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "status",
+      "case_id",
+      "species",
+      "provenance",
+      "evidence",
+      "limitations"
+    ],
+    "properties": {
+      "status": {
+        "const": "success"
+      },
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "provenance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_origin",
+          "skill",
+          "version",
+          "model_called"
+        ],
+        "properties": {
+          "data_origin": {
+            "const": "synthetic_fixture"
+          },
+          "skill": {
+            "const": "herbal_knowledge"
+          },
+          "version": {
+            "const": "0.2.0"
+          },
+          "model_called": {
+            "const": false
+          }
+        }
+      },
+      "evidence": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "evidence_id",
+            "source_kind",
+            "source_title",
+            "content",
+            "supports_phenotypes",
+            "retrieval_score"
+          ],
+          "properties": {
+            "evidence_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_kind": {
+              "const": "synthetic_fixture"
+            },
+            "source_title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "content": {
+              "type": "string",
+              "minLength": 1
+            },
+            "supports_phenotypes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "retrieval_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    }
+  }
+}

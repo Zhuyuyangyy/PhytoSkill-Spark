@@ -1,0 +1,194 @@
+{
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "case_id",
+      "species",
+      "telemetry"
+    ],
+    "properties": {
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "telemetry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "temperature_c",
+          "relative_humidity_pct",
+          "soil_ph",
+          "npk"
+        ],
+        "properties": {
+          "temperature_c": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -30,
+            "maximum": 70
+          },
+          "relative_humidity_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "soil_ph": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 14
+          },
+          "npk": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "nitrogen_mg_kg",
+                  "phosphorus_mg_kg",
+                  "potassium_mg_kg"
+                ],
+                "properties": {
+                  "nitrogen_mg_kg": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "phosphorus_mg_kg": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "potassium_mg_kg": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "status",
+      "case_id",
+      "species",
+      "provenance",
+      "risk_level",
+      "factors",
+      "missing_context",
+      "limitations"
+    ],
+    "properties": {
+      "status": {
+        "const": "success"
+      },
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "provenance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_origin",
+          "skill",
+          "version",
+          "model_called"
+        ],
+        "properties": {
+          "data_origin": {
+            "const": "synthetic_fixture"
+          },
+          "skill": {
+            "const": "growth_risk"
+          },
+          "version": {
+            "const": "0.2.0"
+          },
+          "model_called": {
+            "const": false
+          }
+        }
+      },
+      "risk_level": {
+        "const": "undetermined"
+      },
+      "factors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "factor_id",
+            "metric",
+            "observed_value",
+            "possible_factor",
+            "assessment"
+          ],
+          "properties": {
+            "factor_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "metric": {
+              "enum": [
+                "temperature_c",
+                "soil_ph"
+              ]
+            },
+            "observed_value": {
+              "type": "number"
+            },
+            "possible_factor": {
+              "type": "string",
+              "minLength": 1
+            },
+            "assessment": {
+              "const": "requires_species_reference"
+            }
+          }
+        }
+      },
+      "missing_context": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    }
+  }
+}

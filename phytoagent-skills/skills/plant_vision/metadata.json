@@ -1,0 +1,16 @@
+{
+  "name": "plant_vision",
+  "version": "0.2.0",
+  "description": "药用植物图片的异常表型观察与区域定位。提供图片和物种后使用；纯知识问答、环境分析和人体疾病诊断不使用。",
+  "author": "PhytoSkill-Spark contributors",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:PlantVisionSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": [
+    "fixture"
+  ],
+  "capabilities": [
+    "plant_vision"
+  ]
+}

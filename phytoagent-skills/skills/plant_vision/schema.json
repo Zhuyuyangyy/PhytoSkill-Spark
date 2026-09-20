@@ -1,0 +1,151 @@
+{
+  "input": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "case_id",
+      "species",
+      "image_path"
+    ],
+    "properties": {
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "image_path": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "output": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "status",
+      "case_id",
+      "species",
+      "provenance",
+      "observations",
+      "limitations"
+    ],
+    "properties": {
+      "status": {
+        "const": "success"
+      },
+      "case_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "species": {
+        "type": "string",
+        "minLength": 1
+      },
+      "provenance": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data_origin",
+          "skill",
+          "version",
+          "model_called"
+        ],
+        "properties": {
+          "data_origin": {
+            "const": "synthetic_fixture"
+          },
+          "skill": {
+            "const": "plant_vision"
+          },
+          "version": {
+            "const": "0.2.0"
+          },
+          "model_called": {
+            "const": false
+          }
+        }
+      },
+      "observations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "observation_id",
+            "phenotype",
+            "region",
+            "affected_area_fraction",
+            "area_basis",
+            "model_score"
+          ],
+          "properties": {
+            "observation_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "phenotype": {
+              "enum": [
+                "leaf_yellowing",
+                "leaf_spot",
+                "wilting",
+                "unknown"
+              ]
+            },
+            "region": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "label",
+                "bbox_normalized"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "bbox_normalized": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "minItems": 4,
+                  "maxItems": 4
+                }
+              }
+            },
+            "affected_area_fraction": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "area_basis": {
+              "const": "visible_leaf_area"
+            },
+            "model_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "minItems": 1
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minItems": 1
+      }
+    }
+  }
+}

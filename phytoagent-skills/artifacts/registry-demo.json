@@ -1,0 +1,54 @@
+{
+  "scope": "sdk_registry_only",
+  "mode": "fixture",
+  "model_called": false,
+  "trace": [
+    "signature_created",
+    "signature_verified",
+    "catalog_discovered",
+    "tool_schema_exported",
+    "instructions_loaded",
+    "contract_validated_execution"
+  ],
+  "verification": {
+    "integrity": "passed",
+    "signature": {
+      "status": "passed",
+      "algorithm": "Ed25519",
+      "key_id": "4ba534bea0513aca890ae29412d7ef076beae0b2de73df75abdc24fd7076fe33"
+    },
+    "scanned": "not_checked",
+    "evaluated": "not_checked"
+  },
+  "available_tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "contract_probe",
+        "description": "Exercise SDK contracts with synthetic fixture data; no plant diagnosis.",
+        "parameters": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "message"
+          ],
+          "properties": {
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          }
+        }
+      }
+    }
+  ],
+  "instructions_loaded": true,
+  "result": {
+    "status": "success",
+    "mode": "fixture",
+    "echo": "SDK + Registry contract verified",
+    "data_origin": "synthetic_fixture"
+  }
+}

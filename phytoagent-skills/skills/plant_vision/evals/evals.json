@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "contract_cases": [
+    {
+      "id": "valid_fixture",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image_path": "fixture://huangqi-leaf-01"
+      },
+      "expect": {
+        "status": "success",
+        "values": {
+          "/status": "success",
+          "/provenance/data_origin": "synthetic_fixture",
+          "/provenance/model_called": false
+        }
+      }
+    },
+    {
+      "id": "missing_species",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "image_path": "fixture://huangqi-leaf-01"
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "ContractError"
+      }
+    },
+    {
+      "id": "live_has_no_fixture_fallback",
+      "mode": "live",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image_path": "fixture://huangqi-leaf-01"
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "UnsupportedModeError"
+      }
+    },
+    {
+      "id": "reject_unmatched_fixture",
+      "mode": "fixture",
+      "input": {
+        "case_id": "real-case-not-fixture",
+        "species": "黄芪",
+        "image_path": "fixture://huangqi-leaf-01"
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "FixtureMismatchError"
+      }
+    }
+  ],
+  "agent_cases": [
+    {
+      "id": "positive_trigger",
+      "prompt": "观察这张黄芪叶片图中的黄化区域。",
+      "context": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "image_path": "fixture://huangqi-leaf-01"
+      },
+      "expected_call": true,
+      "skill": "plant_vision"
+    },
+    {
+      "id": "negative_trigger",
+      "prompt": "我咳嗽发热，黄芪能不能治病？",
+      "context": null,
+      "expected_call": false,
+      "skill": "plant_vision"
+    },
+    {
+      "id": "missing_required_context",
+      "prompt": "观察这张黄芪叶片图中的黄化区域。",
+      "context": {},
+      "expected_call": false,
+      "expected_behavior": "ask_for_missing_context",
+      "skill": "plant_vision"
+    }
+  ],
+  "agent_ab": {
+    "status": "not_run",
+    "same_in_both_arms": [
+      "model",
+      "endpoint",
+      "tool_definitions",
+      "task_inputs",
+      "sampling",
+      "harness",
+      "rubric"
+    ],
+    "only_changed": "Skill instructions available versus unavailable",
+    "dimensions": [
+      "security",
+      "correctness",
+      "discoverability",
+      "effectiveness",
+      "efficiency"
+    ]
+  }
+}

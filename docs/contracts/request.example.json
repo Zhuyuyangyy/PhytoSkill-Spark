@@ -1,0 +1,21 @@
+{
+  "image_path": "asset://demo_huangqi_001",
+  "target_species": "黄芪",
+  "user_question": "这株黄芪的叶片为什么发黄？应该先检查什么？",
+  "plant_context": {
+    "growth_stage": "unknown",
+    "affected_part": "leaf",
+    "leaf_age": "unknown",
+    "cultivation": "field"
+  },
+  "telemetry": {
+    "measured_at": null,
+    "source": "manual",
+    "temperature_c": 32,
+    "relative_humidity_pct": 82,
+    "soil_ph": 7.8,
+    "soil_ph_method": null,
+    "soil_moisture_vwc_pct": null,
+    "npk": null
+  }
+}

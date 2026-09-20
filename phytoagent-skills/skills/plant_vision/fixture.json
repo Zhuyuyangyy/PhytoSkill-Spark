@@ -1,0 +1,40 @@
+{
+  "input": {
+    "case_id": "demo-huangqi-001",
+    "species": "黄芪",
+    "image_path": "fixture://huangqi-leaf-01"
+  },
+  "output": {
+    "status": "success",
+    "case_id": "demo-huangqi-001",
+    "species": "黄芪",
+    "provenance": {
+      "data_origin": "synthetic_fixture",
+      "skill": "plant_vision",
+      "version": "0.2.0",
+      "model_called": false
+    },
+    "observations": [
+      {
+        "observation_id": "obs-yellow-01",
+        "phenotype": "leaf_yellowing",
+        "region": {
+          "label": "leaf edge",
+          "bbox_normalized": [
+            0.2,
+            0.15,
+            0.8,
+            0.85
+          ]
+        },
+        "affected_area_fraction": 0.21,
+        "area_basis": "visible_leaf_area",
+        "model_score": 0.92
+      }
+    ],
+    "limitations": [
+      "本结果来自合成fixture，未读取图片或执行模型推理。",
+      "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。"
+    ]
+  }
+}

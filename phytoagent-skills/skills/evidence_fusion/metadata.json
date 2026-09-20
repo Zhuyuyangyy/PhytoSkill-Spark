@@ -1,0 +1,16 @@
+{
+  "name": "evidence_fusion",
+  "version": "0.2.0",
+  "description": "按案例和物种合并已取得的视觉、环境与知识JSON，保留证据ID和缺失项。原始图片分析、凭空补证据、Agent规划或确定病因不使用。",
+  "author": "PhytoSkill-Spark contributors",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:EvidenceFusionSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": [
+    "fixture"
+  ],
+  "capabilities": [
+    "evidence_fusion"
+  ]
+}

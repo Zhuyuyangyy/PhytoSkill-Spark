@@ -1,0 +1,22 @@
+{
+  "scope": "sdk_registry_only",
+  "python": "3.12.10",
+  "os": "Windows",
+  "tests": {
+    "tests": 69,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "offline_demo": "passed",
+  "wheel_build": "passed",
+  "wheel_isolated_cli_check": "passed",
+  "model_called": false,
+  "dgx_hardware_tested": false,
+  "nvidia_official_certification": false,
+  "commands": [
+    "python -m pytest -q --junitxml=artifacts/pytest-results.xml",
+    "python -m demo.run_registry_demo --output artifacts/registry-demo.json",
+    "python -m pip wheel . --no-deps --no-build-isolation --no-index --wheel-dir artifacts/wheels"
+  ]
+}

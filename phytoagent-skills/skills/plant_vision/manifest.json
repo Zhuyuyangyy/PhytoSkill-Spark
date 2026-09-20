@@ -1,0 +1,30 @@
+{
+  "name": "plant_vision",
+  "version": "0.2.0",
+  "description": "药用植物图片的异常表型观察与区域定位。提供图片和物种后使用；纯知识问答、环境分析和人体疾病诊断不使用。",
+  "author": "PhytoSkill-Spark contributors",
+  "runtime": "local_python",
+  "entrypoint": "skill.py:PlantVisionSkill",
+  "input_schema": "schema.json#/input",
+  "output_schema": "schema.json#/output",
+  "supported_modes": [
+    "fixture"
+  ],
+  "capabilities": [
+    "plant_vision"
+  ],
+  "files": {
+    "BENCHMARK.md": "c4a256ccf968b381736d81e6915ebc493074d5459aef4ccca694ef3ee87879a5",
+    "SKILL.md": "024f2f4807cb1dc00b94b66a7f983b9019982e2ed69647b2b270d2ac705154ba",
+    "evals/evals.json": "89b64d14ffb8836e2d37bf1c432fbbfea6f85fc282f0ba9acd0028e500f7cd6f",
+    "examples/request.json": "5773ff1816f2f7fd07a05040f160fd3d7dd81a0b56ef774ffb744e141a126df4",
+    "fixture.json": "bcf6b3ea96343b90e8f7e519f4b95b4634513290546cccc05d02e187041c628d",
+    "metadata.json": "cc896deb55da957fc26808d4187596ce0e5a33fa729713207b094b57e55e47bd",
+    "references/contract.md": "ae94958f9a892bf8601ad7421c050270ee77c93629ba542b40b69ab1cc4988ab",
+    "schema.json": "fb6c7ec0d7d554cc4a033995acd24c64a66f482c0c079188da557f9b06bde172",
+    "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
+    "skill-card.md": "f1771e1d3bafd26f3fb949eea72d3dadb0ed2134469e3bf38053ea8e1dd672ab",
+    "skill.py": "123cb7b961af31472c9a754d2daaea7fe322cb4ebf9907c56cf16a44012af734"
+  },
+  "manifest_sha256": "a603b209ce487361db51d2c6a90bfffe971ebb5a5a6d7485265ec0f4bc7b1f3e"
+}

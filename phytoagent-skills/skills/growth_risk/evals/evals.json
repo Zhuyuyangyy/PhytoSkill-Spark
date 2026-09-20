@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "contract_cases": [
+    {
+      "id": "valid_fixture",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "telemetry": {
+          "temperature_c": 31.5,
+          "relative_humidity_pct": 40,
+          "soil_ph": 7.8,
+          "npk": null
+        }
+      },
+      "expect": {
+        "status": "success",
+        "values": {
+          "/status": "success",
+          "/provenance/data_origin": "synthetic_fixture",
+          "/provenance/model_called": false
+        }
+      }
+    },
+    {
+      "id": "missing_species",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "telemetry": {
+          "temperature_c": 31.5,
+          "relative_humidity_pct": 40,
+          "soil_ph": 7.8,
+          "npk": null
+        }
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "ContractError"
+      }
+    },
+    {
+      "id": "live_has_no_fixture_fallback",
+      "mode": "live",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "telemetry": {
+          "temperature_c": 31.5,
+          "relative_humidity_pct": 40,
+          "soil_ph": 7.8,
+          "npk": null
+        }
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "UnsupportedModeError"
+      }
+    },
+    {
+      "id": "reject_unmatched_fixture",
+      "mode": "fixture",
+      "input": {
+        "case_id": "real-case-not-fixture",
+        "species": "黄芪",
+        "telemetry": {
+          "temperature_c": 31.5,
+          "relative_humidity_pct": 40,
+          "soil_ph": 7.8,
+          "npk": null
+        }
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "FixtureMismatchError"
+      }
+    },
+    {
+      "id": "invalid_humidity_units_or_range",
+      "mode": "fixture",
+      "input": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "telemetry": {
+          "temperature_c": 31.5,
+          "relative_humidity_pct": 140,
+          "soil_ph": 7.8,
+          "npk": null
+        }
+      },
+      "expect": {
+        "status": "failed",
+        "error_code": "ContractError"
+      }
+    }
+  ],
+  "agent_cases": [
+    {
+      "id": "positive_trigger",
+      "prompt": "分析黄芪的温度31.5°C、土壤pH7.8和空气湿度40%的待复核因素。",
+      "context": {
+        "case_id": "demo-huangqi-001",
+        "species": "黄芪",
+        "telemetry": {
+          "temperature_c": 31.5,
+          "relative_humidity_pct": 40,
+          "soil_ph": 7.8,
+          "npk": null
+        }
+      },
+      "expected_call": true,
+      "skill": "growth_risk"
+    },
+    {
+      "id": "negative_trigger",
+      "prompt": "今天北京的天气怎么样？",
+      "context": null,
+      "expected_call": false,
+      "skill": "growth_risk"
+    },
+    {
+      "id": "missing_required_context",
+      "prompt": "分析黄芪的温度31.5°C、土壤pH7.8和空气湿度40%的待复核因素。",
+      "context": {},
+      "expected_call": false,
+      "expected_behavior": "ask_for_missing_context",
+      "skill": "growth_risk"
+    }
+  ],
+  "agent_ab": {
+    "status": "not_run",
+    "same_in_both_arms": [
+      "model",
+      "endpoint",
+      "tool_definitions",
+      "task_inputs",
+      "sampling",
+      "harness",
+      "rubric"
+    ],
+    "only_changed": "Skill instructions available versus unavailable",
+    "dimensions": [
+      "security",
+      "correctness",
+      "discoverability",
+      "effectiveness",
+      "efficiency"
+    ]
+  }
+}

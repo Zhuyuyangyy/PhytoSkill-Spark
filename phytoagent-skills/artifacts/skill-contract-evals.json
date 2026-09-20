@@ -1,0 +1,565 @@
+{
+  "scope": "fixture_contracts_only",
+  "total": 19,
+  "passed": 19,
+  "failed": 0,
+  "skills": [
+    {
+      "skill": "evidence_fusion",
+      "manifest_sha256": "4d0dfc576c64dc786da4086bbdaf0f467ec2829e4b85b5bcf76f2e9df7790e02",
+      "cases": [
+        {
+          "id": "valid_fixture",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:evidence_fusion:valid_fixture",
+            "name": "evidence_fusion",
+            "mode": "fixture",
+            "duration_ms": 467.299,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "case_id": "demo-huangqi-001",
+              "species": "黄芪",
+              "provenance": {
+                "data_origin": "synthetic_fixture",
+                "skill": "evidence_fusion",
+                "version": "0.2.0",
+                "model_called": false
+              },
+              "summary": "三个来源的合成结果已对齐，可追溯至各自ID；不构成真实诊断。",
+              "completeness": "complete",
+              "conclusion_strength": "synthetic_only",
+              "missing_inputs": [],
+              "source_ids": {
+                "vision": [
+                  "obs-yellow-01"
+                ],
+                "environment": [
+                  "factor-temperature-01",
+                  "factor-ph-01"
+                ],
+                "knowledge": [
+                  "fixture-evidence-01"
+                ]
+              },
+              "evidence_chain": [
+                {
+                  "observation_id": "obs-yellow-01",
+                  "phenotype": "leaf_yellowing",
+                  "environment_factor_ids": [
+                    "factor-temperature-01",
+                    "factor-ph-01"
+                  ],
+                  "knowledge_evidence_ids": [
+                    "fixture-evidence-01"
+                  ],
+                  "relationship": "co_occurrence_only"
+                }
+              ],
+              "unlinked_evidence_ids": [],
+              "recommendations": [
+                "用真实图像、带单位的测量和可核实文献替换fixture后再研判。",
+                "复核物种、生育期、土壤水分及采样时间；必要时由植保人员鉴定。"
+              ],
+              "limitations": [
+                "输入为合成fixture，仅验证证据连接；不能用于真实植物诊断。",
+                "共同出现不等于因果关系；不合成疾病概率或药效下降比例。",
+                "本结果来自合成fixture，未读取图片或执行模型推理。",
+                "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。",
+                "本结果为合成fixture，没有经过农学阈值验证。",
+                "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。",
+                "未连接TCM-Mind-RAG；此处没有真实文献检索结果。",
+                "检索分数不代表事实确定性；本草药性知识不能替代栽培病理证据。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "missing_species",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:evidence_fusion:missing_species",
+            "name": "evidence_fusion",
+            "mode": "fixture",
+            "duration_ms": 237.053,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "ContractError",
+              "message": "evidence_fusion input at $: 'species' is a required property"
+            }
+          }
+        },
+        {
+          "id": "live_has_no_fixture_fallback",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:evidence_fusion:live_has_no_fixture_fallback",
+            "name": "evidence_fusion",
+            "mode": "live",
+            "duration_ms": 257.891,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "UnsupportedModeError",
+              "message": "evidence_fusion does not support mode 'live'"
+            }
+          }
+        },
+        {
+          "id": "reject_cross_case_fusion",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:evidence_fusion:reject_cross_case_fusion",
+            "name": "evidence_fusion",
+            "mode": "fixture",
+            "duration_ms": 569.412,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "ContractError",
+              "message": "Case/species mismatch in vision; do not fuse unrelated observations"
+            }
+          }
+        },
+        {
+          "id": "missing_knowledge_is_partial",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:evidence_fusion:missing_knowledge_is_partial",
+            "name": "evidence_fusion",
+            "mode": "fixture",
+            "duration_ms": 491.354,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "case_id": "demo-huangqi-001",
+              "species": "黄芪",
+              "provenance": {
+                "data_origin": "synthetic_fixture",
+                "skill": "evidence_fusion",
+                "version": "0.2.0",
+                "model_called": false
+              },
+              "summary": "部分来源缺失，保留可用结果与缺失列表；不能形成完整诊断。",
+              "completeness": "partial",
+              "conclusion_strength": "synthetic_only",
+              "missing_inputs": [
+                "knowledge"
+              ],
+              "source_ids": {
+                "vision": [
+                  "obs-yellow-01"
+                ],
+                "environment": [
+                  "factor-temperature-01",
+                  "factor-ph-01"
+                ],
+                "knowledge": []
+              },
+              "evidence_chain": [
+                {
+                  "observation_id": "obs-yellow-01",
+                  "phenotype": "leaf_yellowing",
+                  "environment_factor_ids": [
+                    "factor-temperature-01",
+                    "factor-ph-01"
+                  ],
+                  "knowledge_evidence_ids": [],
+                  "relationship": "co_occurrence_only"
+                }
+              ],
+              "unlinked_evidence_ids": [],
+              "recommendations": [
+                "用真实图像、带单位的测量和可核实文献替换fixture后再研判。",
+                "复核物种、生育期、土壤水分及采样时间；必要时由植保人员鉴定。"
+              ],
+              "limitations": [
+                "输入为合成fixture，仅验证证据连接；不能用于真实植物诊断。",
+                "共同出现不等于因果关系；不合成疾病概率或药效下降比例。",
+                "本结果来自合成fixture，未读取图片或执行模型推理。",
+                "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。",
+                "本结果为合成fixture，没有经过农学阈值验证。",
+                "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。",
+                "缺失来源：knowledge"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "no_evidence_is_insufficient",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:evidence_fusion:no_evidence_is_insufficient",
+            "name": "evidence_fusion",
+            "mode": "fixture",
+            "duration_ms": 512.29,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "case_id": "demo-huangqi-001",
+              "species": "黄芪",
+              "provenance": {
+                "data_origin": "synthetic_fixture",
+                "skill": "evidence_fusion",
+                "version": "0.2.0",
+                "model_called": false
+              },
+              "summary": "部分来源缺失，保留可用结果与缺失列表；不能形成完整诊断。",
+              "completeness": "insufficient",
+              "conclusion_strength": "synthetic_only",
+              "missing_inputs": [
+                "vision",
+                "environment",
+                "knowledge"
+              ],
+              "source_ids": {
+                "vision": [],
+                "environment": [],
+                "knowledge": []
+              },
+              "evidence_chain": [],
+              "unlinked_evidence_ids": [],
+              "recommendations": [
+                "用真实图像、带单位的测量和可核实文献替换fixture后再研判。",
+                "复核物种、生育期、土壤水分及采样时间；必要时由植保人员鉴定。"
+              ],
+              "limitations": [
+                "输入为合成fixture，仅验证证据连接；不能用于真实植物诊断。",
+                "共同出现不等于因果关系；不合成疾病概率或药效下降比例。",
+                "缺失来源：vision, environment, knowledge"
+              ]
+            },
+            "error": null
+          }
+        }
+      ],
+      "agent_behavior_cases_supplied": 3
+    },
+    {
+      "skill": "growth_risk",
+      "manifest_sha256": "a6470acbff555319ceec9edc55420a02dce809482cc06b60b8a145860a8ee2e1",
+      "cases": [
+        {
+          "id": "valid_fixture",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:growth_risk:valid_fixture",
+            "name": "growth_risk",
+            "mode": "fixture",
+            "duration_ms": 310.225,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "case_id": "demo-huangqi-001",
+              "species": "黄芪",
+              "provenance": {
+                "data_origin": "synthetic_fixture",
+                "skill": "growth_risk",
+                "version": "0.2.0",
+                "model_called": false
+              },
+              "risk_level": "undetermined",
+              "factors": [
+                {
+                  "factor_id": "factor-temperature-01",
+                  "metric": "temperature_c",
+                  "observed_value": 31.5,
+                  "possible_factor": "需结合生育期核对温度适宜范围",
+                  "assessment": "requires_species_reference"
+                },
+                {
+                  "factor_id": "factor-ph-01",
+                  "metric": "soil_ph",
+                  "observed_value": 7.8,
+                  "possible_factor": "需结合物种和测量方法核对土壤pH",
+                  "assessment": "requires_species_reference"
+                }
+              ],
+              "missing_context": [
+                "生育期与时间序列",
+                "土壤水分",
+                "经核实的物种环境阈值",
+                "N/P/K测量"
+              ],
+              "limitations": [
+                "本结果为合成fixture，没有经过农学阈值验证。",
+                "空气相对湿度不能代替土壤含水率；单次测量不能建立风险趋势。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "missing_species",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:growth_risk:missing_species",
+            "name": "growth_risk",
+            "mode": "fixture",
+            "duration_ms": 166.058,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "ContractError",
+              "message": "growth_risk input at $: 'species' is a required property"
+            }
+          }
+        },
+        {
+          "id": "live_has_no_fixture_fallback",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:growth_risk:live_has_no_fixture_fallback",
+            "name": "growth_risk",
+            "mode": "live",
+            "duration_ms": 164.315,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "UnsupportedModeError",
+              "message": "growth_risk does not support mode 'live'"
+            }
+          }
+        },
+        {
+          "id": "reject_unmatched_fixture",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:growth_risk:reject_unmatched_fixture",
+            "name": "growth_risk",
+            "mode": "fixture",
+            "duration_ms": 353.054,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "FixtureMismatchError",
+              "message": "Input does not match the declared synthetic fixture; configure a live adapter for real data"
+            }
+          }
+        },
+        {
+          "id": "invalid_humidity_units_or_range",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:growth_risk:invalid_humidity_units_or_range",
+            "name": "growth_risk",
+            "mode": "fixture",
+            "duration_ms": 163.846,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "ContractError",
+              "message": "growth_risk input at telemetry/relative_humidity_pct: 140 is greater than the maximum of 100"
+            }
+          }
+        }
+      ],
+      "agent_behavior_cases_supplied": 3
+    },
+    {
+      "skill": "herbal_knowledge",
+      "manifest_sha256": "a218fb346e46f06bf50be7b684c1765fe5404fad54cbda19bbeb90c22b37b55e",
+      "cases": [
+        {
+          "id": "valid_fixture",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:herbal_knowledge:valid_fixture",
+            "name": "herbal_knowledge",
+            "mode": "fixture",
+            "duration_ms": 300.305,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "case_id": "demo-huangqi-001",
+              "species": "黄芪",
+              "provenance": {
+                "data_origin": "synthetic_fixture",
+                "skill": "herbal_knowledge",
+                "version": "0.2.0",
+                "model_called": false
+              },
+              "evidence": [
+                {
+                  "evidence_id": "fixture-evidence-01",
+                  "source_kind": "synthetic_fixture",
+                  "source_title": "接口联调合成条目（非真实文献）",
+                  "content": "演示证据连接：叶片黄化表型需要结合环境测量和经过核实的资料复核，不能仅据图片确定病原。",
+                  "supports_phenotypes": [
+                    "leaf_yellowing"
+                  ],
+                  "retrieval_score": 0.83
+                }
+              ],
+              "limitations": [
+                "未连接TCM-Mind-RAG；此处没有真实文献检索结果。",
+                "检索分数不代表事实确定性；本草药性知识不能替代栽培病理证据。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "missing_species",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:herbal_knowledge:missing_species",
+            "name": "herbal_knowledge",
+            "mode": "fixture",
+            "duration_ms": 147.277,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "ContractError",
+              "message": "herbal_knowledge input at $: 'species' is a required property"
+            }
+          }
+        },
+        {
+          "id": "live_has_no_fixture_fallback",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:herbal_knowledge:live_has_no_fixture_fallback",
+            "name": "herbal_knowledge",
+            "mode": "live",
+            "duration_ms": 177.312,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "UnsupportedModeError",
+              "message": "herbal_knowledge does not support mode 'live'"
+            }
+          }
+        },
+        {
+          "id": "reject_unmatched_fixture",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:herbal_knowledge:reject_unmatched_fixture",
+            "name": "herbal_knowledge",
+            "mode": "fixture",
+            "duration_ms": 315.095,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "FixtureMismatchError",
+              "message": "Input does not match the declared synthetic fixture; configure a live adapter for real data"
+            }
+          }
+        }
+      ],
+      "agent_behavior_cases_supplied": 3
+    },
+    {
+      "skill": "plant_vision",
+      "manifest_sha256": "a603b209ce487361db51d2c6a90bfffe971ebb5a5a6d7485265ec0f4bc7b1f3e",
+      "cases": [
+        {
+          "id": "valid_fixture",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:plant_vision:valid_fixture",
+            "name": "plant_vision",
+            "mode": "fixture",
+            "duration_ms": 284.081,
+            "status": "success",
+            "data": {
+              "status": "success",
+              "case_id": "demo-huangqi-001",
+              "species": "黄芪",
+              "provenance": {
+                "data_origin": "synthetic_fixture",
+                "skill": "plant_vision",
+                "version": "0.2.0",
+                "model_called": false
+              },
+              "observations": [
+                {
+                  "observation_id": "obs-yellow-01",
+                  "phenotype": "leaf_yellowing",
+                  "region": {
+                    "label": "leaf edge",
+                    "bbox_normalized": [
+                      0.2,
+                      0.15,
+                      0.8,
+                      0.85
+                    ]
+                  },
+                  "affected_area_fraction": 0.21,
+                  "area_basis": "visible_leaf_area",
+                  "model_score": 0.92
+                }
+              ],
+              "limitations": [
+                "本结果来自合成fixture，未读取图片或执行模型推理。",
+                "表型和模型分数不能用于确诊病原；面积比例不是药效下降比例。"
+              ]
+            },
+            "error": null
+          }
+        },
+        {
+          "id": "missing_species",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:plant_vision:missing_species",
+            "name": "plant_vision",
+            "mode": "fixture",
+            "duration_ms": 129.557,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "ContractError",
+              "message": "plant_vision input at $: 'species' is a required property"
+            }
+          }
+        },
+        {
+          "id": "live_has_no_fixture_fallback",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:plant_vision:live_has_no_fixture_fallback",
+            "name": "plant_vision",
+            "mode": "live",
+            "duration_ms": 129.915,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "UnsupportedModeError",
+              "message": "plant_vision does not support mode 'live'"
+            }
+          }
+        },
+        {
+          "id": "reject_unmatched_fixture",
+          "passed": true,
+          "response": {
+            "tool_call_id": "eval:plant_vision:reject_unmatched_fixture",
+            "name": "plant_vision",
+            "mode": "fixture",
+            "duration_ms": 287.952,
+            "status": "failed",
+            "data": null,
+            "error": {
+              "code": "FixtureMismatchError",
+              "message": "Input does not match the declared synthetic fixture; configure a live adapter for real data"
+            }
+          }
+        }
+      ],
+      "agent_behavior_cases_supplied": 3
+    }
+  ],
+  "agent_ab": {
+    "status": "not_run",
+    "reason": "Requires the real StepFun Harness and matched trials"
+  },
+  "security_scan": "not_run",
+  "nvidia_verified": false,
+  "dgx_hardware_used": false
+}

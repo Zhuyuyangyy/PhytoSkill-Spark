@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "skills_dir": "../skills",
+  "require_signature": true,
+  "trusted_public_key": "../.trust/publisher.public.pem"
+}

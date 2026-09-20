@@ -1,0 +1,34 @@
+{
+  "input": {
+    "case_id": "demo-huangqi-001",
+    "species": "黄芪",
+    "query": "黄芪叶片黄化可能原因及证据"
+  },
+  "output": {
+    "status": "success",
+    "case_id": "demo-huangqi-001",
+    "species": "黄芪",
+    "provenance": {
+      "data_origin": "synthetic_fixture",
+      "skill": "herbal_knowledge",
+      "version": "0.2.0",
+      "model_called": false
+    },
+    "evidence": [
+      {
+        "evidence_id": "fixture-evidence-01",
+        "source_kind": "synthetic_fixture",
+        "source_title": "接口联调合成条目（非真实文献）",
+        "content": "演示证据连接：叶片黄化表型需要结合环境测量和经过核实的资料复核，不能仅据图片确定病原。",
+        "supports_phenotypes": [
+          "leaf_yellowing"
+        ],
+        "retrieval_score": 0.83
+      }
+    ],
+    "limitations": [
+      "未连接TCM-Mind-RAG；此处没有真实文献检索结果。",
+      "检索分数不代表事实确定性；本草药性知识不能替代栽培病理证据。"
+    ]
+  }
+}

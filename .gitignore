@@ -1,0 +1,23 @@
+# 密钥 / 凭据
+.env
+.env.local
+*.pem
+*.key
+.trust/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# 工具本地状态
+.workbuddy/
+
+# 临时归档
+/*.zip
