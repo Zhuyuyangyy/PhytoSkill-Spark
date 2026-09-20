@@ -2,7 +2,7 @@
 
 PhytoSkill-Spark 将药用植物异常研判拆成四个可独立发现、调用和验证的专家能力包。Skill 是交付物，StepFun 是规划与报告生成者，DGX Spark 是计划中的本地执行底座。每个包包含指令、脚本、契约、来源说明和评测用例，调用方按任务加载所需能力。
 
-**当前0.2.0已完成SDK、Registry、四个Skill接口、确定性证据融合，以及离线fixture组合与失败降级。** 当前组合由脚本调度，未调用StepFun、YOLO、TCM-Mind-RAG或DGX GPU。真实Agent Harness属于下一轮；演示和报告保留这些边界。
+**当前0.2.0已完成SDK、Registry、四个Skill接口、确定性证据融合、离线fixture组合与失败降级，以及真实Agent Harness（`harness/`）。** 演示仍由脚本调度，`artifacts/` 中已有的报告未调用StepFun、YOLO、TCM-Mind-RAG或DGX GPU。Harness已实现并带38项离线测试，但**本仓库内尚无真实端点调用记录**：它需要在配置端点与密钥后运行，步骤见[真实Harness](docs/harness.md)。
 
 ## 立即运行
 
@@ -50,6 +50,7 @@ phytoagent-skills/
 ├── sdk/                   BaseSkill、契约、Manifest、fixture约束、CLI
 ├── registry/              发现、按需加载、签名校验、Tool Schema导出
 ├── runtime/executor.py    校验后执行源码、保留调用ID、结构化错误
+├── harness/               真实StepFun调度：配置、传输、工具循环、任务集、规则化评分、A/B
 ├── skills/
 │   ├── plant_vision/
 │   ├── growth_risk/
@@ -144,11 +145,13 @@ python -m registry verify skills/plant_vision --public-key .trust/publisher.publ
 SDK使用Draft 2020-12，只允许本地JSON Pointer引用；拒绝非有限数字、重复JSON键、越界路径和链接资源。输入输出根类型为对象，Tool Schema从契约直接生成。
 执行器载入源码前检查模式和输入，并校验源码哈希，不执行未覆盖的缓存字节码。Python仍运行在本进程，尚无安全沙箱、并发文件修改隔离或强制超时；后续Harness与部署需处理这些约束。签名证明来源和完整性，不证明行为安全。
 
-未实现的live/replay明确失败，不回退fixture。现阶段不联网。私钥不随源码发布；开发私钥为未加密PEM。本项目开源许可尚待所有者确定，Skill Card标为NOASSERTION。
+未实现的live/replay明确失败，不回退fixture。离线部分（Demo、契约评测、离线测试）不联网；`harness/`是唯一会发起网络请求的模块，必须显式配置端点与密钥，缺密钥直接报错而不是退回fixture。私钥不随源码发布；开发私钥为未加密PEM。
+
+本仓库代码以Apache-2.0授权，见仓库根`LICENSE`。四个Skill包内的Skill Card仍标`NOASSERTION`：包内文件受Manifest哈希与Ed25519签名保护，改动后需重新封包并重签，因此许可尚未随源码同步，属已知遗留项。
 
 ## 后续真实集成
 
-1. StepFun Harness：配置base_url/model_name/api_key，实际完成选Skill、参数生成、tool_call_id关联、错误处理和最终报告，执行正反例及A/B。
+1. StepFun Harness：**已实现**（`harness/`）——配置`base_url`/`model`/密钥后即可完成选Skill、参数生成、tool_call_id关联、错误处理和最终报告，并跑正反例及A/B。运行前先`python -m harness preflight`，其中工具调用可用性与模型一致性两项不过，A/B结论无效。本轮尚未在真实端点跑过，报告中不出现真实调用记录。
 2. PlantVision接既有YOLO/分割权重；HerbalKnowledge接TCM-Mind-RAG；GrowthRisk接核实过的物种/生育期规则。记录来源和版本，升级契约与评测后再声明live。
 3. DGX Spark：在ARM64环境安装兼容依赖，通过NVIDIA推理栈执行视觉、embedding和向量检索；保留硬件、版本和调用日志后报告平台适配性。课件里的型号和修复参数需按实际环境核对。
 
