@@ -20,6 +20,11 @@ from sdk.manifest import seal_manifest
 from sdk.schema import read_json
 
 
+def _slug(text: str) -> str:
+    import re
+    return re.sub(r"[^0-9a-zA-Z]+", "-", text).strip("-").lower() or "batch"
+
+
 def main() -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -27,6 +32,7 @@ def main() -> int:
         pass
     directory = Path(sys.argv[1])
     species = sys.argv[2] if len(sys.argv) > 2 else "黄芪"
+    mode = sys.argv[3] if len(sys.argv) > 3 else "herb"
 
     root = Path(tempfile.mkdtemp(prefix="phyto-herb-batch-"))
     private, public = root / "p.pem", root / "pub.pem"
@@ -50,7 +56,7 @@ def main() -> int:
         case_id = f"herb-{index:03d}"
         response = executor.call("plant_vision", {
             "case_id": case_id, "species": species, "image_path": str(image.resolve()),
-        }, mode="herb", tool_call_id=f"herb-call-{index}")
+        }, mode=mode, tool_call_id=f"{mode}-call-{index}")
         if response["status"] != "success":
             print(f"[{index:2}] {image.name:18} FAILED {response['error']['message'][:90]}")
             records.append({"image": image.name, "case_id": case_id,
@@ -73,9 +79,9 @@ def main() -> int:
                         "eval_count": provenance["eval_count"],
                         "gpu": provenance["gpu"]})
 
-    out = Path("artifacts/dgx/herb-batch.json")
+    out = Path(f"artifacts/dgx/{mode}-batch-{_slug(directory.name)}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"scope": "dgx_herb_batch", "species": species,
+    out.write_text(json.dumps({"scope": f"dgx_{mode}_batch", "species": species, "mode": mode,
                                "images": len(images), "records": records,
                                "trace": runtime.report()},
                               ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

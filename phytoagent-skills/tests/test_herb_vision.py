@@ -200,6 +200,23 @@ def test_a_phenotype_outside_the_vocabulary_is_refused():
     assert _normalise_region(raw, image_size=(800, 800)) is None
 
 
+def test_a_box_covering_the_whole_frame_is_not_a_region():
+    """A full-frame box is the model declining to localise.
+
+    The herb prompt is especially prone to this: asked about a plate of slices,
+    the model sometimes answers with one region spanning the whole photograph.
+    """
+    raw = {"phenotype": "unknown", "label": "everything",
+           "bbox": [0.0, 0.0, 1.0, 1.0], "confidence": 0.5}
+    assert _normalise_region(raw, image_size=(800, 800)) is None
+
+
+def test_a_near_full_frame_box_is_refused_too():
+    raw = {"phenotype": "colour_amber", "label": "most of it",
+           "bbox": [0.01, 0.01, 0.99, 0.99], "confidence": 0.5}
+    assert _normalise_region(raw, image_size=(800, 800)) is None
+
+
 # ── judgement filter ─────────────────────────────────────────────────────────
 
 

@@ -12,7 +12,7 @@ PhytoSkill-Spark 把药用植物异常研判拆成四个可独立发现、调用
 
 **真实模型已跑通**：`step-5-preview` 上 preflight 三项硬检查全过，A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`。真实差异见 [真实 Harness](docs/harness.md)。
 
-**DGX Spark 已连通，真实数据集已跑通**：`gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0），`plant_vision` 新增 `live`（叶片表型）与 `herb`（药材性状）两个真实推理模式。15 张真实黄芪图全链路跑通：真实视觉 → 本地语料 → 融合 → Claim-Evidence 审计，76 个观察、106 个 supported claims、0 refused。产物 `artifacts/dgx/`。见 [DGX 实测](docs/dgx-spark.md)。
+**DGX Spark 已连通，真实数据集已跑通**：`gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0），`plant_vision` 新增 `live`（叶片表型）与 `herb`（药材性状）两个真实推理模式。两组真实图集（药材切片 15 张 + 植株叶片 15 张）全链路跑通：真实视觉 → 本地语料 → 融合 → Claim-Evidence 审计，共 79 个观察、139 个 supported claims、0 refused。产物 `artifacts/dgx/`。见 [DGX 实测](docs/dgx-spark.md)。
 
 ## 立即运行
 
@@ -125,7 +125,16 @@ huangqi-health-assessment/
 
 分成两个模式是因为**实测发现数据集内容与预期不同**：拿到的 15 张图全部是干燥黄芪根茎切片，没有一张是种植植株叶片。用叶片 prompt 问一盘子根切片，模型要么返回空、要么编一个覆盖整个盘子的区域——仪器必须匹配对象。模式语义写进签名清单的 `mode_semantics`，因为两个都叫"跑模型"的模式可以观察完全不同的东西。
 
-15 张真实图全链路（`python -m dgx.real_chain <dir>`）的实测结果：76 个观察、106 个 supported claims、0 refused，全部在 NVIDIA GB10 上推理。**没有地面真值**——这一轮证明链路能跑通、能结构化、能审计，不证明识别准确。
+两组真实图集（药材切片 15 张 + 植株叶片 15 张）都跑通了全链路：
+
+| 模式 | 图集 | 观察 | supported claims |
+| --- | --- | --- | --- |
+| `herb` | 药材切片 | 76 | 106 |
+| `live` | 植株叶片 | 3 | 33 |
+
+`live` 只产出 3 个观察不是失败——那些叶片是健康的，模型如实报告"没有可报告区域"，`schema` 允许空结果，强制非空等于强制编造。
+
+**没有地面真值。** 两组共 30 个观察全是模型的描述，没有人标注过这些图该有什么性状。这一轮证明链路能跑通、能结构化、能审计、能在证据不足时如实报告空结果，**不证明识别准确率**。
 
 ## 工程结构
 
@@ -149,7 +158,7 @@ phytoagent-skills/
 ├── evals/                 包内fixture契约评测器
 ├── scripts/seal_skills.py 发布者显式封包
 ├── dgx/                   DGX Spark：SSH 客户端、叶片/药材视觉推理、批量与全链路脚本
-└── tests/                 318 项全离线测试
+└── tests/                 323 项全离线测试
 ```
 
 ## 治理与评测的实际范围

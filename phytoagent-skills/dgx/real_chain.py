@@ -27,7 +27,12 @@ from sdk.schema import read_json
 
 # The vendored corpus is TCM syndrome knowledge. It is asked for the species and
 # the phenotype the vision leg reported, and it is allowed to come back empty.
-KNOWLEDGE_QUERY = "黄芪 药材 断面 色泽 霉变 虫蛀 质量"
+KNOWLEDGE_QUERIES = {
+    # The corpus is TCM syndrome knowledge. It is asked for the species and the
+    # subject actually photographed, and it is allowed to come back empty.
+    "herb": "黄芪 药材 断面 色泽 霉变 虫蛀 质量",
+    "live": "黄芪 栽培 叶片 黄化 病害 环境",
+}
 
 
 def main() -> int:
@@ -37,6 +42,7 @@ def main() -> int:
         pass
     directory = Path(sys.argv[1])
     species = sys.argv[2] if len(sys.argv) > 2 else "黄芪"
+    mode = sys.argv[3] if len(sys.argv) > 3 else "herb"
 
     root = Path(tempfile.mkdtemp(prefix="phyto-real-chain-"))
     private, public = root / "p.pem", root / "pub.pem"
@@ -63,7 +69,7 @@ def main() -> int:
 
         vision = executor.call("plant_vision", {
             "case_id": case_id, "species": species, "image_path": str(image.resolve()),
-        }, mode="herb", tool_call_id=f"{case_id}-vision")
+        }, mode=mode, tool_call_id=f"{case_id}-vision")
         if vision["status"] != "success":
             print(f"  vision FAILED: {vision['error']['code']}")
             cases.append({"image": image.name, "case_id": case_id,
@@ -75,7 +81,8 @@ def main() -> int:
               f"obs={len(vision_data['observations'])} phenotypes={phenotypes}")
 
         knowledge = executor.call("herbal_knowledge", {
-            "case_id": case_id, "species": species, "query": KNOWLEDGE_QUERY,
+            "case_id": case_id, "species": species,
+            "query": KNOWLEDGE_QUERIES.get(mode, KNOWLEDGE_QUERIES["herb"]),
         }, mode="corpus", tool_call_id=f"{case_id}-knowledge")
         if knowledge["status"] != "success":
             print(f"  knowledge FAILED: {knowledge['error']['code']}")
@@ -129,11 +136,13 @@ def main() -> int:
             "audit": audit,
         })
 
-    record = {"scope": "dgx_real_chain", "species": species,
-              "knowledge_query": KNOWLEDGE_QUERY,
+    record = {"scope": "dgx_real_chain", "species": species, "mode": mode,
+              "knowledge_query": KNOWLEDGE_QUERIES.get(mode, KNOWLEDGE_QUERIES["herb"]),
               "images": len(images), "cases": cases,
               "trace": runtime.report()}
-    out = Path("artifacts/dgx/real-chain.json")
+    import re
+    stem = re.sub(r"[^0-9a-zA-Z]+", "-", directory.name).strip("-").lower() or "set"
+    out = Path(f"artifacts/dgx/real-chain-{mode}-{stem}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"\nwrote {out}")

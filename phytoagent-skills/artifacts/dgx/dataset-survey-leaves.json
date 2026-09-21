@@ -1,0 +1,81 @@
+{
+  "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+  "question": "What is in this image? Answer in one short sentence. Is it a whole plant, leaves, or sliced/processed herb material?",
+  "records": [
+    {
+      "image": "huangqi_leaf_01.jpg",
+      "answer": "This image shows the green, pinnately compound leaves of a living plant.",
+      "latency_ms": 2398.1
+    },
+    {
+      "image": "huangqi_leaf_02.jpg",
+      "answer": "This image shows a hand holding a fresh, leafy branch of a plant, likely a legume such as a type of clover or vetch, with small compound leaves and a developing pod visible.",
+      "latency_ms": 13201.0
+    },
+    {
+      "image": "huangqi_leaf_03.jpg",
+      "answer": "This image shows a dense growth of green leafy plants, likely in a field or garden setting.",
+      "latency_ms": 5738.5
+    },
+    {
+      "image": "huangqi_leaf_04.jpg",
+      "answer": "This image shows a dense field of growing green plants, featuring their stems and numerous small, pinnately compound leaves.",
+      "latency_ms": 3824.5
+    },
+    {
+      "image": "huangqi_leaf_05.jpg",
+      "answer": "This image shows a whole, growing plant with green leaves and small developing flower buds or seed pods.",
+      "latency_ms": 2732.9
+    },
+    {
+      "image": "huangqi_leaf_06.jpg",
+      "answer": "This image shows a field of growing Moringa plants, featuring their characteristic pinnate leaves.",
+      "latency_ms": 2601.3
+    },
+    {
+      "image": "huangqi_leaf_07.jpg",
+      "answer": "This image shows a whole plant, specifically a flowering legume (likely a species of *Astragalus* or similar) with green pinnate leaves and clusters of dried, brownish seed pods or spent flowers.",
+      "latency_ms": 4896.2
+    },
+    {
+      "image": "huangqi_leaf_08.jpg",
+      "answer": "This image shows a whole plant with green compound leaves and clusters of pale yellow flowers, likely in its natural growing state.",
+      "latency_ms": 3227.9
+    },
+    {
+      "image": "huangqi_leaf_09.jpg",
+      "answer": "This image shows a close-up of a flowering plant, specifically highlighting its yellow blossoms and compound leaves along the stem.",
+      "latency_ms": 3018.6
+    },
+    {
+      "image": "huangqi_leaf_10.jpg",
+      "answer": "This image shows a whole, living plant with stems, compound leaves, and developing seed pods or flower clusters.",
+      "latency_ms": 2953.7
+    },
+    {
+      "image": "huangqi_leaf_11.jpg",
+      "answer": "Based on the visual evidence, the image displays a living plant with its stems, compound leaves, flowers, and developing seed pods (pods) all visible together.  Answer: The image shows a whole plant.",
+      "latency_ms": 4464.4
+    },
+    {
+      "image": "huangqi_leaf_12.jpg",
+      "answer": "Based on the visual evidence, the image displays a close-up of a living plant, specifically showing its stems, compound leaves, and developing seed pods (pods). It is not a whole, isolated plant, nor is it processed material.  Answer: The image shows the leaves and seed pods of a living plant.",
+      "latency_ms": 6390.3
+    },
+    {
+      "image": "huangqi_leaf_13.jpg",
+      "answer": "This is a whole plant with green leaves and pale yellow flowers growing in a natural outdoor setting.",
+      "latency_ms": 2733.8
+    },
+    {
+      "image": "huangqi_leaf_14.jpg",
+      "answer": "This image shows a whole, living plant growing in a natural, grassy field.",
+      "latency_ms": 2485.9
+    },
+    {
+      "image": "huangqi_leaf_15.jpg",
+      "answer": "This image shows the leaves of a plant, specifically a close-up of its pinnately compound foliage.",
+      "latency_ms": 3478.7
+    }
+  ]
+}

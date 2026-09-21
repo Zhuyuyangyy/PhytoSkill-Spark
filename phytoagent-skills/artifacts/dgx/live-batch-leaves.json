@@ -1,0 +1,323 @@
+{
+  "scope": "dgx_live_batch",
+  "species": "黄芪",
+  "mode": "live",
+  "images": 15,
+  "records": [
+    {
+      "image": "huangqi_leaf_01.jpg",
+      "case_id": "herb-001",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 2090.1,
+      "eval_count": 17,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_02.jpg",
+      "case_id": "herb-002",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "leaf_yellowing",
+          "region": {
+            "label": "yellowing leaf",
+            "bbox_normalized": [
+              0.4609375,
+              0.19921875,
+              0.5182291666666666,
+              0.236328125
+            ]
+          },
+          "affected_area_fraction": 0.0021,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        }
+      ],
+      "latency_ms": 23491.0,
+      "eval_count": 174,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_03.jpg",
+      "case_id": "herb-003",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "leaf_yellowing",
+          "region": {
+            "label": "yellowing on upper leaves",
+            "bbox_normalized": [
+              0.20111386138613863,
+              0.4609375,
+              0.30445544554455445,
+              0.6128472222222222
+            ]
+          },
+          "affected_area_fraction": 0.0157,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.75
+        }
+      ],
+      "latency_ms": 12251.4,
+      "eval_count": 106,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_04.jpg",
+      "case_id": "herb-004",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 2966.2,
+      "eval_count": 17,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_05.jpg",
+      "case_id": "herb-005",
+      "status": "success",
+      "image_usable": false,
+      "observations": [],
+      "latency_ms": 3058.8,
+      "eval_count": 28,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_06.jpg",
+      "case_id": "herb-006",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 2030.8,
+      "eval_count": 17,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_07.jpg",
+      "case_id": "herb-007",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 6472.3,
+      "eval_count": 69,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_08.jpg",
+      "case_id": "herb-008",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 14133.0,
+      "eval_count": 165,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_09.jpg",
+      "case_id": "herb-009",
+      "status": "success",
+      "image_usable": false,
+      "observations": [],
+      "latency_ms": 32671.1,
+      "eval_count": 400,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_10.jpg",
+      "case_id": "herb-010",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 6207.1,
+      "eval_count": 66,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_11.jpg",
+      "case_id": "herb-011",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 6074.4,
+      "eval_count": 67,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_12.jpg",
+      "case_id": "herb-012",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "leaf_yellowing",
+          "region": {
+            "label": "yellowing leaves",
+            "bbox_normalized": [
+              0.5333333333333333,
+              0.2,
+              0.8,
+              0.8
+            ]
+          },
+          "affected_area_fraction": 0.16,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.8
+        }
+      ],
+      "latency_ms": 13711.2,
+      "eval_count": 160,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_13.jpg",
+      "case_id": "herb-013",
+      "status": "success",
+      "image_usable": false,
+      "observations": [],
+      "latency_ms": 9249.1,
+      "eval_count": 104,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_14.jpg",
+      "case_id": "herb-014",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 5795.1,
+      "eval_count": 62,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_leaf_15.jpg",
+      "case_id": "herb-015",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 6560.7,
+      "eval_count": 64,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    }
+  ],
+  "trace": {
+    "trace_id": "trace-herb-batch-001",
+    "scope": "agentshield_runtime_local",
+    "agent_model_called": false,
+    "dgx_hardware_used": false,
+    "nvidia_verified": false,
+    "calls": [],
+    "blocked": []
+  }
+}

@@ -118,6 +118,11 @@ def _normalise_region(raw: object, *, image_size: tuple[int, int] | None = None)
         return None
     if left >= right or top >= bottom:
         return None
+    # A box that covers the whole frame is not a region observation. It is the
+    # model declining to localise, and reporting it would turn "I see the image"
+    # into an evidence-backed claim about a place in it.
+    if (right - left) >= 0.98 and (bottom - top) >= 0.98:
+        return None
     try:
         confidence = float(raw.get("confidence", 0.0))
     except (TypeError, ValueError):

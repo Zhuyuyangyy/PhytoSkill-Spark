@@ -1,81 +1,82 @@
 {
   "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
   "question": "What is in this image? Answer in one short sentence. Is it a whole plant, leaves, or sliced/processed herb material?",
+  "directory": "case_workspace\\images",
   "records": [
     {
       "image": "huangqi_01.jpg",
       "answer": "Based on the visual evidence, the image displays six elongated, flat pieces of dried plant material. Each piece shows a distinct cross-section with a lighter-colored interior and a rougher, brownish outer edge, which is characteristic of a root that has been cut into slices. Therefore, it is not a whole plant or leaves.  The image contains sliced/processed herb material.",
-      "latency_ms": 7599.9
+      "latency_ms": 7829.8
     },
     {
       "image": "huangqi_02.jpg",
       "answer": "Based on the visual evidence, the image displays a pile of dried, sliced root material, likely a medicinal herb such as Astragalus (Huang Qi).  Answer: The image shows sliced, dried root material of a medicinal herb.",
-      "latency_ms": 5499.9
+      "latency_ms": 5514.5
     },
     {
       "image": "huangqi_03.jpg",
       "answer": "The image displays sliced, dried root pieces of a medicinal herb, likely Astragalus (Huang Qi), arranged in a wooden tray.",
-      "latency_ms": 3610.0
+      "latency_ms": 3671.2
     },
     {
       "image": "huangqi_04.jpg",
       "answer": "Based on the visual evidence, the image displays a pile of dried, sliced root material, which is a processed form of an herb.  Answer: The image shows sliced and dried root material, which is a processed herb.",
-      "latency_ms": 5776.9
+      "latency_ms": 7255.5
     },
     {
       "image": "huangqi_05.jpg",
       "answer": "The image shows a bowl of sliced, dried root pieces, likely a processed herb such as astragalus or ginseng, placed on a wooden table with pink flowers in the background.",
-      "latency_ms": 13183.5
+      "latency_ms": 22044.0
     },
     {
       "image": "huangqi_06.jpg",
       "answer": "Based on the visual evidence, the image displays a pile of dried, sliced root material, which is a form of processed herb.  The image contains sliced, dried root material, which is a processed herb.",
-      "latency_ms": 5089.4
+      "latency_ms": 9349.7
     },
     {
       "image": "huangqi_07.jpg",
       "answer": "This image displays sliced, dried root pieces of Huangqi (Astragalus), a processed herbal material, presented in a white dish and a labeled glass jar.",
-      "latency_ms": 4323.4
+      "latency_ms": 6511.7
     },
     {
       "image": "huangqi_08.jpg",
       "answer": "This image displays sliced, dried root pieces of Astragalus (Huang Qi), a processed herbal material, presented in a white bowl on a wooden surface.",
-      "latency_ms": 7436.1
+      "latency_ms": 7456.3
     },
     {
       "image": "huangqi_09.jpg",
       "answer": "This image displays sliced, dried wild astragalus (Huang Qi) root pieces, presented both in a bowl and inside a labeled glass jar.",
-      "latency_ms": 4107.6
+      "latency_ms": 5303.3
     },
     {
       "image": "huangqi_10.jpg",
       "answer": "The image displays sliced, dried root pieces of a processed herb, likely a traditional medicinal root such as astragalus or ginseng.",
-      "latency_ms": 3338.1
+      "latency_ms": 4572.3
     },
     {
       "image": "huangqi_11.jpg",
       "answer": "This image displays sliced, dried root pieces of a processed herb, likely ginseng or a similar medicinal root.",
-      "latency_ms": 3227.7
+      "latency_ms": 4965.6
     },
     {
       "image": "huangqi_12.jpg",
       "answer": "Based on the visual evidence, the image displays a pile of dried, sliced root material, likely a type of medicinal herb such as Astragalus (Huang Qi), resting on a woven bamboo tray.  Answer: The image shows sliced/processed herb material.",
-      "latency_ms": 5723.8
+      "latency_ms": 6717.2
     },
     {
       "image": "huangqi_13.jpg",
       "answer": "This image displays a pile of sliced, dried root pieces, likely a processed herbal material such as astragalus or ginseng.",
-      "latency_ms": 3553.4
+      "latency_ms": 5086.4
     },
     {
       "image": "huangqi_14.jpg",
       "answer": "Based on the visual evidence, the image displays a collection of dried, cut pieces of a root. The cross-sections reveal a distinct woody texture and concentric rings, which are characteristic of a processed root rather than a whole plant or leaves.  The image contains sliced, dried root material, likely a type of medicinal herb such as Astragalus.",
-      "latency_ms": 7405.1
+      "latency_ms": 8429.9
     },
     {
       "image": "huangqi_15.jpg",
       "answer": "Sliced dried root pieces of a medicinal herb, likely astragalus, are displayed in a wooden box.",
-      "latency_ms": 3610.7
+      "latency_ms": 4799.0
     }
   ]
 }

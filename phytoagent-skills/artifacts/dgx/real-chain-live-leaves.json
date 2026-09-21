@@ -1,0 +1,2268 @@
+{
+  "scope": "dgx_real_chain",
+  "species": "黄芪",
+  "mode": "live",
+  "knowledge_query": "黄芪 栽培 叶片 黄化 病害 环境",
+  "images": 15,
+  "cases": [
+    {
+      "image": "huangqi_leaf_01.jpg",
+      "case_id": "chain-001",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 2102.8,
+          "eval_count": 17
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_02.jpg",
+      "case_id": "chain-002",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "leaf_yellowing",
+            "region": {
+              "label": "yellowing leaf",
+              "bbox_normalized": [
+                0.4609375,
+                0.19921875,
+                0.5182291666666666,
+                0.236328125
+              ]
+            },
+            "affected_area_fraction": 0.0021,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 23577.5,
+          "eval_count": 174
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "leaf_yellowing",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "yellowing leaf（leaf_yellowing）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "yellowing leaf（leaf_yellowing）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_03.jpg",
+      "case_id": "chain-003",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "leaf_yellowing",
+            "region": {
+              "label": "yellowing on upper leaves",
+              "bbox_normalized": [
+                0.20111386138613863,
+                0.4609375,
+                0.30445544554455445,
+                0.6128472222222222
+              ]
+            },
+            "affected_area_fraction": 0.0157,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.75
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 12335.4,
+          "eval_count": 106
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "leaf_yellowing",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "yellowing on upper leaves（leaf_yellowing）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "yellowing on upper leaves（leaf_yellowing）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_04.jpg",
+      "case_id": "chain-004",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 2948.4,
+          "eval_count": 17
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_05.jpg",
+      "case_id": "chain-005",
+      "vision": {
+        "image_usable": false,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 3019.5,
+          "eval_count": 28
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_06.jpg",
+      "case_id": "chain-006",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 2030.9,
+          "eval_count": 17
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_07.jpg",
+      "case_id": "chain-007",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 6430.3,
+          "eval_count": 69
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_08.jpg",
+      "case_id": "chain-008",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 14203.5,
+          "eval_count": 165
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_09.jpg",
+      "case_id": "chain-009",
+      "vision": {
+        "image_usable": false,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 32794.0,
+          "eval_count": 400
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_10.jpg",
+      "case_id": "chain-010",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 6151.7,
+          "eval_count": 66
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_11.jpg",
+      "case_id": "chain-011",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 6100.9,
+          "eval_count": 67
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_12.jpg",
+      "case_id": "chain-012",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "leaf_yellowing",
+            "region": {
+              "label": "yellowing leaves",
+              "bbox_normalized": [
+                0.5333333333333333,
+                0.2,
+                0.8,
+                0.8
+              ]
+            },
+            "affected_area_fraction": 0.16,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.8
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 13816.1,
+          "eval_count": 160
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "leaf_yellowing",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "yellowing leaves（leaf_yellowing）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "yellowing leaves（leaf_yellowing）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_13.jpg",
+      "case_id": "chain-013",
+      "vision": {
+        "image_usable": false,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 9188.3,
+          "eval_count": 104
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_14.jpg",
+      "case_id": "chain-014",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 5739.1,
+          "eval_count": 62
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_leaf_15.jpg",
+      "case_id": "chain-015",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_live_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 6537.3,
+          "eval_count": 64
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-5aae7ad2dc72",
+            "source_kind": "local_corpus",
+            "source_title": "herb_interactions-20",
+            "source_file": "herb_interactions.yaml",
+            "source_location": "herb_interactions.yaml:1-4",
+            "content": "herbs: 黄芪、人参\ntype: enhance\ndescription: 黄芪与人参配伍增强补气固表作用\nseverity: none",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.0909,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    }
+  ],
+  "trace": {
+    "trace_id": "trace-real-chain-001",
+    "scope": "agentshield_runtime_local",
+    "agent_model_called": false,
+    "dgx_hardware_used": false,
+    "nvidia_verified": false,
+    "calls": [],
+    "blocked": []
+  }
+}

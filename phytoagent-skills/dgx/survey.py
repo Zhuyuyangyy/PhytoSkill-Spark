@@ -7,6 +7,7 @@ dataset's real composition is known rather than assumed.
 
 import base64
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -45,9 +46,14 @@ def main() -> int:
             records.append({"image": image.name, "answer": answer,
                             "latency_ms": latency})
 
-    out = Path("artifacts/dgx/dataset-survey.json")
+    # Name the file after the directory: two surveys of different subjects must
+    # not overwrite each other. The first run did exactly that and silently lost
+    # the herb survey when the leaf survey was written to the same path.
+    stem = "dataset-survey-" + re.sub(r"[^0-9a-zA-Z]+", "-", directory.name).strip("-").lower()
+    out = Path("artifacts/dgx") / f"{stem}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"model": MODEL, "question": QUESTION,
+                               "directory": str(directory),
                                "records": records}, ensure_ascii=False, indent=2) + "\n",
                    encoding="utf-8")
     print(f"\nwrote {out}")

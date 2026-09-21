@@ -149,6 +149,30 @@ def test_confidence_is_clamped_and_defaulted():
     assert broken["model_score"] == 0.0
 
 
+def test_a_box_covering_the_whole_frame_is_not_a_region():
+    """A full-frame box is the model declining to localise.
+
+    It would turn "I see the image" into an evidence-backed claim about a place
+    in it, which is exactly what the contract forbids.
+    """
+    raw = {"phenotype": "unknown", "label": "everything",
+           "bbox": [0.0, 0.0, 1.0, 1.0], "confidence": 0.5}
+    assert _normalise_region(raw, image_size=(800, 800)) is None
+
+
+def test_a_near_full_frame_box_is_refused_too():
+    raw = {"phenotype": "leaf_yellowing", "label": "most of it",
+           "bbox": [0.01, 0.01, 0.99, 0.99], "confidence": 0.5}
+    assert _normalise_region(raw, image_size=(800, 800)) is None
+
+
+def test_a_legitimate_region_is_still_accepted():
+    raw = {"phenotype": "leaf_yellowing", "label": "margin",
+           "bbox": [0.2, 0.3, 0.6, 0.7], "confidence": 0.9}
+    region = _normalise_region(raw, image_size=(800, 800))
+    assert region["bbox_normalized"] == [0.2, 0.3, 0.6, 0.7]
+
+
 def test_a_non_object_region_is_refused():
     assert _normalise_region("not a region", image_size=(10, 10)) is None
     assert _normalise_region(None, image_size=(10, 10)) is None
