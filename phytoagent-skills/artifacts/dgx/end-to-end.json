@@ -2,7 +2,7 @@
   "scope": "dgx_end_to_end_live_vision",
   "agent_model_called": false,
   "dgx_hardware_used": true,
-  "image": "artifacts\\dgx\\synthetic-leaf-03.png",
+  "image": "case_workspace\\images\\huangqi_01.jpg",
   "species": "黄芪",
   "case_id": "dgx-live-001",
   "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
@@ -23,55 +23,18 @@
         "driver": "580.142",
         "memory_total": "[N/A]",
         "memory_used": "[N/A]",
-        "processes": [
-          {
-            "pid": "1124163",
-            "used_memory": "32990 MiB"
-          }
-        ]
+        "processes": []
       },
-      "latency_ms": 26624.2,
-      "eval_count": 310
+      "latency_ms": 9264.9,
+      "eval_count": 100
     },
     "image_usable": true,
-    "observations": [
-      {
-        "observation_id": "vision-region-01",
-        "phenotype": "leaf_spot",
-        "region": {
-          "label": "spot",
-          "bbox_normalized": [
-            0.596875,
-            0.690625,
-            0.6796875,
-            0.7734375
-          ]
-        },
-        "affected_area_fraction": 0.0069,
-        "area_basis": "visible_leaf_area",
-        "model_score": 0.9
-      },
-      {
-        "observation_id": "vision-region-02",
-        "phenotype": "leaf_spot",
-        "region": {
-          "label": "spot",
-          "bbox_normalized": [
-            0.7734375,
-            0.846875,
-            0.8359375,
-            0.909375
-          ]
-        },
-        "affected_area_fraction": 0.0039,
-        "area_basis": "visible_leaf_area",
-        "model_score": 0.9
-      }
-    ],
+    "observations": [],
     "limitations": [
       "本次结果来自 DGX Spark 上的真实视觉模型推理，不是合成 fixture。",
       "模型只描述可见区域，不诊断病原；model_score 是模型对自己描述的信心，不是病害概率。",
-      "可见叶片面积比例不是药效下降比例；表型观察不能替代植保人员鉴定。"
+      "可见叶片面积比例不是药效下降比例；表型观察不能替代植保人员鉴定。",
+      "模型未报告任何可用区域；此处不补造区域。"
     ]
   },
   "fusion": {
@@ -92,29 +55,11 @@
       "knowledge"
     ],
     "source_ids": {
-      "vision": [
-        "vision-region-01",
-        "vision-region-02"
-      ],
+      "vision": [],
       "environment": [],
       "knowledge": []
     },
-    "evidence_chain": [
-      {
-        "observation_id": "vision-region-01",
-        "phenotype": "leaf_spot",
-        "environment_factor_ids": [],
-        "knowledge_evidence_ids": [],
-        "relationship": "co_occurrence_only"
-      },
-      {
-        "observation_id": "vision-region-02",
-        "phenotype": "leaf_spot",
-        "environment_factor_ids": [],
-        "knowledge_evidence_ids": [],
-        "relationship": "co_occurrence_only"
-      }
-    ],
+    "evidence_chain": [],
     "unlinked_evidence_ids": [],
     "recommendations": [
       "用真实图像、带单位的测量和可核实文献替换fixture后再研判。",
@@ -126,49 +71,17 @@
       "本次结果来自 DGX Spark 上的真实视觉模型推理，不是合成 fixture。",
       "模型只描述可见区域，不诊断病原；model_score 是模型对自己描述的信心，不是病害概率。",
       "可见叶片面积比例不是药效下降比例；表型观察不能替代植保人员鉴定。",
+      "模型未报告任何可用区域；此处不补造区域。",
       "缺失来源：environment, knowledge"
     ]
   },
   "audit": {
-    "trust_level": "LIMITED",
-    "claims": [
-      {
-        "text": "观察到leaf_spot区域 spot",
-        "evidence_ids": [
-          "vision-region-01"
-        ],
-        "status": "supported"
-      },
-      {
-        "text": "观察到leaf_spot区域 spot",
-        "evidence_ids": [
-          "vision-region-02"
-        ],
-        "status": "supported"
-      }
-    ],
-    "supported_claims": [
-      {
-        "text": "观察到leaf_spot区域 spot",
-        "evidence_ids": [
-          "vision-region-01"
-        ],
-        "status": "supported"
-      },
-      {
-        "text": "观察到leaf_spot区域 spot",
-        "evidence_ids": [
-          "vision-region-02"
-        ],
-        "status": "supported"
-      }
-    ],
+    "trust_level": "INSUFFICIENT",
+    "claims": [],
+    "supported_claims": [],
     "refused_claims": [],
     "violations": [],
-    "evidence_ids": [
-      "vision-region-01",
-      "vision-region-02"
-    ]
+    "evidence_ids": []
   },
   "trace": {
     "trace_id": "trace-dgx-e2e-001",
@@ -185,11 +98,6 @@
     "driver": "580.142",
     "memory_total": "[N/A]",
     "memory_used": "[N/A]",
-    "processes": [
-      {
-        "pid": "1124163",
-        "used_memory": "32990 MiB"
-      }
-    ]
+    "processes": []
   }
 }

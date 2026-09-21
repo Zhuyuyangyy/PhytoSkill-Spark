@@ -12,7 +12,7 @@ PhytoSkill-Spark 把药用植物异常研判拆成四个可独立发现、调用
 
 **真实模型已跑通**：`step-5-preview` 上 preflight 三项硬检查全过，A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`。真实差异见 [真实 Harness](docs/harness.md)。
 
-**DGX Spark 已连通**：`gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0 / Docker），通过 ollama 跑通真实视觉推理，`plant_vision` 新增 `live` 模式，产物 `artifacts/dgx/`。见 [DGX 实测](docs/dgx-spark.md)。
+**DGX Spark 已连通，真实数据集已跑通**：`gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0），`plant_vision` 新增 `live`（叶片表型）与 `herb`（药材性状）两个真实推理模式。15 张真实黄芪图全链路跑通：真实视觉 → 本地语料 → 融合 → Claim-Evidence 审计，76 个观察、106 个 supported claims、0 refused。产物 `artifacts/dgx/`。见 [DGX 实测](docs/dgx-spark.md)。
 
 ## 立即运行
 
@@ -111,7 +111,21 @@ huangqi-health-assessment/
 * `fixture` —— 已发布的合成案例，换任何输入明确失败。
 * `corpus` —— 查询本地语料，返回证据 ID、文件位置（`source_file:line_start-line_end`）与语料版本。**检索不到就返回空**，不编造引用。
 
-必须说明的边界：该语料是 TCM 证型知识，**没有植物生理学证据**，因此按表型过滤的检索结果为空。本草药性知识不能替代栽培病理证据。
+必须说明的边界：该语料是 TCM 证型知识，**没有植物生理学证据**，因此按植物表型过滤的检索结果为空。本草药性知识不能替代栽培病理证据。
+
+## 真实数据集与两个视觉模式
+
+`plant_vision` 有三个显式模式，绝不互相静默替换：
+
+| 模式 | 观察对象 | 性状词表 |
+| --- | --- | --- |
+| `fixture` | 已发布合成案例 | — |
+| `live` | 田间植株 / 叶片 | `leaf_yellowing` / `leaf_spot` / `wilting` |
+| `herb` | 干燥药材切片 | 断面（裂隙/粉性/致密/空心）、色泽（淡黄/琥珀/深褐）、霉变、虫蛀、片型 |
+
+分成两个模式是因为**实测发现数据集内容与预期不同**：拿到的 15 张图全部是干燥黄芪根茎切片，没有一张是种植植株叶片。用叶片 prompt 问一盘子根切片，模型要么返回空、要么编一个覆盖整个盘子的区域——仪器必须匹配对象。模式语义写进签名清单的 `mode_semantics`，因为两个都叫"跑模型"的模式可以观察完全不同的东西。
+
+15 张真实图全链路（`python -m dgx.real_chain <dir>`）的实测结果：76 个观察、106 个 supported claims、0 refused，全部在 NVIDIA GB10 上推理。**没有地面真值**——这一轮证明链路能跑通、能结构化、能审计，不证明识别准确。
 
 ## 工程结构
 
@@ -134,8 +148,8 @@ phytoagent-skills/
 ├── demo/                  phytoforge_demo（三分钟闭环）、四Skill组合、SDK示例
 ├── evals/                 包内fixture契约评测器
 ├── scripts/seal_skills.py 发布者显式封包
-├── dgx/                   DGX Spark SSH 客户端、真实视觉推理、端到端脚本
-└── tests/                 271 项全离线测试
+├── dgx/                   DGX Spark：SSH 客户端、叶片/药材视觉推理、批量与全链路脚本
+└── tests/                 318 项全离线测试
 ```
 
 ## 治理与评测的实际范围
@@ -150,7 +164,7 @@ phytoagent-skills/
 | Integrity / Signed | SHA-256 清单 + 项目 Ed25519 签名；公钥在包外固定 |
 | Fixture contracts | `evals.run_contracts` 28/28 |
 | DGX Spark 实测 | 已连通 `gx10-9ec6`（GB10 / aarch64 / CUDA 13.0），真实视觉推理已跑通，`artifacts/dgx/` |
-| plant_vision live 模式 | 真实 GPU 推理；无 fixture 回退，缺节点或缺密钥即报错 |
+| plant_vision live / herb 模式 | 真实 GPU 推理；无 fixture 回退，缺节点或缺密钥即报错 |
 | Agent 触发与 A/B | 每包有正向、负向、缺参数用例；**已真实运行**：`step-5-preview`，17 任务 × 2 臂，见 `artifacts/agent-ab.json` |
 | SkillSpector / OMS | 未接入；**没有** NVIDIA 官方 Verified 声明 |
 | DGX / 模型准确率 | **未实测**，不提供推算指标 |

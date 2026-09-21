@@ -24,15 +24,25 @@ MANIFEST_SCHEMA = {
         "input_schema": {"type": "string", "minLength": 1},
         "output_schema": {"type": "string", "minLength": 1},
         "supported_modes": {"type": "array", "minItems": 1, "uniqueItems": True,
-                            "items": {"enum": ["fixture", "corpus", "replay", "live"]}},
+                            "items": {"enum": ["fixture", "corpus", "herb", "replay", "live"]}},
         "capabilities": {"type": "array", "uniqueItems": True, "items": {"type": "string"}},
         "permissions": {"$ref": "#/$defs/permissions"},
         "live_requirements": {"$ref": "#/$defs/live_requirements"},
+        "mode_semantics": {"$ref": "#/$defs/mode_semantics"},
         "files": {"type": "object", "minProperties": 3,
                   "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
         "manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     },
     "$defs": {
+        "mode_semantics": {
+            "type": "object",
+            # A mode name means nothing without what it actually does. Two modes
+            # that both "run the model" can observe entirely different subjects,
+            # so the semantics belong in the signed manifest rather than in a
+            # README the registry never reads.
+            "propertyNames": {"enum": ["fixture", "corpus", "replay", "live", "herb"]},
+            "additionalProperties": {"type": "string", "minLength": 1, "maxLength": 300},
+        },
         "live_requirements": {
             "type": "object",
             "additionalProperties": False,

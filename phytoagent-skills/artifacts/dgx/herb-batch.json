@@ -1,0 +1,1217 @@
+{
+  "scope": "dgx_herb_batch",
+  "species": "黄芪",
+  "images": 15,
+  "records": [
+    {
+      "image": "huangqi_01.jpg",
+      "case_id": "herb-001",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.065,
+              0.2975,
+              0.2925,
+              0.9375
+            ]
+          },
+          "affected_area_fraction": 0.1456,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.60875,
+              0.24375,
+              0.79,
+              0.94
+            ]
+          },
+          "affected_area_fraction": 0.1262,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "colour_amber",
+          "region": {
+            "label": "amber outer bark",
+            "bbox_normalized": [
+              0.065,
+              0.2975,
+              0.2925,
+              0.9375
+            ]
+          },
+          "affected_area_fraction": 0.1456,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-04",
+          "phenotype": "colour_amber",
+          "region": {
+            "label": "amber outer bark",
+            "bbox_normalized": [
+              0.60875,
+              0.24375,
+              0.79,
+              0.94
+            ]
+          },
+          "affected_area_fraction": 0.1262,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-05",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.065,
+              0.2975,
+              0.2925,
+              0.9375
+            ]
+          },
+          "affected_area_fraction": 0.1456,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.85
+        },
+        {
+          "observation_id": "vision-region-06",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.60875,
+              0.24375,
+              0.79,
+              0.94
+            ]
+          },
+          "affected_area_fraction": 0.1262,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.85
+        }
+      ],
+      "latency_ms": 82576.0,
+      "eval_count": 907,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1234383",
+            "used_memory": "2973 MiB"
+          }
+        ]
+      }
+    },
+    {
+      "image": "huangqi_02.jpg",
+      "case_id": "herb-002",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 11629.2,
+      "eval_count": 116,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1234383",
+            "used_memory": "14357 MiB"
+          }
+        ]
+      }
+    },
+    {
+      "image": "huangqi_03.jpg",
+      "case_id": "herb-003",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 16539.3,
+      "eval_count": 166,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1234383",
+            "used_memory": "16905 MiB"
+          }
+        ]
+      }
+    },
+    {
+      "image": "huangqi_04.jpg",
+      "case_id": "herb-004",
+      "status": "failed",
+      "error": {
+        "code": "SkillExecutionError",
+        "message": "Skill adapter execution failed"
+      }
+    },
+    {
+      "image": "huangqi_05.jpg",
+      "case_id": "herb-005",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.0641025641025641,
+              0.08012820512820513,
+              0.2532051282051282,
+              0.25
+            ]
+          },
+          "affected_area_fraction": 0.0321,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.0641025641025641,
+              0.08012820512820513,
+              0.2532051282051282,
+              0.25
+            ]
+          },
+          "affected_area_fraction": 0.0321,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "slice_irregular",
+          "region": {
+            "label": "irregular slice shape",
+            "bbox_normalized": [
+              0.0641025641025641,
+              0.08012820512820513,
+              0.2532051282051282,
+              0.25
+            ]
+          },
+          "affected_area_fraction": 0.0321,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.85
+        }
+      ],
+      "latency_ms": 71335.6,
+      "eval_count": 166,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1234383",
+            "used_memory": "34771 MiB"
+          }
+        ]
+      }
+    },
+    {
+      "image": "huangqi_06.jpg",
+      "case_id": "herb-006",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "Dense cut surface with visible radial texture",
+            "bbox_normalized": [
+              0.41375,
+              0.345,
+              0.74375,
+              0.64375
+            ]
+          },
+          "affected_area_fraction": 0.0986,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow central core",
+            "bbox_normalized": [
+              0.445,
+              0.435,
+              0.65125,
+              0.6075
+            ]
+          },
+          "affected_area_fraction": 0.0356,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.92
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "colour_dark_brown",
+          "region": {
+            "label": "Dark brown outer bark",
+            "bbox_normalized": [
+              0.365,
+              0.345,
+              0.74375,
+              0.4525
+            ]
+          },
+          "affected_area_fraction": 0.0407,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-04",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "Dense cut surface with radial texture",
+            "bbox_normalized": [
+              0.73375,
+              0.4225,
+              0.88125,
+              0.835
+            ]
+          },
+          "affected_area_fraction": 0.0608,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.94
+        },
+        {
+          "observation_id": "vision-region-05",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow central core",
+            "bbox_normalized": [
+              0.7525,
+              0.465,
+              0.865,
+              0.7275
+            ]
+          },
+          "affected_area_fraction": 0.0295,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.91
+        },
+        {
+          "observation_id": "vision-region-06",
+          "phenotype": "colour_dark_brown",
+          "region": {
+            "label": "Dark brown outer bark",
+            "bbox_normalized": [
+              0.74,
+              0.4225,
+              0.88125,
+              0.7025
+            ]
+          },
+          "affected_area_fraction": 0.0396,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.89
+        },
+        {
+          "observation_id": "vision-region-07",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "Dense cut surface with radial texture",
+            "bbox_normalized": [
+              0.25875,
+              0.715,
+              0.5025,
+              0.9025
+            ]
+          },
+          "affected_area_fraction": 0.0457,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.92
+        },
+        {
+          "observation_id": "vision-region-08",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow central core",
+            "bbox_normalized": [
+              0.315,
+              0.765,
+              0.4525,
+              0.89
+            ]
+          },
+          "affected_area_fraction": 0.0172,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.89
+        },
+        {
+          "observation_id": "vision-region-09",
+          "phenotype": "colour_dark_brown",
+          "region": {
+            "label": "Dark brown outer bark",
+            "bbox_normalized": [
+              0.25875,
+              0.715,
+              0.5025,
+              0.815
+            ]
+          },
+          "affected_area_fraction": 0.0244,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.87
+        },
+        {
+          "observation_id": "vision-region-10",
+          "phenotype": "colour_dark_brown",
+          "region": {
+            "label": "Dark brown outer bark",
+            "bbox_normalized": [
+              0.65875,
+              0.8025,
+              0.89625,
+              0.9025
+            ]
+          },
+          "affected_area_fraction": 0.0238,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.86
+        },
+        {
+          "observation_id": "vision-region-11",
+          "phenotype": "colour_dark_brown",
+          "region": {
+            "label": "Dark brown outer bark",
+            "bbox_normalized": [
+              0.19,
+              0.8775,
+              0.415,
+              0.9775
+            ]
+          },
+          "affected_area_fraction": 0.0225,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.83
+        },
+        {
+          "observation_id": "vision-region-12",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "Dense cut surface with radial texture",
+            "bbox_normalized": [
+              0.34,
+              0.54,
+              0.615,
+              0.84
+            ]
+          },
+          "affected_area_fraction": 0.0825,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.87
+        },
+        {
+          "observation_id": "vision-region-13",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow central core",
+            "bbox_normalized": [
+              0.39,
+              0.6025,
+              0.5525,
+              0.8025
+            ]
+          },
+          "affected_area_fraction": 0.0325,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.84
+        },
+        {
+          "observation_id": "vision-region-14",
+          "phenotype": "colour_dark_brown",
+          "region": {
+            "label": "Dark brown outer bark",
+            "bbox_normalized": [
+              0.34,
+              0.54,
+              0.615,
+              0.64
+            ]
+          },
+          "affected_area_fraction": 0.0275,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.82
+        },
+        {
+          "observation_id": "vision-region-15",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "Dense cut surface with radial texture",
+            "bbox_normalized": [
+              0.1275,
+              0.4775,
+              0.30875,
+              0.8275
+            ]
+          },
+          "affected_area_fraction": 0.0634,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.86
+        }
+      ],
+      "latency_ms": 166967.8,
+      "eval_count": 1500,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1234383",
+            "used_memory": "45899 MiB"
+          }
+        ]
+      }
+    },
+    {
+      "image": "huangqi_07.jpg",
+      "case_id": "herb-007",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The central part of the slices is a pale yellow color.",
+            "bbox_normalized": [
+              0.15625,
+              0.40625,
+              0.85625,
+              0.98125
+            ]
+          },
+          "affected_area_fraction": 0.4025,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        }
+      ],
+      "latency_ms": 39491.5,
+      "eval_count": 251,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1234383",
+            "used_memory": "48899 MiB"
+          }
+        ]
+      }
+    },
+    {
+      "image": "huangqi_08.jpg",
+      "case_id": "herb-008",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.072,
+              0.10333333333333333,
+              0.59,
+              0.5346666666666666
+            ]
+          },
+          "affected_area_fraction": 0.2234,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.072,
+              0.10333333333333333,
+              0.59,
+              0.5346666666666666
+            ]
+          },
+          "affected_area_fraction": 0.2234,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "slice_irregular",
+          "region": {
+            "label": "irregular slice shape",
+            "bbox_normalized": [
+              0.072,
+              0.10333333333333333,
+              0.59,
+              0.5346666666666666
+            ]
+          },
+          "affected_area_fraction": 0.2234,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.85
+        }
+      ],
+      "latency_ms": 29040.8,
+      "eval_count": 248,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1234383",
+            "used_memory": "51899 MiB"
+          }
+        ]
+      }
+    },
+    {
+      "image": "huangqi_09.jpg",
+      "case_id": "herb-009",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 25938.2,
+      "eval_count": 256,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_10.jpg",
+      "case_id": "herb-010",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 21332.9,
+      "eval_count": 255,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_11.jpg",
+      "case_id": "herb-011",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow cut surface",
+            "bbox_normalized": [
+              0.695,
+              0.5909943714821764,
+              0.7925,
+              0.8724202626641651
+            ]
+          },
+          "affected_area_fraction": 0.0274,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow cut surface",
+            "bbox_normalized": [
+              0.7775,
+              0.8442776735459663,
+              0.9275,
+              0.9474671669793621
+            ]
+          },
+          "affected_area_fraction": 0.0155,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow cut surface",
+            "bbox_normalized": [
+              0.39,
+              0.7879924953095685,
+              0.53,
+              0.9380863039399625
+            ]
+          },
+          "affected_area_fraction": 0.021,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-04",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow cut surface",
+            "bbox_normalized": [
+              0.43,
+              0.5816135084427767,
+              0.5425,
+              0.7879924953095685
+            ]
+          },
+          "affected_area_fraction": 0.0232,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-05",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow cut surface",
+            "bbox_normalized": [
+              0.56,
+              0.5628517823639775,
+              0.6675,
+              0.7879924953095685
+            ]
+          },
+          "affected_area_fraction": 0.0242,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-06",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow cut surface",
+            "bbox_normalized": [
+              0.53,
+              0.7692307692307693,
+              0.645,
+              0.8911819887429644
+            ]
+          },
+          "affected_area_fraction": 0.014,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-07",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow cut surface",
+            "bbox_normalized": [
+              0.53,
+              0.8724202626641651,
+              0.61,
+              0.9662288930581614
+            ]
+          },
+          "affected_area_fraction": 0.0075,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-08",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Pale yellow cut surface",
+            "bbox_normalized": [
+              0.55,
+              0.6848030018761726,
+              0.61,
+              0.797373358348968
+            ]
+          },
+          "affected_area_fraction": 0.0068,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        }
+      ],
+      "latency_ms": 121368.6,
+      "eval_count": 1500,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_12.jpg",
+      "case_id": "herb-012",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 22831.2,
+      "eval_count": 269,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_13.jpg",
+      "case_id": "herb-013",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 14500.5,
+      "eval_count": 166,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_14.jpg",
+      "case_id": "herb-014",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.45,
+              0.44,
+              0.7375,
+              0.8
+            ]
+          },
+          "affected_area_fraction": 0.1035,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.6625,
+              0.43,
+              0.9875,
+              0.79
+            ]
+          },
+          "affected_area_fraction": 0.117,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.3625,
+              0.205,
+              0.6125,
+              0.505
+            ]
+          },
+          "affected_area_fraction": 0.075,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-04",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.2075,
+              0.34,
+              0.4125,
+              0.63
+            ]
+          },
+          "affected_area_fraction": 0.0594,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-05",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.285,
+              0.45,
+              0.6075,
+              0.895
+            ]
+          },
+          "affected_area_fraction": 0.1435,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-06",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.6,
+              0.19,
+              0.8125,
+              0.465
+            ]
+          },
+          "affected_area_fraction": 0.0584,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-07",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.7925,
+              0.24,
+              0.925,
+              0.525
+            ]
+          },
+          "affected_area_fraction": 0.0378,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-08",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.6125,
+              0.38,
+              0.8,
+              0.58
+            ]
+          },
+          "affected_area_fraction": 0.0375,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-09",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.1525,
+              0.595,
+              0.3,
+              0.855
+            ]
+          },
+          "affected_area_fraction": 0.0384,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-10",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.31,
+              0.3,
+              0.4125,
+              0.4
+            ]
+          },
+          "affected_area_fraction": 0.0103,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-11",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.4625,
+              0.22,
+              0.55,
+              0.3
+            ]
+          },
+          "affected_area_fraction": 0.007,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-12",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.725,
+              0.235,
+              0.805,
+              0.3
+            ]
+          },
+          "affected_area_fraction": 0.0052,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-13",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.22,
+              0.505,
+              0.3,
+              0.63
+            ]
+          },
+          "affected_area_fraction": 0.01,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-14",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut surface",
+            "bbox_normalized": [
+              0.5575,
+              0.13,
+              0.6625,
+              0.33
+            ]
+          },
+          "affected_area_fraction": 0.021,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-15",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.45,
+              0.44,
+              0.7375,
+              0.8
+            ]
+          },
+          "affected_area_fraction": 0.1035,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-16",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.6625,
+              0.43,
+              0.9875,
+              0.79
+            ]
+          },
+          "affected_area_fraction": 0.117,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-17",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.3625,
+              0.205,
+              0.6125,
+              0.505
+            ]
+          },
+          "affected_area_fraction": 0.075,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-18",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.2075,
+              0.34,
+              0.4125,
+              0.63
+            ]
+          },
+          "affected_area_fraction": 0.0594,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-19",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.285,
+              0.45,
+              0.6075,
+              0.895
+            ]
+          },
+          "affected_area_fraction": 0.1435,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-20",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.6,
+              0.19,
+              0.8125,
+              0.465
+            ]
+          },
+          "affected_area_fraction": 0.0584,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-21",
+          "phenotype": "cut_surface_dense",
+          "region": {
+            "label": "dense cut surface",
+            "bbox_normalized": [
+              0.7925,
+              0.24,
+              0.925,
+              0.525
+            ]
+          },
+          "affected_area_fraction": 0.0378,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        }
+      ],
+      "latency_ms": 121574.5,
+      "eval_count": 1500,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_15.jpg",
+      "case_id": "herb-015",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 16445.1,
+      "eval_count": 185,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    }
+  ],
+  "trace": {
+    "trace_id": "trace-herb-batch-001",
+    "scope": "agentshield_runtime_local",
+    "agent_model_called": false,
+    "dgx_hardware_used": false,
+    "nvidia_verified": false,
+    "calls": [],
+    "blocked": []
+  }
+}

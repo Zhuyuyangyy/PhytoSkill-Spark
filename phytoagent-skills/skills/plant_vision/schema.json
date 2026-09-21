@@ -60,7 +60,8 @@
           "data_origin": {
             "enum": [
               "synthetic_fixture",
-              "dgx_live_inference"
+              "dgx_live_inference",
+              "dgx_herb_inference"
             ]
           },
           "skill": {
@@ -125,10 +126,20 @@
             },
             "phenotype": {
               "enum": [
-                "leaf_yellowing",
+                "colour_amber",
+                "colour_dark_brown",
+                "colour_pale_yellow",
+                "cut_surface_dense",
+                "cut_surface_fissure",
+                "cut_surface_hollow",
+                "cut_surface_powder",
+                "insect_damage",
                 "leaf_spot",
-                "wilting",
-                "unknown"
+                "leaf_yellowing",
+                "mould_visible",
+                "slice_irregular",
+                "unknown",
+                "wilting"
               ]
             },
             "region": {
@@ -161,7 +172,10 @@
               "maximum": 1
             },
             "area_basis": {
-              "const": "visible_leaf_area"
+              "enum": [
+                "visible_leaf_area",
+                "visible_subject_area"
+              ]
             },
             "model_score": {
               "type": "number",

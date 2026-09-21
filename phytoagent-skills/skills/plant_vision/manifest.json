@@ -9,7 +9,8 @@
   "output_schema": "schema.json#/output",
   "supported_modes": [
     "fixture",
-    "live"
+    "live",
+    "herb"
   ],
   "capabilities": [
     "plant_vision"
@@ -22,8 +23,13 @@
   },
   "live_requirements": {
     "dgx": "SSH access to a DGX Spark node via PHYTO_DGX_* credentials",
-    "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest (ollama)",
+    "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest (ollama, vision)",
     "fallback": "none; a missing node or credential is a hard error"
+  },
+  "mode_semantics": {
+    "fixture": "已发布合成案例，只回答一个精确匹配的输入",
+    "live": "真实 GPU 推理，观察田间/叶片表型（黄化、斑点、萎蔫）",
+    "herb": "真实 GPU 推理，观察干燥药材切片性状（断面、色泽、霉变、虫蛀、片型）"
   },
   "files": {
     "BENCHMARK.md": "c4a256ccf968b381736d81e6915ebc493074d5459aef4ccca694ef3ee87879a5",
@@ -31,12 +37,12 @@
     "evals/evals.json": "1baae8a3ece63f0b0739efbd6041d9bc55b151a52c0d88caae4d51e0e36596e3",
     "examples/request.json": "5773ff1816f2f7fd07a05040f160fd3d7dd81a0b56ef774ffb744e141a126df4",
     "fixture.json": "bcf6b3ea96343b90e8f7e519f4b95b4634513290546cccc05d02e187041c628d",
-    "metadata.json": "39e39a53af0e34fc86c246189316e024137de9b9820f74ed53e1e34ea10240a4",
+    "metadata.json": "f0095eafa3ddbc3ec860d5df0f340c1c6644251922114bee1b13f28bd8c69e3a",
     "references/contract.md": "ae94958f9a892bf8601ad7421c050270ee77c93629ba542b40b69ab1cc4988ab",
-    "schema.json": "9a00603fbfb810d17765672e12496b9ab654f0e7a88116556d925580d875ceaa",
+    "schema.json": "f49c1ab6050638bac46f0c2a0b8f8ffa9830f9dcd2fa60ff9a13e95970397f7b",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "f1771e1d3bafd26f3fb949eea72d3dadb0ed2134469e3bf38053ea8e1dd672ab",
-    "skill.py": "9b6c8018c1469ca0f6b00fdf0f2debb5cc3fb6709fcfef5c233770cf95914e73"
+    "skill.py": "be6ad7f95b2537320179f27e2fb60f53b8acc29b619d231e3626e87426e60168"
   },
-  "manifest_sha256": "c5e287fe11abf760789122708592a2a31c1d027e9a7ef9effe8a20764491afc7"
+  "manifest_sha256": "fd22067cf88df31378a3250768d2e8d45f6bff9b14e3fd884a5697c2f122d42d"
 }

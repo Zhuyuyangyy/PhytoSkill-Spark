@@ -27,10 +27,10 @@
     "fixture.json": "770f4d0e394fb34b160ef54680d9ad2467ac61a139664e44a900ddc799cce276",
     "metadata.json": "3444d40ee9b1266df67e8d01d65b7e5b0bf4b6aa22a4de2f91de3f5ab7dd7cbc",
     "references/contract.md": "60992d9528f12af42be5412da8a41a276f8d469eb4f25bd097188233ddf42dd8",
-    "schema.json": "e116ae987ae63ffce4c38257f0b6185ca75f88c7110d41941e952bc7c2cb47db",
+    "schema.json": "e95195f9d143164bfcb50bf74164eb414d35398618ab8b2c799fbed91617f1f6",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "b4773340f81a12dc0577e1b25a51b0140048f4415c8631f3f668de1d211334ea",
     "skill.py": "80c93834770e1c61922f117c7070288d647b8445a127ba025cb4dce291707fba"
   },
-  "manifest_sha256": "68d18e166905fb6bece3237527b56fb490cfe9cb2eb6e2c471791bc0bc6327ff"
+  "manifest_sha256": "fb80bd4cc4cacef46d093609d62bc7000735341043618bef3f8e409ef352d88b"
 }

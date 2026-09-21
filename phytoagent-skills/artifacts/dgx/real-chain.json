@@ -1,0 +1,5051 @@
+{
+  "scope": "dgx_real_chain",
+  "species": "黄芪",
+  "knowledge_query": "黄芪 药材 断面 色泽 霉变 虫蛀 质量",
+  "images": 15,
+  "cases": [
+    {
+      "image": "huangqi_01.jpg",
+      "case_id": "chain-001",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.065,
+                0.2975,
+                0.2925,
+                0.9375
+              ]
+            },
+            "affected_area_fraction": 0.1456,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.60875,
+                0.24375,
+                0.79,
+                0.94
+              ]
+            },
+            "affected_area_fraction": 0.1262,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_amber",
+            "region": {
+              "label": "amber outer bark",
+              "bbox_normalized": [
+                0.065,
+                0.2975,
+                0.2925,
+                0.9375
+              ]
+            },
+            "affected_area_fraction": 0.1456,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "colour_amber",
+            "region": {
+              "label": "amber outer bark",
+              "bbox_normalized": [
+                0.60875,
+                0.24375,
+                0.79,
+                0.94
+              ]
+            },
+            "affected_area_fraction": 0.1262,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.065,
+                0.2975,
+                0.2925,
+                0.9375
+              ]
+            },
+            "affected_area_fraction": 0.1456,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.85
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.60875,
+                0.24375,
+                0.79,
+                0.94
+              ]
+            },
+            "affected_area_fraction": 0.1262,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.85
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 74058.9,
+          "eval_count": 907
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_amber",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "colour_amber",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "amber outer bark（colour_amber）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "amber outer bark（colour_amber）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "amber outer bark（colour_amber）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "amber outer bark（colour_amber）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01",
+          "vision-region-02",
+          "vision-region-03",
+          "vision-region-04",
+          "vision-region-05",
+          "vision-region-06"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_02.jpg",
+      "case_id": "chain-002",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 10471.8,
+          "eval_count": 116
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_03.jpg",
+      "case_id": "chain-003",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 14159.8,
+          "eval_count": 166
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_04.jpg",
+      "case_id": "chain-004",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.34,
+                0.34375,
+                0.5808333333333333,
+                0.69375
+              ]
+            },
+            "affected_area_fraction": 0.0843,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.2625,
+                0.2875,
+                0.38333333333333336,
+                0.9225
+              ]
+            },
+            "affected_area_fraction": 0.0767,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.020833333333333332,
+                0.64375,
+                0.2625,
+                0.925
+              ]
+            },
+            "affected_area_fraction": 0.068,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.6041666666666666,
+                0.45625,
+                0.6958333333333333,
+                0.83125
+              ]
+            },
+            "affected_area_fraction": 0.0344,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.09583333333333334,
+                0.2875,
+                0.24583333333333332,
+                0.53125
+              ]
+            },
+            "affected_area_fraction": 0.0366,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.10416666666666667,
+                0.49375,
+                0.22083333333333333,
+                0.69375
+              ]
+            },
+            "affected_area_fraction": 0.0233,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-07",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.5375,
+                0.21875,
+                0.6208333333333333,
+                0.58125
+              ]
+            },
+            "affected_area_fraction": 0.0302,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-08",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.6875,
+                0.43125,
+                0.75,
+                0.75625
+              ]
+            },
+            "affected_area_fraction": 0.0203,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-09",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.7041666666666667,
+                0.75,
+                0.8291666666666667,
+                0.93125
+              ]
+            },
+            "affected_area_fraction": 0.0227,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-10",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.4791666666666667,
+                0.68125,
+                0.6208333333333333,
+                0.86875
+              ]
+            },
+            "affected_area_fraction": 0.0266,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-11",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.020833333333333332,
+                0.4625,
+                0.11666666666666667,
+                0.625
+              ]
+            },
+            "affected_area_fraction": 0.0156,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-12",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.020833333333333332,
+                0.15625,
+                0.14583333333333334,
+                0.41875
+              ]
+            },
+            "affected_area_fraction": 0.0328,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-13",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.12083333333333333,
+                0.125,
+                0.24583333333333332,
+                0.30625
+              ]
+            },
+            "affected_area_fraction": 0.0227,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-14",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.3958333333333333,
+                0.15625,
+                0.4875,
+                0.36875
+              ]
+            },
+            "affected_area_fraction": 0.0195,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-15",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.45416666666666666,
+                0.21875,
+                0.5041666666666667,
+                0.41875
+              ]
+            },
+            "affected_area_fraction": 0.01,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-16",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.4875,
+                0.125,
+                0.5541666666666667,
+                0.51875
+              ]
+            },
+            "affected_area_fraction": 0.0263,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-17",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.5291666666666667,
+                0.15625,
+                0.6541666666666667,
+                0.3625
+              ]
+            },
+            "affected_area_fraction": 0.0258,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-18",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.6541666666666667,
+                0.31875,
+                0.7,
+                0.53125
+              ]
+            },
+            "affected_area_fraction": 0.0097,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-19",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.6958333333333333,
+                0.28125,
+                0.7708333333333334,
+                0.55
+              ]
+            },
+            "affected_area_fraction": 0.0202,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 121597.6,
+          "eval_count": 1500
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-07",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-08",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-09",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-10",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-11",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-12",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-13",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-14",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-15",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-16",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-17",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-18",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-19",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-07"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-08"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-09"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-10"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-11"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-12"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-13"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-14"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-15"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-16"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-17"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-18"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-19"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-07"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-08"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-09"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-10"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-11"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-12"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-13"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-14"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-15"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-16"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-17"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-18"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-19"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01",
+          "vision-region-02",
+          "vision-region-03",
+          "vision-region-04",
+          "vision-region-05",
+          "vision-region-06",
+          "vision-region-07",
+          "vision-region-08",
+          "vision-region-09",
+          "vision-region-10",
+          "vision-region-11",
+          "vision-region-12",
+          "vision-region-13",
+          "vision-region-14",
+          "vision-region-15",
+          "vision-region-16",
+          "vision-region-17",
+          "vision-region-18",
+          "vision-region-19"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_05.jpg",
+      "case_id": "chain-005",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.0641025641025641,
+                0.08012820512820513,
+                0.2532051282051282,
+                0.25
+              ]
+            },
+            "affected_area_fraction": 0.0321,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.0641025641025641,
+                0.08012820512820513,
+                0.2532051282051282,
+                0.25
+              ]
+            },
+            "affected_area_fraction": 0.0321,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "slice_irregular",
+            "region": {
+              "label": "irregular slice shape",
+              "bbox_normalized": [
+                0.0641025641025641,
+                0.08012820512820513,
+                0.2532051282051282,
+                0.25
+              ]
+            },
+            "affected_area_fraction": 0.0321,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.85
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 16064.6,
+          "eval_count": 166
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "slice_irregular",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "irregular slice shape（slice_irregular）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "irregular slice shape（slice_irregular）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01",
+          "vision-region-02",
+          "vision-region-03"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_06.jpg",
+      "case_id": "chain-006",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "Dense cut surface with visible radial texture",
+              "bbox_normalized": [
+                0.41375,
+                0.345,
+                0.74375,
+                0.64375
+              ]
+            },
+            "affected_area_fraction": 0.0986,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow central core",
+              "bbox_normalized": [
+                0.445,
+                0.435,
+                0.65125,
+                0.6075
+              ]
+            },
+            "affected_area_fraction": 0.0356,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.92
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_dark_brown",
+            "region": {
+              "label": "Dark brown outer bark",
+              "bbox_normalized": [
+                0.365,
+                0.345,
+                0.74375,
+                0.4525
+              ]
+            },
+            "affected_area_fraction": 0.0407,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "Dense cut surface with radial texture",
+              "bbox_normalized": [
+                0.73375,
+                0.4225,
+                0.88125,
+                0.835
+              ]
+            },
+            "affected_area_fraction": 0.0608,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.94
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow central core",
+              "bbox_normalized": [
+                0.7525,
+                0.465,
+                0.865,
+                0.7275
+              ]
+            },
+            "affected_area_fraction": 0.0295,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.91
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "colour_dark_brown",
+            "region": {
+              "label": "Dark brown outer bark",
+              "bbox_normalized": [
+                0.74,
+                0.4225,
+                0.88125,
+                0.7025
+              ]
+            },
+            "affected_area_fraction": 0.0396,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.89
+          },
+          {
+            "observation_id": "vision-region-07",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "Dense cut surface with radial texture",
+              "bbox_normalized": [
+                0.25875,
+                0.715,
+                0.5025,
+                0.9025
+              ]
+            },
+            "affected_area_fraction": 0.0457,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.92
+          },
+          {
+            "observation_id": "vision-region-08",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow central core",
+              "bbox_normalized": [
+                0.315,
+                0.765,
+                0.4525,
+                0.89
+              ]
+            },
+            "affected_area_fraction": 0.0172,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.89
+          },
+          {
+            "observation_id": "vision-region-09",
+            "phenotype": "colour_dark_brown",
+            "region": {
+              "label": "Dark brown outer bark",
+              "bbox_normalized": [
+                0.25875,
+                0.715,
+                0.5025,
+                0.815
+              ]
+            },
+            "affected_area_fraction": 0.0244,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.87
+          },
+          {
+            "observation_id": "vision-region-10",
+            "phenotype": "colour_dark_brown",
+            "region": {
+              "label": "Dark brown outer bark",
+              "bbox_normalized": [
+                0.65875,
+                0.8025,
+                0.89625,
+                0.9025
+              ]
+            },
+            "affected_area_fraction": 0.0238,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.86
+          },
+          {
+            "observation_id": "vision-region-11",
+            "phenotype": "colour_dark_brown",
+            "region": {
+              "label": "Dark brown outer bark",
+              "bbox_normalized": [
+                0.19,
+                0.8775,
+                0.415,
+                0.9775
+              ]
+            },
+            "affected_area_fraction": 0.0225,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.83
+          },
+          {
+            "observation_id": "vision-region-12",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "Dense cut surface with radial texture",
+              "bbox_normalized": [
+                0.34,
+                0.54,
+                0.615,
+                0.84
+              ]
+            },
+            "affected_area_fraction": 0.0825,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.87
+          },
+          {
+            "observation_id": "vision-region-13",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow central core",
+              "bbox_normalized": [
+                0.39,
+                0.6025,
+                0.5525,
+                0.8025
+              ]
+            },
+            "affected_area_fraction": 0.0325,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.84
+          },
+          {
+            "observation_id": "vision-region-14",
+            "phenotype": "colour_dark_brown",
+            "region": {
+              "label": "Dark brown outer bark",
+              "bbox_normalized": [
+                0.34,
+                0.54,
+                0.615,
+                0.64
+              ]
+            },
+            "affected_area_fraction": 0.0275,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.82
+          },
+          {
+            "observation_id": "vision-region-15",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "Dense cut surface with radial texture",
+              "bbox_normalized": [
+                0.1275,
+                0.4775,
+                0.30875,
+                0.8275
+              ]
+            },
+            "affected_area_fraction": 0.0634,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.86
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 121887.8,
+          "eval_count": 1500
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_dark_brown",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "colour_dark_brown",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-07",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-08",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-09",
+            "phenotype": "colour_dark_brown",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-10",
+            "phenotype": "colour_dark_brown",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-11",
+            "phenotype": "colour_dark_brown",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-12",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-13",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-14",
+            "phenotype": "colour_dark_brown",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-15",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "Dense cut surface with visible radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow central core（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dense cut surface with radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow central core（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dense cut surface with radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-07"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow central core（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-08"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-09"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-10"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-11"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dense cut surface with radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-12"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow central core（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-13"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-14"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dense cut surface with radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-15"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "Dense cut surface with visible radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow central core（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dense cut surface with radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow central core（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dense cut surface with radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-07"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow central core（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-08"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-09"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-10"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-11"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dense cut surface with radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-12"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow central core（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-13"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dark brown outer bark（colour_dark_brown）",
+            "evidence_ids": [
+              "vision-region-14"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Dense cut surface with radial texture（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-15"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01",
+          "vision-region-02",
+          "vision-region-03",
+          "vision-region-04",
+          "vision-region-05",
+          "vision-region-06",
+          "vision-region-07",
+          "vision-region-08",
+          "vision-region-09",
+          "vision-region-10",
+          "vision-region-11",
+          "vision-region-12",
+          "vision-region-13",
+          "vision-region-14",
+          "vision-region-15"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_07.jpg",
+      "case_id": "chain-007",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "The central part of the slices is a pale yellow color.",
+              "bbox_normalized": [
+                0.15625,
+                0.40625,
+                0.85625,
+                0.98125
+              ]
+            },
+            "affected_area_fraction": 0.4025,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 21630.0,
+          "eval_count": 251
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "The central part of the slices is a pale yellow color.（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "The central part of the slices is a pale yellow color.（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_08.jpg",
+      "case_id": "chain-008",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.072,
+                0.10333333333333333,
+                0.59,
+                0.5346666666666666
+              ]
+            },
+            "affected_area_fraction": 0.2234,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.072,
+                0.10333333333333333,
+                0.59,
+                0.5346666666666666
+              ]
+            },
+            "affected_area_fraction": 0.2234,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "slice_irregular",
+            "region": {
+              "label": "irregular slice shape",
+              "bbox_normalized": [
+                0.072,
+                0.10333333333333333,
+                0.59,
+                0.5346666666666666
+              ]
+            },
+            "affected_area_fraction": 0.2234,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.85
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 22114.2,
+          "eval_count": 248
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "slice_irregular",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "irregular slice shape（slice_irregular）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "irregular slice shape（slice_irregular）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01",
+          "vision-region-02",
+          "vision-region-03"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_09.jpg",
+      "case_id": "chain-009",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 21997.4,
+          "eval_count": 256
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_10.jpg",
+      "case_id": "chain-010",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 21791.9,
+          "eval_count": 255
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_11.jpg",
+      "case_id": "chain-011",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow cut surface",
+              "bbox_normalized": [
+                0.695,
+                0.5909943714821764,
+                0.7925,
+                0.8724202626641651
+              ]
+            },
+            "affected_area_fraction": 0.0274,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow cut surface",
+              "bbox_normalized": [
+                0.7775,
+                0.8442776735459663,
+                0.9275,
+                0.9474671669793621
+              ]
+            },
+            "affected_area_fraction": 0.0155,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow cut surface",
+              "bbox_normalized": [
+                0.39,
+                0.7879924953095685,
+                0.53,
+                0.9380863039399625
+              ]
+            },
+            "affected_area_fraction": 0.021,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow cut surface",
+              "bbox_normalized": [
+                0.43,
+                0.5816135084427767,
+                0.5425,
+                0.7879924953095685
+              ]
+            },
+            "affected_area_fraction": 0.0232,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow cut surface",
+              "bbox_normalized": [
+                0.56,
+                0.5628517823639775,
+                0.6675,
+                0.7879924953095685
+              ]
+            },
+            "affected_area_fraction": 0.0242,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow cut surface",
+              "bbox_normalized": [
+                0.53,
+                0.7692307692307693,
+                0.645,
+                0.8911819887429644
+              ]
+            },
+            "affected_area_fraction": 0.014,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-07",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow cut surface",
+              "bbox_normalized": [
+                0.53,
+                0.8724202626641651,
+                0.61,
+                0.9662288930581614
+              ]
+            },
+            "affected_area_fraction": 0.0075,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-08",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "Pale yellow cut surface",
+              "bbox_normalized": [
+                0.55,
+                0.6848030018761726,
+                0.61,
+                0.797373358348968
+              ]
+            },
+            "affected_area_fraction": 0.0068,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 121533.1,
+          "eval_count": 1500
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-07",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-08",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-07"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-08"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-07"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "Pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-08"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01",
+          "vision-region-02",
+          "vision-region-03",
+          "vision-region-04",
+          "vision-region-05",
+          "vision-region-06",
+          "vision-region-07",
+          "vision-region-08"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_12.jpg",
+      "case_id": "chain-012",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 22841.1,
+          "eval_count": 269
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_13.jpg",
+      "case_id": "chain-013",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 14572.0,
+          "eval_count": 166
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_14.jpg",
+      "case_id": "chain-014",
+      "vision": {
+        "image_usable": true,
+        "observations": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.45,
+                0.44,
+                0.7375,
+                0.8
+              ]
+            },
+            "affected_area_fraction": 0.1035,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.6625,
+                0.43,
+                0.9875,
+                0.79
+              ]
+            },
+            "affected_area_fraction": 0.117,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.3625,
+                0.205,
+                0.6125,
+                0.505
+              ]
+            },
+            "affected_area_fraction": 0.075,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.2075,
+                0.34,
+                0.4125,
+                0.63
+              ]
+            },
+            "affected_area_fraction": 0.0594,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.285,
+                0.45,
+                0.6075,
+                0.895
+              ]
+            },
+            "affected_area_fraction": 0.1435,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.6,
+                0.19,
+                0.8125,
+                0.465
+              ]
+            },
+            "affected_area_fraction": 0.0584,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-07",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.7925,
+                0.24,
+                0.925,
+                0.525
+              ]
+            },
+            "affected_area_fraction": 0.0378,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-08",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.6125,
+                0.38,
+                0.8,
+                0.58
+              ]
+            },
+            "affected_area_fraction": 0.0375,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-09",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.1525,
+                0.595,
+                0.3,
+                0.855
+              ]
+            },
+            "affected_area_fraction": 0.0384,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-10",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.31,
+                0.3,
+                0.4125,
+                0.4
+              ]
+            },
+            "affected_area_fraction": 0.0103,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-11",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.4625,
+                0.22,
+                0.55,
+                0.3
+              ]
+            },
+            "affected_area_fraction": 0.007,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-12",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.725,
+                0.235,
+                0.805,
+                0.3
+              ]
+            },
+            "affected_area_fraction": 0.0052,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-13",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.22,
+                0.505,
+                0.3,
+                0.63
+              ]
+            },
+            "affected_area_fraction": 0.01,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-14",
+            "phenotype": "colour_pale_yellow",
+            "region": {
+              "label": "pale yellow cut surface",
+              "bbox_normalized": [
+                0.5575,
+                0.13,
+                0.6625,
+                0.33
+              ]
+            },
+            "affected_area_fraction": 0.021,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.95
+          },
+          {
+            "observation_id": "vision-region-15",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.45,
+                0.44,
+                0.7375,
+                0.8
+              ]
+            },
+            "affected_area_fraction": 0.1035,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-16",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.6625,
+                0.43,
+                0.9875,
+                0.79
+              ]
+            },
+            "affected_area_fraction": 0.117,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-17",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.3625,
+                0.205,
+                0.6125,
+                0.505
+              ]
+            },
+            "affected_area_fraction": 0.075,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-18",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.2075,
+                0.34,
+                0.4125,
+                0.63
+              ]
+            },
+            "affected_area_fraction": 0.0594,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-19",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.285,
+                0.45,
+                0.6075,
+                0.895
+              ]
+            },
+            "affected_area_fraction": 0.1435,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-20",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.6,
+                0.19,
+                0.8125,
+                0.465
+              ]
+            },
+            "affected_area_fraction": 0.0584,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          },
+          {
+            "observation_id": "vision-region-21",
+            "phenotype": "cut_surface_dense",
+            "region": {
+              "label": "dense cut surface",
+              "bbox_normalized": [
+                0.7925,
+                0.24,
+                0.925,
+                0.525
+              ]
+            },
+            "affected_area_fraction": 0.0378,
+            "area_basis": "visible_subject_area",
+            "model_score": 0.9
+          }
+        ],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 121785.8,
+          "eval_count": 1500
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": [
+          {
+            "observation_id": "vision-region-01",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-02",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-03",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-04",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-05",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-06",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-07",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-08",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-09",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-10",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-11",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-12",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-13",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-14",
+            "phenotype": "colour_pale_yellow",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-15",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-16",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-17",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-18",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-19",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-20",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          },
+          {
+            "observation_id": "vision-region-21",
+            "phenotype": "cut_surface_dense",
+            "environment_factor_ids": [],
+            "knowledge_evidence_ids": [],
+            "relationship": "co_occurrence_only"
+          }
+        ]
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-07"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-08"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-09"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-10"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-11"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-12"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-13"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-14"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-15"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-16"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-17"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-18"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-19"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-20"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-21"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-01"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-02"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-03"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-04"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-05"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-06"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-07"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-08"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-09"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-10"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-11"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-12"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-13"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "pale yellow cut surface（colour_pale_yellow）",
+            "evidence_ids": [
+              "vision-region-14"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-15"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-16"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-17"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-18"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-19"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-20"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "dense cut surface（cut_surface_dense）",
+            "evidence_ids": [
+              "vision-region-21"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332",
+          "vision-region-01",
+          "vision-region-02",
+          "vision-region-03",
+          "vision-region-04",
+          "vision-region-05",
+          "vision-region-06",
+          "vision-region-07",
+          "vision-region-08",
+          "vision-region-09",
+          "vision-region-10",
+          "vision-region-11",
+          "vision-region-12",
+          "vision-region-13",
+          "vision-region-14",
+          "vision-region-15",
+          "vision-region-16",
+          "vision-region-17",
+          "vision-region-18",
+          "vision-region-19",
+          "vision-region-20",
+          "vision-region-21"
+        ]
+      }
+    },
+    {
+      "image": "huangqi_15.jpg",
+      "case_id": "chain-015",
+      "vision": {
+        "image_usable": true,
+        "observations": [],
+        "provenance": {
+          "data_origin": "dgx_herb_inference",
+          "skill": "plant_vision",
+          "version": "0.2.0",
+          "model_called": true,
+          "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+          "dgx_hardware_used": true,
+          "gpu": {
+            "index": "0",
+            "name": "NVIDIA GB10",
+            "driver": "580.142",
+            "memory_total": "[N/A]",
+            "memory_used": "[N/A]",
+            "processes": []
+          },
+          "latency_ms": 16713.5,
+          "eval_count": 185
+        }
+      },
+      "knowledge": {
+        "evidence": [
+          {
+            "evidence_id": "corpus-460ddcb11091",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:285-292",
+            "content": "case_type: NOISY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 脉细弱、眩晕健忘、痰黏难咯、神倦乏力、心悸怔忡、食欲不振、腹胀便溏、无汗、舌淡苔白、失眠多梦、面色萎黄\ndifficulty: hard\nnoise_ratio: 0.2744652015175688\nnote: 注入27%干扰症状",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-4bacfbc71332",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:2515-2521",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-53c3a96a0162",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:1046-1052",
+            "content": "case_type: TYPICAL\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ndifficulty: easy\nnoise_ratio: 0.0",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-64f7c87c2617",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "syndromes.yaml",
+            "source_location": "syndromes.yaml:92-96",
+            "content": "syndrome: 心脾两虚\nsymptoms: 心悸怔忡、失眠多梦、眩晕健忘、食欲不振、腹胀便溏、神倦乏力、面色萎黄、舌淡苔白、脉细弱\ntreatment: 益气补血\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          },
+          {
+            "evidence_id": "corpus-6518c5b3bcf0",
+            "source_kind": "local_corpus",
+            "source_title": "心脾两虚",
+            "source_file": "synthetic_cases.json",
+            "source_location": "synthetic_cases.json:5068-5075",
+            "content": "case_type: BOUNDARY\nsyndrome: 心脾两虚\nprescription: 归脾汤\nherbs: 人参、黄芪、白术、茯神、酸枣仁、龙眼肉、木香、炙甘草、当归、远志、生姜、大枣\nsymptoms: 心悸怔忡、脉细弱、眩晕健忘、面色萎黄\ndifficulty: medium\nnoise_ratio: 0.0\nnote: 仅提供4个症状（完整集=9）",
+            "supports_phenotypes": [],
+            "retrieval_score": 0.1538,
+            "corpus_version": "tcm-mind-rag-data-2026-05-29"
+          }
+        ],
+        "provenance": {
+          "data_origin": "local_corpus",
+          "skill": "herbal_knowledge",
+          "version": "0.2.0",
+          "model_called": false,
+          "corpus_version": "tcm-mind-rag-data-2026-05-29",
+          "corpus_sha256": "89cca69cb662c74bacbe3d22f2f067f7fc3627a264fbd7d9a1b9be9258f66563",
+          "retriever": "deterministic_character_bigram_overlap"
+        }
+      },
+      "fusion": {
+        "completeness": "partial",
+        "missing_inputs": [
+          "environment"
+        ],
+        "evidence_chain": []
+      },
+      "audit": {
+        "trust_level": "LIMITED",
+        "claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "supported_claims": [
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-460ddcb11091"
+            ],
+            "status": "supported"
+          },
+          {
+            "text": "语料记载：心脾两虚",
+            "evidence_ids": [
+              "corpus-4bacfbc71332"
+            ],
+            "status": "supported"
+          }
+        ],
+        "refused_claims": [],
+        "violations": [],
+        "evidence_ids": [
+          "corpus-460ddcb11091",
+          "corpus-4bacfbc71332"
+        ]
+      }
+    }
+  ],
+  "trace": {
+    "trace_id": "trace-real-chain-001",
+    "scope": "agentshield_runtime_local",
+    "agent_model_called": false,
+    "dgx_hardware_used": false,
+    "nvidia_verified": false,
+    "calls": [],
+    "blocked": []
+  }
+}

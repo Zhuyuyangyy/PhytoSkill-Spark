@@ -1,18 +1,20 @@
-"""plant_vision adapter: fixture mode by default, live mode on the DGX Spark node.
+"""plant_vision adapter with three explicit modes, never silently substituted.
 
-The two modes are deliberately separate and never silently substituted:
+* ``fixture`` — the published synthetic case. Answers exactly one input and
+  refuses everything else, which is what makes the contract testable offline.
+* ``live`` — real inference on the DGX Spark node, observing **field/leaf**
+  phenotypes (yellowing, spots, wilting). Requires a real image path.
+* ``herb`` — real inference on the same node, observing **dried sliced herb
+  material** (cut-surface texture, colour, mould, insect damage, slice shape).
 
-* ``fixture`` — the published synthetic case. It answers exactly one input and
-  refuses everything else, which is what makes the package's contract testable
-  offline.
-* ``live`` — real inference on the DGX Spark node. Selected explicitly by the
-  caller. If the node is unreachable or the credential is missing, the call fails;
-  it does not fall back to the fixture, because a fixture answer to a real
-  photograph would be a fabricated observation.
+``herb`` exists because the supplied image set is 15 photographs of sliced
+Astragalus root, not growing plants. Asking a leaf-chlorosis prompt about a plate
+of root slices returns either nothing or a region covering the whole plate; the
+instrument has to match the subject.
 
-What ``live`` never does: diagnose. The prompt asks for description only, and the
-parser drops any region whose text names a pathogen. ``model_score`` is the
-model's stated confidence in its own description, not a probability of disease.
+Every real mode has **no fixture fallback**: a missing node, a missing credential,
+a ``fixture://`` placeholder or an absent file are all hard errors. Answering a
+real request with synthetic data would be a fabricated observation.
 """
 
 from __future__ import annotations
@@ -20,7 +22,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from dgx.client import DgxClient, load_credentials
-from dgx.vision import run_vision
+from dgx.herb_vision import run_vision as run_herb_vision
+from dgx.vision import run_vision as run_leaf_vision
 from sdk import BaseSkill, ContractError
 from sdk.exceptions import UnsupportedModeError
 from sdk.fixture_skill import FixtureSkill
@@ -61,7 +64,11 @@ class PlantVisionSkill(BaseSkill):
         if mode == "fixture":
             return self._run_fixture(payload)
         if mode == "live":
-            return self._run_live(payload)
+            return self._run_real(payload, runner=run_leaf_vision,
+                                  data_origin="dgx_live_inference")
+        if mode == "herb":
+            return self._run_real(payload, runner=run_herb_vision,
+                                  data_origin="dgx_herb_inference")
         raise UnsupportedModeError(f"plant_vision does not support mode {mode!r}")
 
     # ── modes ─────────────────────────────────────────────────────────────
@@ -70,17 +77,17 @@ class PlantVisionSkill(BaseSkill):
         """Delegate to the sealed fixture; a mismatch is an explicit failure."""
         return FixtureSkill.run(self, payload, mode="fixture")
 
-    def _run_live(self, payload: dict) -> dict:
+    def _run_real(self, payload: dict, *, runner, data_origin: str) -> dict:
         """Run real inference on the DGX Spark node. No fixture fallback."""
         image_path = payload.get("image_path")
         if not isinstance(image_path, str) or not image_path.strip():
-            raise ContractError("live mode requires a non-empty image_path")
+            raise ContractError("real mode requires a non-empty image_path")
         species = payload.get("species")
         if not isinstance(species, str) or not species.strip():
-            raise ContractError("live mode requires a species")
+            raise ContractError("real mode requires a species")
         if image_path.startswith("fixture://"):
             raise ContractError(
-                "live mode cannot read a fixture:// placeholder; supply a real image path")
+                "real mode cannot read a fixture:// placeholder; supply a real image path")
         path = Path(image_path)
         if not path.is_file():
             raise ContractError(f"image not found: {image_path}")
@@ -91,8 +98,11 @@ class PlantVisionSkill(BaseSkill):
             raise ContractError(f"DGX credentials unavailable: {exc}") from exc
 
         with DgxClient(credentials) as client:
-            call = run_vision(client, image_bytes=path.read_bytes(),
-                              species=species, model=self._model)
+            # A large photograph on a contended node takes minutes: the observed
+            # range is ~12 s to ~167 s for the same code path. 600 s is not
+            # generous, it is what the slowest real image needed.
+            call = runner(client, image_bytes=path.read_bytes(),
+                          species=species, model=self._model, timeout=900)
 
         observations = []
         for index, region in enumerate(call["regions"], start=1):
@@ -102,13 +112,13 @@ class PlantVisionSkill(BaseSkill):
                 "region": {"label": region["label"],
                            "bbox_normalized": region["bbox_normalized"]},
                 "affected_area_fraction": self._area(region["bbox_normalized"]),
-                "area_basis": "visible_leaf_area",
+                "area_basis": "visible_subject_area",
                 "model_score": region["model_score"],
             })
         limitations = [
             "本次结果来自 DGX Spark 上的真实视觉模型推理，不是合成 fixture。",
-            "模型只描述可见区域，不诊断病原；model_score 是模型对自己描述的信心，不是病害概率。",
-            "可见叶片面积比例不是药效下降比例；表型观察不能替代植保人员鉴定。",
+            "模型只描述可见性状，不判定等级、真伪或病因；model_score 是模型对自己描述的信心，不是质量分。",
+            "可见区域面积比例不是有效成分变化比例；性状观察不能替代药典检验与专业人员鉴定。",
         ]
         if not call["image_usable"]:
             limitations.append("模型判定图像不可用；未据此产生任何表型结论。")
@@ -119,7 +129,7 @@ class PlantVisionSkill(BaseSkill):
             "case_id": payload.get("case_id", ""),
             "species": species,
             "provenance": {
-                "data_origin": "dgx_live_inference",
+                "data_origin": data_origin,
                 "skill": "plant_vision",
                 "version": self.version,
                 "model_called": True,

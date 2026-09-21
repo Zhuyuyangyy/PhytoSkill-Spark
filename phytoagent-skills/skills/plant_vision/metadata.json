@@ -9,7 +9,8 @@
   "output_schema": "schema.json#/output",
   "supported_modes": [
     "fixture",
-    "live"
+    "live",
+    "herb"
   ],
   "capabilities": [
     "plant_vision"
@@ -22,7 +23,12 @@
   },
   "live_requirements": {
     "dgx": "SSH access to a DGX Spark node via PHYTO_DGX_* credentials",
-    "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest (ollama)",
+    "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest (ollama, vision)",
     "fallback": "none; a missing node or credential is a hard error"
+  },
+  "mode_semantics": {
+    "fixture": "已发布合成案例，只回答一个精确匹配的输入",
+    "live": "真实 GPU 推理，观察田间/叶片表型（黄化、斑点、萎蔫）",
+    "herb": "真实 GPU 推理，观察干燥药材切片性状（断面、色泽、霉变、虫蛀、片型）"
   }
 }
