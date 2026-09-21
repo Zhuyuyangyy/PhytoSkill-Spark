@@ -121,11 +121,12 @@
     },
     {
       "id": "missing_required_context",
-      "prompt": "检索黄芪叶片黄化的可能原因，给出可以核实的来源。",
+      "prompt": "检索黄芪叶片黄化的可能原因并给出可核实来源。注意：我还没有提供本地语料的访问方式。",
       "context": {},
       "expected_call": false,
       "expected_behavior": "ask_for_missing_context",
-      "skill": "herbal_knowledge"
+      "skill": "herbal_knowledge",
+      "note": "语料访问方式缺失。合理行为是先说明需要哪种语料接入，而不是直接调用一个没有语料的检索。"
     }
   ],
   "agent_ab": {

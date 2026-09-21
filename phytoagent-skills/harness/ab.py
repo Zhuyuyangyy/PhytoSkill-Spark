@@ -29,7 +29,7 @@ from harness.agent import ARMS, AgentHarness
 from harness.config import HarnessConfig
 from harness.scoring import score_task, summarise
 from harness.tasks import Task, build_tasks, count_by_kind
-from harness.transport import Transport
+from harness.transport import MIN_REQUEST_INTERVAL_SECONDS, Transport
 from runtime.executor import SkillExecutor
 
 NVIDIA_SMI_TIMEOUT_SECONDS = 10
@@ -72,12 +72,16 @@ def probe_environment() -> dict:
 
 class AbRunner:
     def __init__(self, config: HarnessConfig, *, poster=None, registry_factory=fixture_registry,
-                 tasks: list[Task] | None = None, progress=None):
+                 tasks: list[Task] | None = None, progress=None,
+                 min_request_interval: float | None = MIN_REQUEST_INTERVAL_SECONDS):
         self.config = config
         self.poster = poster
         self.registry_factory = registry_factory
         self.tasks = tasks if tasks is not None else build_tasks()
         self.progress = progress or (lambda message: None)
+        # A scripted poster answers instantly, so throttling it would only make
+        # the offline tests slow. Real runs keep the default.
+        self.min_request_interval = min_request_interval
 
     def run(self, *, repeat: int = 1) -> dict:
         config = self.config
@@ -85,7 +89,8 @@ class AbRunner:
         runs: list[dict] = []
         scored: list[dict] = []
         with self.registry_factory() as registry:
-            transport = Transport(config, self.poster)
+            transport = Transport(config, self.poster,
+                                  min_request_interval=self.min_request_interval)
             harness = AgentHarness(registry, SkillExecutor(registry), transport, config)
             packages = {name: {"manifest_sha256": detail["manifest_sha256"],
                                "instructions_sha256": detail["instructions_sha256"],

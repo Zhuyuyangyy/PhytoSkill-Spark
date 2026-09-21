@@ -1,0 +1,62 @@
+{
+  "reachable": true,
+  "auth_accepted": true,
+  "first_response": {
+    "http_status": 200,
+    "model_returned": "step-5-preview",
+    "finish_reason": "length",
+    "usage": {
+      "prompt_tokens": 16,
+      "completion_tokens": 16,
+      "total_tokens": 32,
+      "reasoning_tokens": 0
+    },
+    "latency_ms": 992.618
+  },
+  "tool_calling": {
+    "tool_calls_returned": 1,
+    "names": [
+      "phyto_ping"
+    ],
+    "works": true,
+    "finish_reason": "tool_calls"
+  },
+  "model_identity": {
+    "requests": 22,
+    "distinct_models": [
+      "step-5-preview"
+    ],
+    "consistent": true,
+    "reasoning_tokens_observed": [
+      0
+    ],
+    "thinking_mode_note": "reasoning_effort 未固定，两臂使用同一默认值；已在报告的 sampling_parameters_sent 中记录。"
+  },
+  "failures": [],
+  "passed": true,
+  "config": {
+    "base_url": "https://api.stepfun.com/v1",
+    "host": "api.stepfun.com",
+    "model_requested": "step-5-preview",
+    "api_key_present": true,
+    "api_key_source": "PHYTO_STEPFUN_API_KEY",
+    "timeout_seconds": 90.0,
+    "max_retries": 4,
+    "max_turns": 6,
+    "sampling_parameters_sent": {},
+    "reasoning_effort_pinned": false,
+    "proxy_configured": false,
+    "trace_payload": "hash",
+    "dotenv_loaded": true
+  },
+  "environment": {
+    "hostname": "LAPTOP-CKUGPPR5",
+    "machine": "AMD64",
+    "system": "Windows",
+    "release": "11",
+    "python_version": "3.13.14",
+    "nvidia_smi_present": false,
+    "gpus": [],
+    "cuda_visible_devices": null
+  }
+}

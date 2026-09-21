@@ -64,7 +64,8 @@ def tool_call(name, arguments, call_id="call_1"):
 
 def make_transport(poster, **overrides):
     config = HarnessConfig(api_key=SECRET, **overrides)
-    return Transport(config, poster, sleep=lambda _seconds: None), config
+    return Transport(config, poster, sleep=lambda _seconds: None,
+                   min_request_interval=None), config
 
 
 def fixture_input(registry, name):
@@ -187,10 +188,59 @@ class TestTransport:
 
     def test_missing_credential_never_reaches_the_network(self):
         poster = ScriptedPoster([])
-        transport = Transport(HarnessConfig(), poster, sleep=lambda _s: None)
+        transport = Transport(HarnessConfig(), poster, sleep=lambda _s: None,
+                            min_request_interval=None)
         with pytest.raises(ConfigError):
             transport.chat({"model": "m", "messages": []})
         assert poster.requests == []
+
+
+class TestRequestThrottle:
+    """A per-minute limit is met by spacing requests, not by retrying harder."""
+
+    def test_requests_are_spaced_by_the_minimum_interval(self):
+        poster = ScriptedPoster([(200, completion()) for _ in range(3)])
+        waits: list[float] = []
+        clock = {"now": 0.0}
+
+        def sleep(seconds):
+            waits.append(seconds)
+            clock["now"] += seconds
+
+        config = HarnessConfig(api_key=SECRET)
+        transport = Transport(config, poster, sleep=sleep, monotonic=lambda: clock["now"],
+                              min_request_interval=6.5)
+        for _ in range(3):
+            transport.chat({"model": "m", "messages": []})
+        # The first request is not delayed; the next two each wait out the window.
+        assert waits == [6.5, 6.5]
+
+    def test_an_elapsed_window_is_not_waited_out_twice(self):
+        poster = ScriptedPoster([(200, completion()) for _ in range(2)])
+        waits: list[float] = []
+        clock = {"now": 0.0}
+
+        def sleep(seconds):
+            waits.append(seconds)
+            clock["now"] += seconds
+
+        config = HarnessConfig(api_key=SECRET)
+        transport = Transport(config, poster, sleep=sleep, monotonic=lambda: clock["now"],
+                              min_request_interval=6.5)
+        transport.chat({"model": "m", "messages": []})
+        clock["now"] += 20.0  # the caller was slow on its own
+        transport.chat({"model": "m", "messages": []})
+        # The first request is never delayed, and the 20 s already spent covers
+        # the second gap, so nothing is owed.
+        assert waits == []
+
+    def test_throttling_can_be_disabled_for_scripted_posters(self):
+        poster = ScriptedPoster([(200, completion()) for _ in range(3)])
+        config = HarnessConfig(api_key=SECRET)
+        transport = Transport(config, poster, sleep=lambda _s: None, min_request_interval=None)
+        for _ in range(3):
+            transport.chat({"model": "m", "messages": []})
+        assert len(poster.requests) == 3
 
 
 class TestAgentLoop:
@@ -396,7 +446,8 @@ class TestAbRunner:
         poster = ScriptedPoster([(200, completion(content="本次无法完成，缺少必要的图片上下文。"))
                                  for _ in range(200)])
         config = HarnessConfig(api_key=SECRET, max_turns=2)
-        runner = AbRunner(config, poster=poster, tasks=build_tasks())
+        runner = AbRunner(config, poster=poster, tasks=build_tasks(),
+                          min_request_interval=None)
         report = runner.run(repeat=1)
 
         assert report["scope"] == "agent_ab_real_model_fixture_tools"
@@ -433,7 +484,7 @@ class TestAbRunner:
         poster = ScriptedPoster([(200, completion(content="缺少图片，无法进行。"))
                                  for _ in range(400)])
         runner = AbRunner(HarnessConfig(api_key=SECRET, max_turns=2), poster=poster,
-                          tasks=build_tasks()[:3])
+                          tasks=build_tasks()[:3], min_request_interval=None)
         report = runner.run(repeat=2)
         assert report["task_count"] == 3
         assert len(report["scored"]) == 12

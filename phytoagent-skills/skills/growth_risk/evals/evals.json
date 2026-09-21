@@ -121,11 +121,12 @@
     },
     {
       "id": "missing_required_context",
-      "prompt": "分析黄芪的温度31.5°C、土壤pH7.8和空气湿度40%的待复核因素。",
+      "prompt": "分析黄芪的待复核环境因素。我有温度31.5°C、土壤pH7.8和空气湿度40%，N/P/K还没测，生育期也不确定。",
       "context": {},
       "expected_call": false,
       "expected_behavior": "ask_for_missing_context",
-      "skill": "growth_risk"
+      "skill": "growth_risk",
+      "note": "N/P/K 与生育期缺失。合理行为是先澄清缺哪些测量再调用，而不是用默认值补齐。"
     }
   ],
   "agent_ab": {

@@ -31,7 +31,7 @@ Skill 是交付物，StepFun 负责规划与报告生成，DGX Spark 是本地�
     │                           evidence_fusion / agentshield_audit
     ├── demo/                   phytoforge_demo（三分钟闭环）、四 Skill 组合、SDK 示例
     ├── evals/                  包内 fixture 契约评测器
-    ├── tests/                  230 项，全离线
+    ├── tests/                  233 项，全离线
     ├── artifacts/              pytest 结果、契约评测、release 校验记录、演示记录、发布包
     └── docs/                   比赛资料对照、开发日志、分轮范围、Harness 运行手册
 ```
@@ -76,7 +76,7 @@ python -m harness ab --repeat 1 --output artifacts/agent-ab.json
 - Compiler **不生成任意代码**：它渲染模板并写出声明式配置，唯一生成的 Python 文件是对所有产物逐字节相同的固定薄执行器。
 - 融合为确定性 ID 连接逻辑（真实执行），不把视觉分数与检索分数组合成疾病概率。
 - `artifacts/` 中的现有报告**全部来自 fixture 或本地确定性代码**，`agent_model_called` 为 `false`。
-- Harness 已实现并可运行，但**仓库内尚无真实端点调用记录**；它需要在配置密钥后运行。即便运行，工具返回的内容仍是 fixture，`dgx_hardware_used` 也如实记录是否触及 GPU。
+- Harness **已真实运行**：`step-5-preview` 上 preflight 三项硬检查全过，A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`。即便运行，工具返回的内容仍是 fixture，`dgx_hardware_used` 也如实记录是否触及 GPU。`repeat=1`、17 个任务不足以支撑统计显著性，差值只作方向性观察。
 - Registry 的 `scanned` / `evaluated` 状态仍为 `not_checked`；未接入 SkillSpector 或 OMS，**没有** NVIDIA 官方 Verified 声明。项目内部可称 `Validated`，不能冒充官方认证。
 - 项目自有的 `manifest.sig` 是 Ed25519 格式，与 OpenSSF Model Signing 的 `skill.oms.sig` 不能互换。
 - 编译门禁与 Runtime 中间件是**策略层，不是隔离层**：Python 仍运行在本进程，尚无安全沙箱、并发文件修改隔离或强制超时。

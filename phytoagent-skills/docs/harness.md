@@ -157,3 +157,94 @@ scp <dgx>:~/PhytoSkill-Spark/phytoagent-skills/artifacts/agent-ab.json artifacts
 密钥一旦出现在聊天记录、日志或 Git 历史里就无法撤回，**改代码救不回来**，
 必须到 StepFun 后台吊销并重建。本仓库的 `.gitignore` 已忽略 `.env`，
 且任何报告都不写密钥（只写 `api_key_present` 与来源变量名）。
+
+## 已跑通的真实运行（2026-09-21）
+
+端点 `https://api.stepfun.com/v1`，模型 `step-5-preview`，密钥不入库（`.env` 已被 gitignore）。
+
+| 步骤 | 命令 | 结果 |
+| --- | --- | --- |
+| 自检 | `python -m harness preflight` | `passed: true`，`failures: []` |
+| A/B | `python -m harness ab --repeat 1` | `agent_model_called: true`，产物 `artifacts/agent-ab.json` |
+
+preflight 三项硬检查的实际值：
+
+- **鉴权**：通过。
+- **工具调用可用性**：`tool_calls_returned: 1`，返回 `phyto_ping`，`finish_reason: "tool_calls"`。
+- **模型身份一致性**：22 次采样，`distinct_models: ["step-5-preview"]`，`consistent: true`。
+
+A/B 全程 `models_returned_all: ["step-5-preview"]`，`model_identity_consistent: true`，
+说明网关没有把请求负载均衡到别的快照——这是把 A/B 当作受控实验的前提。
+
+## 限速：10 RPM 是这一轮的真实约束
+
+免费额度是 **10 RPM**。第一次跑 preflight 直接撞上：
+
+```
+HTTP 429: request limited RPM reached, current: 11, limit: 10
+```
+
+指数退避解决不了这个问题——重试本身就在消耗额度，把下一次尝试推得更远。因此在
+`harness/transport.py` 加了请求间隔节流（`MIN_REQUEST_INTERVAL_SECONDS = 6.5`），
+在发请求**之前**留出窗口，而不是失败后补救。节流可注入也可关闭，离线测试传
+`min_request_interval=None`，否则 39 项 harness 测试会从 18s 退化成 5 分钟。
+
+## 第一轮 A/B 暴露的任务定义缺陷（已修）
+
+第一轮结果：两臂 `trigger_pass_rate` 都是 **0.8**，加载 Skill 指令**没有**提升触发率。
+逐条看 trace 后确认，三个失败全是**任务定义写错了**，不是模型失败：
+
+1. **`agentshield_audit` 正向触发** —— 任务的 context 只给了 `audit_id` 和 `stage`，
+   没给 schema 必填的 `subject.manifest`。模型的回复是要求补齐 manifest 再审计，
+   并逐条列出需要什么。这是**正确行为**，判它失败是判错了。
+2. **`growth_risk` 缺参数澄清** —— 任务的 prompt 与 `positive_trigger` **一字不差**。
+   同样的输入期望不同行为，模型无法分辨。
+3. **`herbal_knowledge` 缺参数澄清** —— 同上。
+
+三处都已修正：给审计任务补上 manifest；把两个澄清任务的 prompt 改成真正缺参数
+（growth_risk 明确说 N/P/K 未测、生育期不确定；herbal_knowledge 明确说未提供语料接入）。
+
+这个教训值得记下来：**判模型失败之前，先确认任务本身是否自洽**。fixture 边界
+（`FixtureMismatchError`）是设计使然，用它来判 Agent 失败会得到没有意义的数字。
+
+## 第三轮：修正后的真实 A/B 结果
+
+修正任务定义与评分规则后重跑，`repeat=1`，17 个任务 × 2 臂：
+
+| 指标 | without_skill | with_skill | 差值 |
+| --- | --- | --- | --- |
+| trigger_pass_rate | 1.0 | 1.0 | 0.0 |
+| coverage_mean | 0.7 | 0.8 | 0.1 |
+| forbidden_violations | 2 | 0 | -2 |
+| unknown_tool_attempts | 0 | 0 | 0 |
+| argument_errors | 0 | 0 | 0 |
+| total_tokens | 101316 | 142646 | 41330 |
+| latency_ms_mean | 37486.7 | 31767.9 | -5718.8 |
+
+**剩余失败：0**。正向触发 5/5、负向触发 5/5、缺参数澄清 5/5，两臂都是。
+
+### 唯一可归因于 Skill 指令的真实差异
+
+`forbidden_violations` 从 **2 降到 0**，`coverage_mean` 从 **0.7 升到 0.8**。
+两处越权都发生在 `missing_context` 任务：不带 Skill 指令时，模型在缺参数情况下
+仍然调用了 `growth_risk` 和 `herbal_knowledge`；带上 Skill 指令后没有越权。
+`coverage_mean` 的提升来自端到端任务覆盖的专业 Skill 数量。
+
+必须同时说清楚的反面：`trigger_pass_rate` **没有提升**（都是 1.0），
+而 `total_tokens` 多了 41330、`prompt_tokens` 多了 46074。加载 Skill 指令的
+代价是上下文变大，收益是更少的越权和更高的覆盖。这不是"Skill 让模型更聪明"，
+而是"Skill 让模型更守规矩"——这个区别在答辩时值得讲明白。
+
+### 为什么 missing_context 的判分标准改了
+
+原规则把"调用了 Skill"直接判失败。但每个 Skill 都跑在 fixture 模式下，
+用真实值调用必然返回 `FixtureMismatchError`——这是设计使然，说明不了 Agent 的好坏。
+真正该看的是**有没有编造结论**。新规则：调用后如实报告失败、不发明答案，算通过；
+把失败说成结论，才算失败。`harness/scoring.py` 的 `_fabricated()` 做这个判定，
+并新增 `failed_tool_calls` 把"执行后失败"与"调用前就被拒绝"区分开。
+
+### 单次运行的局限
+
+`repeat=1`，17 个任务。报告里 `statistics.significance_test` 是 `none`：
+样本量不足以支撑统计显著性判断，上面的差值只能当**方向性观察**，不能当结论。
+10 RPM 限速下跑更多轮次成本很高，这一条不隐瞒。

@@ -23,7 +23,7 @@
   "files": {
     "BENCHMARK.md": "95a5d51dc04a703234f9d42f23aba0d8dc0c1bcfe468a89e530b8d28346e0414",
     "SKILL.md": "718347a0a9d366d08c681f486b00d9af0acb3d94606138589a48497408c8869b",
-    "evals/evals.json": "8cfba81346f031ef834802746fcffbfce083f8a18a67038a79f2c77c5549cea9",
+    "evals/evals.json": "e1771f708bb8dbf293aed4df9434bba89f28094d5e7f704e87dc4934e78b8396",
     "examples/request.json": "a8879ce18be7aacc87b4906e8e8d1a05618f60afdad40d624831e6191a43e752",
     "fixture.json": "7114c61a7bb484ebf6f79e84e33eb41a743c03bfacb172b21f931d102aead32b",
     "metadata.json": "6a167bfb7e3653e44b2afaef638a71e94fa1d4ed37bf28f45ae3a25d9d1b0083",
@@ -33,5 +33,5 @@
     "skill-card.md": "47ed2d7530fdeb4e5e1ddd0d5689ac8367d8f3089ce36ad59423b3eaeb00468b",
     "skill.py": "fc4b0cec064eee87bb749e35368cd726b47233e422abae74a1ea725c684870b4"
   },
-  "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc"
+  "manifest_sha256": "e16d028f0ddde6237ce9ff0efbf1ebed1f7e8605aa26ccf4d89355a07438a933"
 }

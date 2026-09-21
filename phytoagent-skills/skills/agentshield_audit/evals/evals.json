@@ -264,7 +264,39 @@
       "prompt": "准备把新编译的黄芪研判Skill注册进Registry，请先做一次注册前审计，确认权限、负向用例和清单完整性。",
       "context": {
         "audit_id": "audit-agent-001",
-        "stage": "pre_registration"
+        "stage": "pre_registration",
+        "subject": {
+          "kind": "skill_package",
+          "manifest": {
+            "name": "huangqi_health_assessment",
+            "version": "0.3.0",
+            "permissions": {
+              "filesystem": [
+                "case_workspace:read",
+                "corpus:read",
+                "package:read"
+              ],
+              "network": "deny"
+            },
+            "files": {
+              "SKILL.md": "a",
+              "skill.py": "b",
+              "evals/evals.json": "c"
+            }
+          },
+          "evals": {
+            "contract_cases": [
+              {
+                "id": "valid_fixture",
+                "kind": "positive"
+              },
+              {
+                "id": "reject_unmatched_fixture",
+                "kind": "negative"
+              }
+            ]
+          }
+        }
       },
       "expected_call": {
         "skill": "agentshield_audit",

@@ -127,19 +127,25 @@ Compiler 不把这种用例伪装成通过的用例。`evals.json` 里它们是 
 
 | 项目 | 值 | 命令 |
 | --- | --- | --- |
-| 测试 | **230 passed**，全离线 | `python -m pytest -q` |
+| 测试 | **233 passed**，全离线 | `python -m pytest -q` |
 | 契约评测 | **28 / 28** | `python -m evals.run_contracts` |
 | 四 Skill 组合 | `completeness: complete` | `python -m demo.run_demo` |
 | 失败降级 | `completeness: partial`, `missing_inputs: ["knowledge"]` | `python -m demo.run_demo --simulate-failure herbal_knowledge` |
 | 三分钟演示 | `outcome: pass`（该值由运行结果推导，非预设） | `python -m demo.phytoforge_demo` |
+| 真实 preflight | `passed: true`，`failures: []`，22 次采样身份一致 | `python -m harness preflight` |
+| 真实 A/B | 两臂各 17 任务，0 失败；`forbidden_violations` 2→0 | `python -m harness ab --repeat 1` |
 | 语料索引 | 540 chunk，sha256 已记录 | `python -m corpus.vendor --source ...` |
 
 对应产物：`artifacts/pytest-v0.3-results.xml`、`artifacts/skill-contract-evals.json`、`artifacts/phytoforge-demo.json`、`artifacts/generated-skills/huangqi-health-assessment/`。
 
 ## 八、明确未做
 
-- **未调用任何模型**：StepFun、YOLO、Embedding、DGX GPU 均未调用。`agent_model_called` 与 `dgx_hardware_used` 在所有产物中都是 `false`。
-- **未跑 Agent A/B**：`harness/` 已实现并带离线测试，但仓库内无真实端点调用记录，`artifacts/agent-ab.json` 不存在。
-- **未接入 SkillSpector / OMS**：Registry 的 `scanned` / `evaluated` 仍为 `not_checked`，无 NVIDIA 官方 Verified 声明。
-- **无农学准确率、无 GPU 性能指标**：不提供推算值。
+- **StepFun 已真实调用，其余均未**：`step-5-preview` 上 preflight 三项硬检查全过，
+  A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`。但 YOLO、Embedding、
+  DGX GPU 仍未调用，`dgx_hardware_used` 在所有产物中都是 `false`。
+- **A/B 样本量不足**：`repeat=1`、17 个任务，`significance_test` 是 `none`。
+  差值只能当方向性观察，不能当结论。免费额度 10 RPM 限制了跑更多轮次。
+- **未接入 SkillSpector / OMS**：Registry 的 `scanned` / `evaluated` 仍为 `not_checked`，
+  无 NVIDIA 官方 Verified 声明。
+- **无农学准确率、无 GPU 性能指标**：工具返回内容仍是 fixture，无法支撑真实诊断结论。不提供推算值。
 - **策略层不是隔离层**：Python 仍运行在本进程，尚无安全沙箱、并发文件修改隔离或强制超时。

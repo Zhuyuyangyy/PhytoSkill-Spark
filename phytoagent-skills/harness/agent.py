@@ -248,6 +248,14 @@ class AgentHarness:
                                 if record.get("status") == "success"],
             "rejected_calls": [{"name": record["name"], "code": record.get("error_code")}
                                for record in tool_records if record.get("status") == "rejected"],
+            # Calls that reached a Skill and came back failed. Kept separate from
+            # rejected_calls, which never executed: a failed call is the fixture
+            # boundary working as designed, and the scorer must be able to tell the
+            # two apart instead of treating any failure as an Agent error.
+            "failed_tool_calls": [{"name": record["name"],
+                                   "code": record.get("error_code")}
+                                  for record in tool_records
+                                  if record.get("status") == "failed"],
             "final_text": final_text,
             "final_text_sha256": digest(final_text or ""),
             "usage_totals": usage_totals,

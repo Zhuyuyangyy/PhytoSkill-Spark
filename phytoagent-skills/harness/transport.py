@@ -27,6 +27,13 @@ BACKOFF_CAP_SECONDS = 60.0
 MAX_ERROR_BODY_CHARS = 400
 USER_AGENT = "phytoagent-skills-harness/0.2"
 
+# Minimum spacing between two requests, in seconds. A per-minute rate limit is
+# not solved by retrying harder: the retries themselves consume the budget and
+# push the next attempt further past the window. Spacing requests up front is
+# what keeps a run inside the limit. The free tier is 10 RPM, i.e. one request
+# every 6 s, so the default leaves a small margin.
+MIN_REQUEST_INTERVAL_SECONDS = 6.5
+
 
 class Poster(Protocol):
     """Sends one request. Returns ``(http_status, body_bytes)``."""
@@ -90,10 +97,16 @@ class Completion:
 
 class Transport:
     def __init__(self, config: HarnessConfig, poster: Poster | None = None, *,
-                 sleep=time.sleep):
+                 sleep=time.sleep, monotonic=time.monotonic,
+                 min_request_interval: float | None = MIN_REQUEST_INTERVAL_SECONDS):
         self.config = config
         self.poster = poster if poster is not None else urllib_poster(config.proxy)
         self._sleep = sleep
+        # Injected so an offline test with a scripted poster does not spend real
+        # seconds waiting for a rate-limit window that will never fill.
+        self._monotonic = monotonic
+        self._min_request_interval = min_request_interval
+        self._last_request_at: float | None = None
         self.model_history: list[str | None] = []
 
     def _scrub(self, text: str) -> str:
@@ -149,6 +162,7 @@ class Transport:
         last_error = "no attempt was made"
 
         for attempt in range(1, retries + 2):
+            self._await_turn()
             try:
                 status, raw = self.poster(config.endpoint, body, headers, config.timeout_seconds)
             except TransportError as exc:
@@ -178,6 +192,23 @@ class Transport:
         raise TransportError(
             f"{config.host} failed after {retries + 1} attempt(s). Last error: {last_error}"
         )
+
+    def _await_turn(self) -> None:
+        """Space requests out so a per-minute limit is never reached.
+
+        Only the successful path is throttled. A request that already failed with
+        429 has spent its turn, so waiting again would double the penalty; the
+        exponential backoff covers that case instead.
+        """
+        interval = self._min_request_interval
+        if interval is None or interval <= 0 or self._last_request_at is None:
+            self._last_request_at = self._monotonic()
+            return
+        elapsed = self._monotonic() - self._last_request_at
+        remaining = interval - elapsed
+        if remaining > 0:
+            self._sleep(remaining)
+        self._last_request_at = self._monotonic()
 
     def _backoff(self, attempt: int) -> float:
         """Exponential backoff. Linear backoff is not enough against per-minute limits."""
