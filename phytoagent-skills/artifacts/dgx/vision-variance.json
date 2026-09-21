@@ -1,0 +1,116 @@
+{
+  "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+  "image": "D:\\DRX SPARK\\phytoagent-skills\\artifacts\\dgx\\synthetic-leaf-03.png",
+  "species": "黄芪",
+  "repeats": 2,
+  "runs": [
+    {
+      "run": 0,
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "leaf_spot",
+          "region": {
+            "label": "spot",
+            "bbox_normalized": [
+              0.596875,
+              0.690625,
+              0.6796875,
+              0.7734375
+            ]
+          },
+          "affected_area_fraction": 0.0069,
+          "area_basis": "visible_leaf_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "leaf_spot",
+          "region": {
+            "label": "spot",
+            "bbox_normalized": [
+              0.7734375,
+              0.846875,
+              0.8359375,
+              0.909375
+            ]
+          },
+          "affected_area_fraction": 0.0039,
+          "area_basis": "visible_leaf_area",
+          "model_score": 0.9
+        }
+      ],
+      "latency_ms": 25592.8,
+      "eval_count": 310,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1124163",
+            "used_memory": "32990 MiB"
+          }
+        ]
+      }
+    },
+    {
+      "run": 1,
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "leaf_spot",
+          "region": {
+            "label": "spot",
+            "bbox_normalized": [
+              0.596875,
+              0.690625,
+              0.6796875,
+              0.7734375
+            ]
+          },
+          "affected_area_fraction": 0.0069,
+          "area_basis": "visible_leaf_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "leaf_spot",
+          "region": {
+            "label": "spot",
+            "bbox_normalized": [
+              0.7734375,
+              0.846875,
+              0.8359375,
+              0.909375
+            ]
+          },
+          "affected_area_fraction": 0.0039,
+          "area_basis": "visible_leaf_area",
+          "model_score": 0.9
+        }
+      ],
+      "latency_ms": 24772.2,
+      "eval_count": 310,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1124163",
+            "used_memory": "32990 MiB"
+          }
+        ]
+      }
+    }
+  ]
+}

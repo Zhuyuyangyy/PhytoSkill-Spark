@@ -1,0 +1,101 @@
+{
+  "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+  "runs": [
+    {
+      "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+      "image_usable": false,
+      "regions": [],
+      "latency_ms": 4021.1,
+      "eval_count": 17,
+      "prompt_eval_count": 443,
+      "load_duration_ns": 1441584,
+      "total_duration_ns": 4001898672,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1080627",
+            "used_memory": "32992 MiB"
+          }
+        ]
+      },
+      "image_file": "synthetic-leaf-01.png"
+    },
+    {
+      "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+      "image_usable": false,
+      "regions": [],
+      "latency_ms": 6654.0,
+      "eval_count": 17,
+      "prompt_eval_count": 443,
+      "load_duration_ns": 1919456,
+      "total_duration_ns": 6625832912,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1080627",
+            "used_memory": "32992 MiB"
+          }
+        ]
+      },
+      "image_file": "synthetic-leaf-02.png"
+    },
+    {
+      "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+      "image_usable": false,
+      "regions": [],
+      "latency_ms": 6021.0,
+      "eval_count": 17,
+      "prompt_eval_count": 587,
+      "load_duration_ns": 6851152,
+      "total_duration_ns": 6002183824,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1080627",
+            "used_memory": "32992 MiB"
+          }
+        ]
+      },
+      "image_file": "synthetic-leaf-03.png"
+    },
+    {
+      "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+      "image_usable": false,
+      "regions": [],
+      "latency_ms": 4919.6,
+      "eval_count": 17,
+      "prompt_eval_count": 251,
+      "load_duration_ns": 4186992,
+      "total_duration_ns": 4899422560,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1080627",
+            "used_memory": "32994 MiB"
+          }
+        ]
+      },
+      "image_file": "synthetic-noise-01.png"
+    }
+  ]
+}

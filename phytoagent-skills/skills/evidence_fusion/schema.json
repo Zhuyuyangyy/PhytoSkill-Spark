@@ -77,7 +77,7 @@
           },
           "provenance": {
             "type": "object",
-            "additionalProperties": false,
+            "additionalProperties": true,
             "required": [
               "data_origin",
               "skill",
@@ -86,7 +86,10 @@
             ],
             "properties": {
               "data_origin": {
-                "const": "synthetic_fixture"
+                "enum": [
+                  "synthetic_fixture",
+                  "dgx_live_inference"
+                ]
               },
               "skill": {
                 "const": "plant_vision"
@@ -95,7 +98,38 @@
                 "const": "0.2.0"
               },
               "model_called": {
-                "const": false
+                "type": "boolean"
+              },
+              "model": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "latency_ms": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "eval_count": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "dgx_hardware_used": {
+                "type": "boolean"
+              },
+              "gpu": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": true
               }
             }
           },
@@ -163,8 +197,7 @@
                   "maximum": 1
                 }
               }
-            },
-            "minItems": 1
+            }
           },
           "limitations": {
             "type": "array",
@@ -173,6 +206,9 @@
               "minLength": 1
             },
             "minItems": 1
+          },
+          "image_usable": {
+            "type": "boolean"
           }
         }
       },

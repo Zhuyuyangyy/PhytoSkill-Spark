@@ -49,6 +49,12 @@ def instantiate(skill_type: type, package: Path) -> BaseSkill:
     if "corpus" in accepted:
         from corpus.retriever import LocalCorpus
         extras["corpus"] = LocalCorpus()
+    if "model" in accepted:
+        # Left as None: the Skill applies its own default. Passing a model name
+        # here would make the executor decide something that belongs to the Skill.
+        extras["model"] = None
+    if "env_file" in accepted:
+        extras["env_file"] = None
     return skill_type(package, **extras)
 
 

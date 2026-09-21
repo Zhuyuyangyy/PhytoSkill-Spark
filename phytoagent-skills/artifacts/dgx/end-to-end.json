@@ -1,0 +1,195 @@
+{
+  "scope": "dgx_end_to_end_live_vision",
+  "agent_model_called": false,
+  "dgx_hardware_used": true,
+  "image": "artifacts\\dgx\\synthetic-leaf-03.png",
+  "species": "黄芪",
+  "case_id": "dgx-live-001",
+  "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+  "vision": {
+    "status": "success",
+    "case_id": "dgx-live-001",
+    "species": "黄芪",
+    "provenance": {
+      "data_origin": "dgx_live_inference",
+      "skill": "plant_vision",
+      "version": "0.2.0",
+      "model_called": true,
+      "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+      "dgx_hardware_used": true,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": [
+          {
+            "pid": "1124163",
+            "used_memory": "32990 MiB"
+          }
+        ]
+      },
+      "latency_ms": 26624.2,
+      "eval_count": 310
+    },
+    "image_usable": true,
+    "observations": [
+      {
+        "observation_id": "vision-region-01",
+        "phenotype": "leaf_spot",
+        "region": {
+          "label": "spot",
+          "bbox_normalized": [
+            0.596875,
+            0.690625,
+            0.6796875,
+            0.7734375
+          ]
+        },
+        "affected_area_fraction": 0.0069,
+        "area_basis": "visible_leaf_area",
+        "model_score": 0.9
+      },
+      {
+        "observation_id": "vision-region-02",
+        "phenotype": "leaf_spot",
+        "region": {
+          "label": "spot",
+          "bbox_normalized": [
+            0.7734375,
+            0.846875,
+            0.8359375,
+            0.909375
+          ]
+        },
+        "affected_area_fraction": 0.0039,
+        "area_basis": "visible_leaf_area",
+        "model_score": 0.9
+      }
+    ],
+    "limitations": [
+      "本次结果来自 DGX Spark 上的真实视觉模型推理，不是合成 fixture。",
+      "模型只描述可见区域，不诊断病原；model_score 是模型对自己描述的信心，不是病害概率。",
+      "可见叶片面积比例不是药效下降比例；表型观察不能替代植保人员鉴定。"
+    ]
+  },
+  "fusion": {
+    "status": "success",
+    "case_id": "dgx-live-001",
+    "species": "黄芪",
+    "provenance": {
+      "data_origin": "synthetic_fixture",
+      "skill": "evidence_fusion",
+      "version": "0.2.0",
+      "model_called": false
+    },
+    "summary": "部分来源缺失，保留可用结果与缺失列表；不能形成完整诊断。",
+    "completeness": "partial",
+    "conclusion_strength": "synthetic_only",
+    "missing_inputs": [
+      "environment",
+      "knowledge"
+    ],
+    "source_ids": {
+      "vision": [
+        "vision-region-01",
+        "vision-region-02"
+      ],
+      "environment": [],
+      "knowledge": []
+    },
+    "evidence_chain": [
+      {
+        "observation_id": "vision-region-01",
+        "phenotype": "leaf_spot",
+        "environment_factor_ids": [],
+        "knowledge_evidence_ids": [],
+        "relationship": "co_occurrence_only"
+      },
+      {
+        "observation_id": "vision-region-02",
+        "phenotype": "leaf_spot",
+        "environment_factor_ids": [],
+        "knowledge_evidence_ids": [],
+        "relationship": "co_occurrence_only"
+      }
+    ],
+    "unlinked_evidence_ids": [],
+    "recommendations": [
+      "用真实图像、带单位的测量和可核实文献替换fixture后再研判。",
+      "复核物种、生育期、土壤水分及采样时间；必要时由植保人员鉴定。"
+    ],
+    "limitations": [
+      "输入为合成fixture，仅验证证据连接；不能用于真实植物诊断。",
+      "共同出现不等于因果关系；不合成疾病概率或药效下降比例。",
+      "本次结果来自 DGX Spark 上的真实视觉模型推理，不是合成 fixture。",
+      "模型只描述可见区域，不诊断病原；model_score 是模型对自己描述的信心，不是病害概率。",
+      "可见叶片面积比例不是药效下降比例；表型观察不能替代植保人员鉴定。",
+      "缺失来源：environment, knowledge"
+    ]
+  },
+  "audit": {
+    "trust_level": "LIMITED",
+    "claims": [
+      {
+        "text": "观察到leaf_spot区域 spot",
+        "evidence_ids": [
+          "vision-region-01"
+        ],
+        "status": "supported"
+      },
+      {
+        "text": "观察到leaf_spot区域 spot",
+        "evidence_ids": [
+          "vision-region-02"
+        ],
+        "status": "supported"
+      }
+    ],
+    "supported_claims": [
+      {
+        "text": "观察到leaf_spot区域 spot",
+        "evidence_ids": [
+          "vision-region-01"
+        ],
+        "status": "supported"
+      },
+      {
+        "text": "观察到leaf_spot区域 spot",
+        "evidence_ids": [
+          "vision-region-02"
+        ],
+        "status": "supported"
+      }
+    ],
+    "refused_claims": [],
+    "violations": [],
+    "evidence_ids": [
+      "vision-region-01",
+      "vision-region-02"
+    ]
+  },
+  "trace": {
+    "trace_id": "trace-dgx-e2e-001",
+    "scope": "agentshield_runtime_local",
+    "agent_model_called": false,
+    "dgx_hardware_used": false,
+    "nvidia_verified": false,
+    "calls": [],
+    "blocked": []
+  },
+  "gpu": {
+    "index": "0",
+    "name": "NVIDIA GB10",
+    "driver": "580.142",
+    "memory_total": "[N/A]",
+    "memory_used": "[N/A]",
+    "processes": [
+      {
+        "pid": "1124163",
+        "used_memory": "32990 MiB"
+      }
+    ]
+  }
+}

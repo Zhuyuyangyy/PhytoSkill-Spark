@@ -27,11 +27,26 @@ MANIFEST_SCHEMA = {
                             "items": {"enum": ["fixture", "corpus", "replay", "live"]}},
         "capabilities": {"type": "array", "uniqueItems": True, "items": {"type": "string"}},
         "permissions": {"$ref": "#/$defs/permissions"},
+        "live_requirements": {"$ref": "#/$defs/live_requirements"},
         "files": {"type": "object", "minProperties": 3,
                   "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
         "manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     },
     "$defs": {
+        "live_requirements": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["fallback"],
+            "properties": {
+                "dgx": {"type": "string", "minLength": 1, "maxLength": 300},
+                "model": {"type": "string", "minLength": 1, "maxLength": 300},
+                "corpus": {"type": "string", "minLength": 1, "maxLength": 300},
+                # A package that can reach real hardware must say what happens
+                # when it cannot. "none" means a hard error, never a silent
+                # fallback to a synthetic answer.
+                "fallback": {"type": "string", "minLength": 1, "maxLength": 300},
+            },
+        },
         "permissions": {
             "type": "object",
             "additionalProperties": False,

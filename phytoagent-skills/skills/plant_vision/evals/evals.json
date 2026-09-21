@@ -40,8 +40,9 @@
       },
       "expect": {
         "status": "failed",
-        "error_code": "UnsupportedModeError"
-      }
+        "error_code": "ContractError"
+      },
+      "note": "live 模式不会退回 fixture：fixture:// 占位符被明确拒绝，因为用合成数据回答真实请求就是伪造观察。"
     },
     {
       "id": "reject_unmatched_fixture",

@@ -1,0 +1,46 @@
+{
+  "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+  "image_usable": false,
+  "regions": [],
+  "latency_ms": 34751.0,
+  "eval_count": 17,
+  "prompt_eval_count": 443,
+  "load_duration_ns": 28919880960,
+  "total_duration_ns": 34729441536,
+  "gpu": {
+    "index": "0",
+    "name": "NVIDIA GB10",
+    "driver": "580.142",
+    "memory_total": "[N/A]",
+    "memory_used": "[N/A]",
+    "processes": [
+      {
+        "pid": "1080627",
+        "used_memory": "32980 MiB"
+      }
+    ]
+  },
+  "gpu_ps": {
+    "models": [
+      {
+        "name": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+        "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+        "size": 33380567612,
+        "digest": "95c9635e54b021f5dd0aa39efe97b26ac3c37ac550a3803f557de2f6a9904f74",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "27.3B",
+          "quantization_level": "Q4_K_M"
+        },
+        "expires_at": "2026-09-21T04:54:01.883831072Z",
+        "size_vram": 33380567612,
+        "context_length": 262144
+      }
+    ]
+  }
+}

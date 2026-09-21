@@ -12,6 +12,8 @@ PhytoSkill-Spark 把药用植物异常研判拆成四个可独立发现、调用
 
 **真实模型已跑通**：`step-5-preview` 上 preflight 三项硬检查全过，A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`。真实差异见 [真实 Harness](docs/harness.md)。
 
+**DGX Spark 已连通**：`gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0 / Docker），通过 ollama 跑通真实视觉推理，`plant_vision` 新增 `live` 模式，产物 `artifacts/dgx/`。见 [DGX 实测](docs/dgx-spark.md)。
+
 ## 立即运行
 
 需要 Python 3.11+，PowerShell 示例：
@@ -132,7 +134,8 @@ phytoagent-skills/
 ├── demo/                  phytoforge_demo（三分钟闭环）、四Skill组合、SDK示例
 ├── evals/                 包内fixture契约评测器
 ├── scripts/seal_skills.py 发布者显式封包
-└── tests/                 233 项全离线测试
+├── dgx/                   DGX Spark SSH 客户端、真实视觉推理、端到端脚本
+└── tests/                 271 项全离线测试
 ```
 
 ## 治理与评测的实际范围
@@ -146,6 +149,8 @@ phytoagent-skills/
 | Catalog / Documented | 五包可发现；含触发边界、说明、契约和 Skill Card |
 | Integrity / Signed | SHA-256 清单 + 项目 Ed25519 签名；公钥在包外固定 |
 | Fixture contracts | `evals.run_contracts` 28/28 |
+| DGX Spark 实测 | 已连通 `gx10-9ec6`（GB10 / aarch64 / CUDA 13.0），真实视觉推理已跑通，`artifacts/dgx/` |
+| plant_vision live 模式 | 真实 GPU 推理；无 fixture 回退，缺节点或缺密钥即报错 |
 | Agent 触发与 A/B | 每包有正向、负向、缺参数用例；**已真实运行**：`step-5-preview`，17 任务 × 2 臂，见 `artifacts/agent-ab.json` |
 | SkillSpector / OMS | 未接入；**没有** NVIDIA 官方 Verified 声明 |
 | DGX / 模型准确率 | **未实测**，不提供推算指标 |

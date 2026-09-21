@@ -33,7 +33,13 @@ def test_independent_discovery_and_progressive_loading(domain_registry):
     assert len(selected["instructions"]) > 0
 
 
-@pytest.mark.parametrize("name", SKILL_NAMES[:3])
+# Skills whose adapter is a sealed fixture: a mismatched case must fail loudly
+# rather than fall back to a synthetic answer. plant_vision is excluded because it
+# now also implements live mode (covered separately below).
+FIXTURE_ONLY = ("growth_risk", "herbal_knowledge")
+
+
+@pytest.mark.parametrize("name", FIXTURE_ONLY)
 def test_fixture_cannot_answer_real_requests_or_live_calls(domain_registry, name):
     executor = SkillExecutor(domain_registry)
     payload = read_json(PROJECT_ROOT / "skills" / name / "examples/request.json")
@@ -42,6 +48,34 @@ def test_fixture_cannot_answer_real_requests_or_live_calls(domain_registry, name
         executor.execute(name, payload)
     with pytest.raises(UnsupportedModeError):
         executor.execute(name, payload, mode="live")
+
+
+def test_plant_vision_fixture_refuses_a_real_case(domain_registry):
+    executor = SkillExecutor(domain_registry)
+    with pytest.raises(FixtureMismatchError):
+        executor.execute("plant_vision", {"case_id": "user-real-case", "species": "黄芪",
+                                          "image_path": "fixture://huangqi-leaf-01"})
+
+
+def test_plant_vision_live_mode_refuses_a_fixture_placeholder(domain_registry):
+    """live mode reaches the GPU; a fixture:// path is not an image.
+
+    Accepting the placeholder would mean answering a real request with synthetic
+    data, which is exactly what the fixture boundary forbids.
+    """
+    executor = SkillExecutor(domain_registry)
+    with pytest.raises(ContractError, match="fixture://"):
+        executor.execute("plant_vision", {"case_id": "demo-huangqi-001", "species": "黄芪",
+                                          "image_path": "fixture://huangqi-leaf-01"},
+                         mode="live")
+
+
+def test_plant_vision_live_mode_refuses_a_missing_image(domain_registry):
+    executor = SkillExecutor(domain_registry)
+    with pytest.raises(ContractError, match="image not found"):
+        executor.execute("plant_vision", {"case_id": "demo-huangqi-001", "species": "黄芪",
+                                          "image_path": "case_workspace/absent.jpg"},
+                         mode="live")
 
 
 def test_composition_contract_snapshots_match_upstream_outputs():

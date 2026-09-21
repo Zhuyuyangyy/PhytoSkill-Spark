@@ -8,7 +8,8 @@
   "input_schema": "schema.json#/input",
   "output_schema": "schema.json#/output",
   "supported_modes": [
-    "fixture"
+    "fixture",
+    "live"
   ],
   "capabilities": [
     "plant_vision"
@@ -18,5 +19,10 @@
       "case_workspace:read"
     ],
     "network": "deny"
+  },
+  "live_requirements": {
+    "dgx": "SSH access to a DGX Spark node via PHYTO_DGX_* credentials",
+    "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest (ollama)",
+    "fallback": "none; a missing node or credential is a hard error"
   }
 }
