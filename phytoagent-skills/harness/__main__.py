@@ -139,6 +139,18 @@ def main(argv: list[str] | None = None) -> int:
     ab.add_argument("--kind", action="append", help="restrict to a task kind")
     ab.add_argument("--repeat", type=int, default=1)
     ab.add_argument("--output", type=Path, default=Path("artifacts/agent-ab.json"))
+    ab.add_argument("--baseline-prompt-tokens", type=int, default=6000,
+                    help="per-task prompt tokens used for the cost estimate")
+    ab.add_argument("--baseline-completion-tokens", type=int, default=600,
+                    help="per-task completion tokens used for the cost estimate")
+    ab.add_argument("--real-images", action="store_true",
+                    help="run only the real-photograph tasks. Each carries its own "
+                         "mode (live/herb) and needs the images on disk plus a "
+                         "reachable DGX Spark node. Not mixable with the fixture "
+                         "set, whose inputs every real mode refuses by design.")
+    ab.add_argument("--tool-mode", default="fixture", choices=["fixture", "live", "herb"],
+                    help="default mode for tasks that do not specify one. Real-image "
+                         "tasks always carry their own.")
 
     args = parser.parse_args(argv)
     try:
@@ -188,7 +200,7 @@ def main(argv: list[str] | None = None) -> int:
             if not chosen:
                 print("no task matched", file=sys.stderr)
                 return EXIT_CONFIG
-            runner = AbRunner(config, tasks=[chosen[0]],
+            runner = AbRunner(config, tasks=[chosen[0]], tool_mode=args.tool_mode,
                               progress=lambda message: print(message, file=sys.stderr))
             report = runner.run(repeat=1)
             for row in report["scored"]:
@@ -205,8 +217,19 @@ def main(argv: list[str] | None = None) -> int:
         if not tasks:
             print("no task matched", file=sys.stderr)
             return EXIT_CONFIG
-        runner = AbRunner(config, tasks=tasks,
+        from harness.tasks import build_tasks as _build
+        if getattr(args, "real_images", False):
+            tasks = _build(only_real_images=True)
+        runner = AbRunner(config, tasks=tasks, tool_mode=args.tool_mode,
                           progress=lambda message: print(message, file=sys.stderr))
+        runner._baseline_prompt_tokens = args.baseline_prompt_tokens
+        runner._baseline_completion_tokens = args.baseline_completion_tokens
+        # Print the estimate before spending anything: an exhausted account returns
+        # HTTP 402 for every model, and a partial run looks like a result.
+        estimate = runner._cost_estimate()
+        if estimate.get("known_price"):
+            print(json.dumps({"cost_estimate": estimate}, ensure_ascii=False, indent=2),
+                  file=sys.stderr)
         report = runner.run(repeat=args.repeat)
         write_report(report, args.output)
         _print({"arms_summary": report["arms_summary"], "comparison": report["comparison"],

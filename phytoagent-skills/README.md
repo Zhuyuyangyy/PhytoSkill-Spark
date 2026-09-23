@@ -158,7 +158,7 @@ phytoagent-skills/
 ├── evals/                 包内fixture契约评测器
 ├── scripts/seal_skills.py 发布者显式封包
 ├── dgx/                   DGX Spark：SSH 客户端、叶片/药材视觉推理、批量与全链路脚本
-└── tests/                 323 项全离线测试
+└── tests/                 362 项全离线测试
 ```
 
 ## 治理与评测的实际范围
@@ -172,9 +172,13 @@ phytoagent-skills/
 | Catalog / Documented | 五包可发现；含触发边界、说明、契约和 Skill Card |
 | Integrity / Signed | SHA-256 清单 + 项目 Ed25519 签名；公钥在包外固定 |
 | Fixture contracts | `evals.run_contracts` 28/28 |
+| 观察缓存 | 按图片内容哈希；实测 15 张图 411s → 12s，结果逐字节一致 |
+| Step Plan 通道 | **另一额度池**：普通 API 返回 402 时此通道仍可用，`PHYTO_STEPFUN_BASE_URL=step_plan`；不受 V0 的 10 RPM 限制 |
+| 降级矩阵 | 缺凭据/缺图/fixture 占位/损坏缓存/不支持的模式，全部明确报错不回退 |
 | DGX Spark 实测 | 已连通 `gx10-9ec6`（GB10 / aarch64 / CUDA 13.0），真实视觉推理已跑通，`artifacts/dgx/` |
 | plant_vision live / herb 模式 | 真实 GPU 推理；无 fixture 回退，缺节点或缺密钥即报错 |
-| Agent 触发与 A/B | 每包有正向、负向、缺参数用例；**已真实运行**：`step-5-preview`，17 任务 × 2 臂，见 `artifacts/agent-ab.json` |
+| Agent 触发与 A/B | **已真实运行**：`step-5-preview`，17 任务 × 2 臂见 `artifacts/agent-ab.json`；3 个真实图像任务见 `artifacts/agent-ab-real.json` |
+| 真实图像任务 | **已跑通**：3 个任务 × 2 臂，StepFun 真实调用 `plant_vision` 并报告 DGX 真实推理结果；负向任务两臂都拒绝编造 |
 | SkillSpector / OMS | 未接入；**没有** NVIDIA 官方 Verified 声明 |
 | DGX / 模型准确率 | **未实测**，不提供推算指标 |
 | 本地语料 | 已 vendored 并带哈希；确定性检索，无 Embedding / 向量库 |

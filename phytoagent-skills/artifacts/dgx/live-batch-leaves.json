@@ -10,7 +10,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 2090.1,
+      "latency_ms": 5940.2,
       "eval_count": 17,
       "gpu": {
         "index": "0",
@@ -44,7 +44,7 @@
           "model_score": 0.9
         }
       ],
-      "latency_ms": 23491.0,
+      "latency_ms": 32853.5,
       "eval_count": 174,
       "gpu": {
         "index": "0",
@@ -78,7 +78,7 @@
           "model_score": 0.75
         }
       ],
-      "latency_ms": 12251.4,
+      "latency_ms": 21787.5,
       "eval_count": 106,
       "gpu": {
         "index": "0",
@@ -95,7 +95,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 2966.2,
+      "latency_ms": 7666.8,
       "eval_count": 17,
       "gpu": {
         "index": "0",
@@ -112,7 +112,7 @@
       "status": "success",
       "image_usable": false,
       "observations": [],
-      "latency_ms": 3058.8,
+      "latency_ms": 18273.0,
       "eval_count": 28,
       "gpu": {
         "index": "0",
@@ -129,7 +129,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 2030.8,
+      "latency_ms": 17046.3,
       "eval_count": 17,
       "gpu": {
         "index": "0",
@@ -146,7 +146,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 6472.3,
+      "latency_ms": 16149.6,
       "eval_count": 69,
       "gpu": {
         "index": "0",
@@ -163,7 +163,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 14133.0,
+      "latency_ms": 19425.3,
       "eval_count": 165,
       "gpu": {
         "index": "0",
@@ -180,7 +180,7 @@
       "status": "success",
       "image_usable": false,
       "observations": [],
-      "latency_ms": 32671.1,
+      "latency_ms": 46073.4,
       "eval_count": 400,
       "gpu": {
         "index": "0",
@@ -197,7 +197,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 6207.1,
+      "latency_ms": 28949.0,
       "eval_count": 66,
       "gpu": {
         "index": "0",
@@ -214,7 +214,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 6074.4,
+      "latency_ms": 26384.5,
       "eval_count": 67,
       "gpu": {
         "index": "0",
@@ -248,7 +248,7 @@
           "model_score": 0.8
         }
       ],
-      "latency_ms": 13711.2,
+      "latency_ms": 32636.2,
       "eval_count": 160,
       "gpu": {
         "index": "0",
@@ -265,7 +265,7 @@
       "status": "success",
       "image_usable": false,
       "observations": [],
-      "latency_ms": 9249.1,
+      "latency_ms": 35990.8,
       "eval_count": 104,
       "gpu": {
         "index": "0",
@@ -282,7 +282,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 5795.1,
+      "latency_ms": 33885.1,
       "eval_count": 62,
       "gpu": {
         "index": "0",
@@ -299,7 +299,7 @@
       "status": "success",
       "image_usable": true,
       "observations": [],
-      "latency_ms": 6560.7,
+      "latency_ms": 24955.7,
       "eval_count": 64,
       "gpu": {
         "index": "0",

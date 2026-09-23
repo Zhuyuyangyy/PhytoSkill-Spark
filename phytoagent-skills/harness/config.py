@@ -26,6 +26,29 @@ DEFAULT_DOTENV = PROJECT_ROOT / ".env"
 DEFAULT_BASE_URL = "https://api.stepfun.com/v1"
 DEFAULT_MODEL = "step-3.7-flash"
 
+# Step Plan is a **separate channel with its own Credit pool**. The published
+# distinction matters in practice: an account whose pay-as-you-go channel returns
+# HTTP 402 "quota_exceeded" can still work on this one, because the two channels'
+# quotas are independent. Verified on 2026-09-21 — same key, /v1 -> 402,
+# /step_plan/v1 -> 200. That is why this is selectable rather than a footnote.
+STEP_PLAN_BASE_URL = "https://api.stepfun.com/step_plan/v1"
+
+# Published list prices (CNY per 1M tokens), kept here so a run can report what it
+# is about to cost before it spends anything. Source: StepFun 开放平台「定价与限速」.
+# step-5-preview is ~5x the input and ~2.5x the output price of step-3.7-flash, and
+# step-3.5-flash is cheaper again. For tool-selection experiments the extra
+# reasoning capability buys nothing measurable, so the default is the cheap one.
+MODEL_PRICES_PER_MILLION = {
+    "step-5-preview": {"input": 7.0, "output": 20.0},
+    "step-3.7-flash": {"input": 1.35, "output": 8.1},
+    "step-3.5-flash": {"input": 0.7, "output": 2.1},
+    "step-3.5-flash-2603": {"input": 0.7, "output": 2.1},
+}
+
+# Only these models are known to honour `tools`. Others may accept the parameter
+# and silently ignore it, which would make an A/B about tool selection meaningless.
+TOOL_CALLING_MODELS = ("step-3.7-flash", "step-3.5-flash", "step-3.5-flash-2603")
+
 ENV_BASE_URL = "PHYTO_STEPFUN_BASE_URL"
 ENV_MODEL = "PHYTO_STEPFUN_MODEL"
 ENV_API_KEY = "PHYTO_STEPFUN_API_KEY"
@@ -79,6 +102,23 @@ def _resolve(environ: dict[str, str], dotenv: dict[str, str], key: str) -> str |
         return value.strip()
     fallback = dotenv.get(key)
     return fallback.strip() if fallback and fallback.strip() else None
+
+
+BASE_URL_ALIASES = {
+    # "step_plan" names the subscription channel without making the operator
+    # remember the full path. It is a different quota pool from the default.
+    "step_plan": STEP_PLAN_BASE_URL,
+    "step-plan": STEP_PLAN_BASE_URL,
+    "default": DEFAULT_BASE_URL,
+}
+
+
+def _resolve_base_url(environ: dict[str, str], dotenv: dict[str, str]) -> str:
+    """Resolve the endpoint, accepting a shorthand as well as a full URL."""
+    raw = _resolve(environ, dotenv, ENV_BASE_URL)
+    if raw is None:
+        return DEFAULT_BASE_URL
+    return BASE_URL_ALIASES.get(raw.strip().lower(), raw.strip())
 
 
 def _integer(environ, dotenv, key: str, default: int, minimum: int) -> int:
@@ -218,7 +258,7 @@ class HarnessConfig:
 
         reasoning = _resolve(environ, dotenv, ENV_REASONING_EFFORT)
         return cls(
-            base_url=_resolve(environ, dotenv, ENV_BASE_URL) or DEFAULT_BASE_URL,
+            base_url=_resolve_base_url(environ, dotenv),
             model=_resolve(environ, dotenv, ENV_MODEL) or DEFAULT_MODEL,
             api_key=api_key,
             timeout_seconds=_number(environ, dotenv, ENV_TIMEOUT) or 90.0,

@@ -21,6 +21,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from dgx.cache import ObservationCache, cached_vision
 from dgx.client import DgxClient, load_credentials
 from dgx.herb_vision import run_vision as run_herb_vision
 from dgx.vision import run_vision as run_leaf_vision
@@ -50,11 +51,15 @@ class PlantVisionSkill(BaseSkill):
     """One narrowly scoped, contract-validated capability."""
 
     def __init__(self, package_dir, *, model: str | None = None,
-                 env_file: str | Path | None = None):
+                 env_file: str | Path | None = None,
+                 cache: ObservationCache | None = None):
         super().__init__(package_dir)
         self._model = model or DEFAULT_MODEL
         # None means "use the repository default", not "no credentials".
         self._env_file = Path(env_file) if env_file is not None else _default_env_file()
+        # One inference costs 12-167 s and contends with other work on the node.
+        # Both A/B arms and every rerun would otherwise pay it again.
+        self._cache = cache if cache is not None else ObservationCache()
 
     @property
     def model(self) -> str:
@@ -64,10 +69,10 @@ class PlantVisionSkill(BaseSkill):
         if mode == "fixture":
             return self._run_fixture(payload)
         if mode == "live":
-            return self._run_real(payload, runner=run_leaf_vision,
+            return self._run_real(payload, mode=mode, runner=run_leaf_vision,
                                   data_origin="dgx_live_inference")
         if mode == "herb":
-            return self._run_real(payload, runner=run_herb_vision,
+            return self._run_real(payload, mode=mode, runner=run_herb_vision,
                                   data_origin="dgx_herb_inference")
         raise UnsupportedModeError(f"plant_vision does not support mode {mode!r}")
 
@@ -77,7 +82,7 @@ class PlantVisionSkill(BaseSkill):
         """Delegate to the sealed fixture; a mismatch is an explicit failure."""
         return FixtureSkill.run(self, payload, mode="fixture")
 
-    def _run_real(self, payload: dict, *, runner, data_origin: str) -> dict:
+    def _run_real(self, payload: dict, *, mode: str, runner, data_origin: str) -> dict:
         """Run real inference on the DGX Spark node. No fixture fallback."""
         image_path = payload.get("image_path")
         if not isinstance(image_path, str) or not image_path.strip():
@@ -97,12 +102,14 @@ class PlantVisionSkill(BaseSkill):
         except ValueError as exc:
             raise ContractError(f"DGX credentials unavailable: {exc}") from exc
 
+        image_bytes = path.read_bytes()
         with DgxClient(credentials) as client:
             # A large photograph on a contended node takes minutes: the observed
             # range is ~12 s to ~167 s for the same code path. 600 s is not
             # generous, it is what the slowest real image needed.
-            call = runner(client, image_bytes=path.read_bytes(),
-                          species=species, model=self._model, timeout=900)
+            call = cached_vision(client, cache=self._cache, image_bytes=image_bytes,
+                                 species=species, model=self._model, mode=mode,
+                                 runner=runner, timeout=900)
 
         observations = []
         for index, region in enumerate(call["regions"], start=1):
@@ -138,6 +145,7 @@ class PlantVisionSkill(BaseSkill):
                 "gpu": call["gpu"],
                 "latency_ms": call["latency_ms"],
                 "eval_count": call["eval_count"],
+                "observation_cache": call.get("cache", "unknown"),
             },
             "image_usable": call["image_usable"],
             "observations": observations,

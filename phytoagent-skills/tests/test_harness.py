@@ -195,6 +195,97 @@ class TestTransport:
         assert poster.requests == []
 
 
+class TestStepPlanChannel:
+    """Step Plan is a separate Credit pool, and the alias must reach it.
+
+    Verified on 2026-09-21: the same key returned HTTP 402 on /v1 and 200 on
+    /step_plan/v1. If the alias silently resolved to the default, a working
+    subscription would look dead.
+    """
+
+    def test_the_shorthand_resolves_to_the_step_plan_channel(self, monkeypatch):
+        monkeypatch.setenv("PHYTO_STEPFUN_BASE_URL", "step_plan")
+        from harness.config import STEP_PLAN_BASE_URL, HarnessConfig
+        assert HarnessConfig.from_env().base_url == STEP_PLAN_BASE_URL
+        assert "/step_plan/" in STEP_PLAN_BASE_URL
+
+    @pytest.mark.parametrize("alias", ["step_plan", "step-plan", "STEP_PLAN"])
+    def test_the_alias_is_case_and_separator_insensitive(self, monkeypatch, alias):
+        monkeypatch.setenv("PHYTO_STEPFUN_BASE_URL", alias)
+        from harness.config import STEP_PLAN_BASE_URL, HarnessConfig
+        assert HarnessConfig.from_env().base_url == STEP_PLAN_BASE_URL
+
+    def test_default_resolves_to_the_pay_as_you_go_channel(self, monkeypatch, tmp_path):
+        """With neither an env var nor a dotenv, the pay-as-you-go channel is used."""
+        monkeypatch.delenv("PHYTO_STEPFUN_BASE_URL", raising=False)
+        # Point the dotenv somewhere empty, or the repository's real .env (which
+        # selects step_plan) would answer for it.
+        monkeypatch.setattr("harness.config.DEFAULT_DOTENV", tmp_path / "absent.env")
+        from harness.config import DEFAULT_BASE_URL, HarnessConfig
+        assert HarnessConfig.from_env().base_url == DEFAULT_BASE_URL
+        assert "/step_plan/" not in DEFAULT_BASE_URL
+
+    def test_an_explicit_url_is_passed_through_unchanged(self, monkeypatch):
+        url = "https://api.stepfun.com/step_plan/v1"
+        monkeypatch.setenv("PHYTO_STEPFUN_BASE_URL", url)
+        from harness.config import HarnessConfig
+        assert HarnessConfig.from_env().base_url == url
+
+    def test_the_endpoint_is_built_from_the_base_url(self, monkeypatch):
+        monkeypatch.setenv("PHYTO_STEPFUN_BASE_URL", "step_plan")
+        from harness.config import HarnessConfig
+        config = HarnessConfig.from_env()
+        assert config.endpoint == "https://api.stepfun.com/step_plan/v1/chat/completions"
+
+    def test_a_real_environment_wins_over_the_alias_file(self, tmp_path, monkeypatch):
+        """A shared host can override a dotenv without editing it."""
+        monkeypatch.setenv("PHYTO_STEPFUN_BASE_URL", "default")
+        env_file = tmp_path / ".env"
+        env_file.write_text("PHYTO_STEPFUN_BASE_URL=step_plan" + chr(10), encoding="utf-8")
+        from harness.config import DEFAULT_BASE_URL, HarnessConfig
+        monkeypatch.setattr("harness.config.DEFAULT_DOTENV", env_file)
+        assert HarnessConfig.from_env().base_url == DEFAULT_BASE_URL
+
+
+class TestCostEstimate:
+    """A run must be able to say what it will cost before it spends anything."""
+
+    def test_the_estimate_uses_the_published_prices(self):
+        from harness.ab import estimate_cost
+        result = estimate_cost(tasks=17, arms=2, prompt_tokens=6000,
+                               completion_tokens=600, model="step-5-preview")
+        assert result["known_price"] is True
+        assert result["input_price_per_million"] == 7.0
+        assert result["output_price_per_million"] == 20.0
+        assert result["estimated_cost_cny"] > 0
+
+    def test_a_cheaper_model_estimates_less(self):
+        from harness.ab import estimate_cost
+        kwargs = dict(tasks=17, arms=2, prompt_tokens=6000, completion_tokens=600)
+        flagship = estimate_cost(model="step-5-preview", **kwargs)["estimated_cost_cny"]
+        mid = estimate_cost(model="step-3.7-flash", **kwargs)["estimated_cost_cny"]
+        cheap = estimate_cost(model="step-3.5-flash", **kwargs)["estimated_cost_cny"]
+        assert flagship > mid > cheap > 0
+
+    def test_an_unknown_model_reports_no_price_rather_than_guessing(self):
+        from harness.ab import estimate_cost
+        result = estimate_cost(tasks=1, arms=1, prompt_tokens=1,
+                               completion_tokens=1, model="not-a-model")
+        assert result["known_price"] is False
+        assert "estimated_cost_cny" not in result
+
+    def test_the_estimate_scales_with_tasks_and_arms(self):
+        from harness.ab import estimate_cost
+        # Use a volume where rounding to 4 decimals is negligible; at tiny volumes
+        # the rounding dominates and the test would measure formatting, not scaling.
+        single = estimate_cost(tasks=10, arms=1, prompt_tokens=100000,
+                               completion_tokens=10000, model="step-3.7-flash")
+        double = estimate_cost(tasks=20, arms=2, prompt_tokens=100000,
+                               completion_tokens=10000, model="step-3.7-flash")
+        assert double["estimated_cost_cny"] == pytest.approx(
+            single["estimated_cost_cny"] * 4, rel=0.001)
+
+
 class TestRequestThrottle:
     """A per-minute limit is met by spacing requests, not by retrying harder."""
 

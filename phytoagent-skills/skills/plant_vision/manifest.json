@@ -42,7 +42,7 @@
     "schema.json": "f49c1ab6050638bac46f0c2a0b8f8ffa9830f9dcd2fa60ff9a13e95970397f7b",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "f1771e1d3bafd26f3fb949eea72d3dadb0ed2134469e3bf38053ea8e1dd672ab",
-    "skill.py": "be6ad7f95b2537320179f27e2fb60f53b8acc29b619d231e3626e87426e60168"
+    "skill.py": "06aaea0e37acef09bd9a0c449ecf7da19248884747de5b741cb0f621eed7d0b8"
   },
-  "manifest_sha256": "fd22067cf88df31378a3250768d2e8d45f6bff9b14e3fd884a5697c2f122d42d"
+  "manifest_sha256": "b266d15891b1425041d65d31fe57f5591d73d4dc725a2f0ac62f1ca91c442b44"
 }

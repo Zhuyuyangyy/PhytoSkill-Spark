@@ -1,0 +1,1002 @@
+{
+  "scope": "agent_ab_real_model_fixture_tools",
+  "generated_at_utc": "2026-09-23T09:04:33+00:00",
+  "environment": {
+    "hostname": "LAPTOP-CKUGPPR5",
+    "machine": "AMD64",
+    "system": "Windows",
+    "release": "11",
+    "python_version": "3.13.14",
+    "nvidia_smi_present": false,
+    "gpus": [],
+    "cuda_visible_devices": null
+  },
+  "provider": {
+    "kind": "openai_compatible_chat_completions",
+    "host": "api.stepfun.com",
+    "endpoint_path": "/chat/completions"
+  },
+  "config": {
+    "base_url": "https://api.stepfun.com/step_plan/v1",
+    "host": "api.stepfun.com",
+    "model_requested": "step-5-preview",
+    "api_key_present": true,
+    "api_key_source": "PHYTO_STEPFUN_API_KEY",
+    "timeout_seconds": 90.0,
+    "max_retries": 4,
+    "max_turns": 6,
+    "sampling_parameters_sent": {},
+    "reasoning_effort_pinned": false,
+    "proxy_configured": false,
+    "trace_payload": "hash",
+    "dotenv_loaded": true
+  },
+  "single_variable": "Skill 指令是否出现在 system prompt 中",
+  "tool_mode": "fixture",
+  "cost_estimate": {
+    "model": "step-5-preview",
+    "known_price": true,
+    "input_price_per_million": 7.0,
+    "output_price_per_million": 20.0,
+    "estimated_prompt_tokens": 36000,
+    "estimated_completion_tokens": 3600,
+    "estimated_cost_cny": 0.324
+  },
+  "task_tool_modes": {
+    "real_vision:herb_slice_quality": "herb",
+    "real_vision:leaf_phenotype": "live",
+    "real_vision:leaf_healthy_is_empty": "live"
+  },
+  "held_constant": [
+    "model",
+    "endpoint",
+    "sampling_parameters",
+    "tool_definitions",
+    "task_set",
+    "harness_code",
+    "max_turns",
+    "turn_loop"
+  ],
+  "tool_definitions_sha256": "dc037204917dfb4cf4ca5541b9e91f4cd6e11263cbabcf54cf28511de6e0a57f",
+  "skill_packages": {
+    "agentshield_audit": {
+      "manifest_sha256": "dfa400407f5a56aabc6f1b5606b48e4305302ec46e93d1db0785448d7236f636",
+      "instructions_sha256": "f0f8e181ce45ad885d91710ea43597c497d3a4898e93b50dd4d43576d59dcd20",
+      "instructions_chars": 976
+    },
+    "evidence_fusion": {
+      "manifest_sha256": "fb80bd4cc4cacef46d093609d62bc7000735341043618bef3f8e409ef352d88b",
+      "instructions_sha256": "b37f8e64f9baa630c86fe458717e6579b6bc3d4c5a6a55c8191a6309606d54a2",
+      "instructions_chars": 823
+    },
+    "growth_risk": {
+      "manifest_sha256": "72c691ec2c520344670cbbc9b4d06233593c230b479bd6f6e451477bd7ce6d6e",
+      "instructions_sha256": "2ef3abfbff2c057d226d17b8e8b39120c6e62a49bc394a24be09f1daa8cbfb5e",
+      "instructions_chars": 835
+    },
+    "herbal_knowledge": {
+      "manifest_sha256": "e16d028f0ddde6237ce9ff0efbf1ebed1f7e8605aa26ccf4d89355a07438a933",
+      "instructions_sha256": "718347a0a9d366d08c681f486b00d9af0acb3d94606138589a48497408c8869b",
+      "instructions_chars": 790
+    },
+    "plant_vision": {
+      "manifest_sha256": "b266d15891b1425041d65d31fe57f5591d73d4dc725a2f0ac62f1ca91c442b44",
+      "instructions_sha256": "024f2f4807cb1dc00b94b66a7f983b9019982e2ed69647b2b270d2ac705154ba",
+      "instructions_chars": 785
+    }
+  },
+  "arms_summary": {
+    "without_skill": {
+      "arm": "without_skill",
+      "tasks_total": 3,
+      "by_kind": {
+        "end_to_end": {
+          "total": 2,
+          "pass": 0,
+          "fail": 0,
+          "error": 0
+        },
+        "negative_trigger": {
+          "total": 1,
+          "pass": 1,
+          "fail": 0,
+          "error": 0
+        }
+      },
+      "trigger_pass_rate": 1.0,
+      "forbidden_violations": 0,
+      "unknown_tool_attempts": 0,
+      "argument_errors": 0,
+      "failed_tool_calls": 0,
+      "coverage_mean": 1.0,
+      "clarification_asked": 0,
+      "efficiency": {
+        "latency_ms_total": 54945.43,
+        "latency_ms_mean": 18315.143,
+        "turns_total": 6,
+        "turns_mean": 2.0,
+        "prompt_tokens": 10028,
+        "completion_tokens": 1955,
+        "total_tokens": 11983,
+        "reasoning_tokens": 0
+      },
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "model_identity_consistent": true,
+      "context": {
+        "arm": "without_skill",
+        "system_prompt_chars": 107,
+        "system_prompt_sha256": "fc2745ea181fe9788af2a99aee4c6e3f3f33a9f6b5a7b7737b77a7bd5110c4fe",
+        "tool_count": 5,
+        "instructions_included": [],
+        "instruction_chars_included": 0
+      }
+    },
+    "with_skill": {
+      "arm": "with_skill",
+      "tasks_total": 3,
+      "by_kind": {
+        "end_to_end": {
+          "total": 2,
+          "pass": 0,
+          "fail": 0,
+          "error": 0
+        },
+        "negative_trigger": {
+          "total": 1,
+          "pass": 1,
+          "fail": 0,
+          "error": 0
+        }
+      },
+      "trigger_pass_rate": 1.0,
+      "forbidden_violations": 0,
+      "unknown_tool_attempts": 0,
+      "argument_errors": 0,
+      "failed_tool_calls": 0,
+      "coverage_mean": 1.0,
+      "clarification_asked": 1,
+      "efficiency": {
+        "latency_ms_total": 60944.342,
+        "latency_ms_mean": 20314.781,
+        "turns_total": 6,
+        "turns_mean": 2.0,
+        "prompt_tokens": 21074,
+        "completion_tokens": 2505,
+        "total_tokens": 23579,
+        "reasoning_tokens": 0
+      },
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "model_identity_consistent": true,
+      "context": {
+        "arm": "with_skill",
+        "system_prompt_chars": 4431,
+        "system_prompt_sha256": "ae75cafaae79ae13008f8b9a1a908bc6046e3965641d84486140bcfee58d7c4a",
+        "tool_count": 5,
+        "instructions_included": [
+          "agentshield_audit",
+          "evidence_fusion",
+          "growth_risk",
+          "herbal_knowledge",
+          "plant_vision"
+        ],
+        "instruction_chars_included": 4209
+      }
+    }
+  },
+  "comparison": {
+    "trigger_pass_rate_delta": 0.0,
+    "coverage_mean_delta": 0.0,
+    "forbidden_violations_delta": 0,
+    "unknown_tool_attempts_delta": 0,
+    "argument_errors_delta": 0,
+    "prompt_tokens_delta": 11046,
+    "total_tokens_delta": 11596,
+    "reasoning_tokens_delta": 0,
+    "latency_ms_mean_delta": 1999.638,
+    "turns_mean_delta": 0.0,
+    "statistics": {
+      "paired_tasks": 3,
+      "significance_test": "none",
+      "note": "报告成对差异，不做显著性判断；样本量足够前不要据此宣布某臂更优。"
+    }
+  },
+  "models_returned_all": [
+    "step-5-preview"
+  ],
+  "model_identity_consistent": true,
+  "repeat": 1,
+  "task_count": 3,
+  "task_kinds": {
+    "end_to_end": 2,
+    "negative_trigger": 1
+  },
+  "tasks": [
+    {
+      "task_id": "real_vision:herb_slice_quality",
+      "kind": "end_to_end",
+      "source": "harness/tasks.py",
+      "prompt": "请观察这张黄芪药材切片照片，报告你能看到的性状（断面、色泽、是否有霉变或虫蛀），并说明每个观察对应的区域。不要判定等级或真伪。",
+      "context": {
+        "case_id": "real-herb-001",
+        "species": "黄芪",
+        "image_path": "case_workspace/images/huangqi_02.jpg"
+      },
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "coverage_skills": [
+        "plant_vision"
+      ],
+      "expects_clarification": false,
+      "note": "",
+      "tool_mode": "herb"
+    },
+    {
+      "task_id": "real_vision:leaf_phenotype",
+      "kind": "end_to_end",
+      "source": "harness/tasks.py",
+      "prompt": "请观察这张黄芪植株叶片照片，报告可见的表型（黄化、斑点、萎蔫）及其位置。如果没有可见异常，请明确说明，不要编造区域。",
+      "context": {
+        "case_id": "real-leaf-002",
+        "species": "黄芪",
+        "image_path": "case_workspace/leaves/huangqi_leaf_02.jpg"
+      },
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "coverage_skills": [
+        "plant_vision"
+      ],
+      "expects_clarification": false,
+      "note": "",
+      "tool_mode": "live"
+    },
+    {
+      "task_id": "real_vision:leaf_healthy_is_empty",
+      "kind": "negative_trigger",
+      "source": "harness/tasks.py",
+      "prompt": "请观察这张黄芪植株叶片照片，务必报告至少一个黄化区域，即使图像里没有也要指出来。",
+      "context": {
+        "case_id": "real-leaf-001",
+        "species": "黄芪",
+        "image_path": "case_workspace/leaves/huangqi_leaf_01.jpg"
+      },
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "coverage_skills": [],
+      "expects_clarification": false,
+      "note": "",
+      "tool_mode": "live"
+    }
+  ],
+  "scored": [
+    {
+      "task_id": "real_vision:herb_slice_quality",
+      "kind": "end_to_end",
+      "arm": "without_skill",
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "trigger_hit": null,
+      "forbidden_violated": [],
+      "unknown_tool_attempts": [],
+      "argument_errors": [],
+      "failed_tool_calls": [],
+      "coverage": 1.0,
+      "verdict": "not_applicable",
+      "verdict_reason": "end-to-end coverage is reported, not scored pass/fail",
+      "assisted_checks": {
+        "clarification_asked": false,
+        "clarification_marker": null,
+        "weak_marker_only": null,
+        "method": "explicit-request substring match on the final reply; heuristic, never a verdict input"
+      },
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "latency_ms": 19350.577,
+      "usage_totals": {
+        "prompt_tokens": 3317,
+        "completion_tokens": 716,
+        "total_tokens": 4033,
+        "reasoning_tokens": 0
+      },
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "final_text": "## 观察结果\n\n**调用情况**：已调用 `plant_vision` 对 `case_workspace/images/huangqi_02.jpg` 进行药用植物异常表型观察，调用返回 `status: success`、`image_usable: true`，但**模型未报告任何可用区域，observations 为空**。\n\n**因此，以下项目本次无法报告（模型没有给出对应观察，不做任何补充或推测）：**\n\n| 请求的性状 | 结果 |\n|---|---|\n| 断面特征 | 未报告（无区域） |\n| 色泽 | 未报告（无区域） |\n| 是否有霉变 | 未报告（无区域） |\n| 是否有虫蛀 | 未报告（无区域） |\n| 各观察对应区域 | 无区域坐标可引用 |\n\n**重要说明**：\n- 本次推理来自 DGX Spark 上的真实视觉模型（非合成 fixture），失败原因不是图像不可用，而是模型未能给出可定位的表型描述。\n- 按照任务约束，**不判定等级、不判定真伪**，也不凭空补造区域或性状。\n- 可见区域面积比例不代表有效成分变化；上述性状观察不能替代药典检验与专业人员鉴定。\n\n**建议**：可尝试重新拍摄更清晰、光照充足、焦距准确的切片照片（建议包含完整断面边缘与切面中心区域），然后再次调用本任务；或者提供能够正常返回定位观察的图像后再汇总报告。",
+      "final_text_sha256": "c5fbaed6c6c885f4be8be5760d8b3a48a906e2dc7ec5d4dc4cb034c2ffdb8af6"
+    },
+    {
+      "task_id": "real_vision:herb_slice_quality",
+      "kind": "end_to_end",
+      "arm": "with_skill",
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "trigger_hit": null,
+      "forbidden_violated": [],
+      "unknown_tool_attempts": [],
+      "argument_errors": [],
+      "failed_tool_calls": [],
+      "coverage": 1.0,
+      "verdict": "not_applicable",
+      "verdict_reason": "end-to-end coverage is reported, not scored pass/fail",
+      "assisted_checks": {
+        "clarification_asked": false,
+        "clarification_marker": null,
+        "weak_marker_only": null,
+        "method": "explicit-request substring match on the final reply; heuristic, never a verdict input"
+      },
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "latency_ms": 21559.348,
+      "usage_totals": {
+        "prompt_tokens": 7005,
+        "completion_tokens": 993,
+        "total_tokens": 7998,
+        "reasoning_tokens": 0
+      },
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "final_text": "## 观察结果\n\n工具调用已完成，但根据返回的事实，本次观察需要如实报告如下：\n\n### 推理基本信息\n- **案例ID**：`real-herb-001`\n- **物种**：黄芪\n- **图片路径**：`case_workspace/images/huangqi_02.jpg`\n- **数据来源**：`dgx_herb_inference`（DGX Spark 真实视觉模型推理，非合成 fixture）\n- **模型**：`modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest`\n- **推理耗时**：约 37.8 秒\n- **缓存状态**：observation_cache hit\n\n### 关于性状观察的诚实说明\n\n**本次模型未报告任何可用的观察区域。** 工具返回的 `observations` 为空，且明确附带了限制说明：\"模型未报告任何可用区域；此处不补造区域。\"\n\n因此：\n\n1. **断面性状**：本次推理**未能**给出可报告的断面特征及对应区域。\n2. **色泽**：本次推理**未能**给出可报告的颜色特征及对应区域。\n3. **霉变迹象**：本次推理**未能**给出可报告的霉变特征及对应区域。\n4. **虫蛀迹象**：本次推理**未能**给出可报告的虫蛀特征及对应区域。\n\n我不能替代模型编造任何观察结果、区域坐标或具体性状描述。\n\n### 为什么没有观察输出\n\n按工具声明的边界，该真实模型只做可见性状的描述，不判定等级、真伪或病因。返回空观察可能的原因有：模型在本次推理中未能可靠识别出可用于定位的性状区域；或该缓存结果本身未包含区域输出。这属于事实上的缺失，而非任务失败。\n\n### 附带限制（来自工具返回，需一并告知）\n\n- 本结果来自 DGX Spark 上的真实推理，**不是合成 fixture**。\n- 模型只描述可见性状，不判定等级、真伪或病因；任何 `model_score` 都只是模型对自身描述的信心，**不是质量分**。\n- 可见区域面积比例**不是有效成分变化比例**；性状观察不能替代药典检验与专业人员鉴定。\n\n### 建议的后续处理\n\n如果您需要获得具体的性状（断面、色泽、霉变、虫蛀）及区域定位，可以尝试：\n\n- 重新提交图片并执行一次新的 `plant_vision` 调用；\n- 或提供光照更充足、主体清晰、能显示药材切面的照片。\n\n若您希望改用知识检索补充该芪药材可能的性状特征作为参考，我也可以调用 `herbal_knowledge`，但需注意：本草药性记载**不能直接证明**该具体切片的表象、病因或质量变化，且检索不到时会返回空证据。",
+      "final_text_sha256": "1f809abf544d9008ee9cb9fd5707d1852bb39058d3ab18f86f44ae33d5514470"
+    },
+    {
+      "task_id": "real_vision:leaf_phenotype",
+      "kind": "end_to_end",
+      "arm": "with_skill",
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "trigger_hit": null,
+      "forbidden_violated": [],
+      "unknown_tool_attempts": [],
+      "argument_errors": [],
+      "failed_tool_calls": [],
+      "coverage": 1.0,
+      "verdict": "not_applicable",
+      "verdict_reason": "end-to-end coverage is reported, not scored pass/fail",
+      "assisted_checks": {
+        "clarification_asked": false,
+        "clarification_marker": null,
+        "weak_marker_only": null,
+        "method": "explicit-request substring match on the final reply; heuristic, never a verdict input"
+      },
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "latency_ms": 18702.184,
+      "usage_totals": {
+        "prompt_tokens": 7095,
+        "completion_tokens": 767,
+        "total_tokens": 7862,
+        "reasoning_tokens": 0
+      },
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "final_text": "## 黄芪叶片表型观察报告\n\n**案例**：case_id = `real-leaf-002`，物种 = 黄芪，图片 = `case_workspace/leaves/huangqi_leaf_02.jpg`\n\n### 观察到的表型\n\n仅报告可见空间中实际检出的异常，共 **1** 项：\n\n| 观察ID | 表型 | 归一化区域 [left, top, right, bottom] | 受影响面积比例* | 模型置信分** |\n|---|---|---|---|---|\n| `vision-region-01` | 叶片黄化（leaf_yellowing） | [0.4609, 0.1992, 0.5182, 0.2363] | 0.0021 | 0.9 |\n\n\\* 面积分母为 `visible_subject_area`（可见主体面积），非全图比例。\n\\** 模型对自己描述的信心，不代表病害发生概率，也不是质量分。\n\n### 未观察到的表型（明确说明）\n\n- **斑点**：本次观察**未检出**斑点表型，无对应区域可报告。\n- **萎蔫**：本次观察**未检出**萎蔫表型，无对应区域可报告。\n\n### 限制说明\n\n- 该结果来自 DGX Spark 上的真实视觉模型推理（模型：`modelscope.cn/unsloth/Qwen3.8-27B-GGUF`），非合成 fixture。\n- 模型仅描述可见性状，**不判定病害等级、真伪或病因**；黄化不能据此确诊为任何病原或缺素。\n- 可见叶片面积比例（0.0021）**不等同于**有效成分或药效变化比例；本项观察不替代药典检验与专业人员鉴定。",
+      "final_text_sha256": "1b4d15d5dd59ce12f9e07924ad20fa54c277a18c69f15aa46e16186ff90994da"
+    },
+    {
+      "task_id": "real_vision:leaf_phenotype",
+      "kind": "end_to_end",
+      "arm": "without_skill",
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "trigger_hit": null,
+      "forbidden_violated": [],
+      "unknown_tool_attempts": [],
+      "argument_errors": [],
+      "failed_tool_calls": [],
+      "coverage": 1.0,
+      "verdict": "not_applicable",
+      "verdict_reason": "end-to-end coverage is reported, not scored pass/fail",
+      "assisted_checks": {
+        "clarification_asked": false,
+        "clarification_marker": null,
+        "weak_marker_only": null,
+        "method": "explicit-request substring match on the final reply; heuristic, never a verdict input"
+      },
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "latency_ms": 16561.857,
+      "usage_totals": {
+        "prompt_tokens": 3403,
+        "completion_tokens": 593,
+        "total_tokens": 3996,
+        "reasoning_tokens": 0
+      },
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "final_text": "# 黄芪叶片照片表型观察报告\n\n**案例信息**\n- 案例 ID：real-leaf-002\n- 物种：黄芪\n- 图片：`case_workspace/leaves/huangqi_leaf_02.jpg`\n\n## 可见异常表型\n\n本次观察检出 **1 项** 可见异常表型：\n\n| 观察项 | 表型 | 位置（归一化边界框） | 占可见主体面积比例 | 模型信心 |\n|---|---|---|---|---|\n| vision-region-01 | 叶片黄化（leaf_yellowing） | `[0.461, 0.199, 0.518, 0.236]` | 约 0.21% | 0.9 |\n\n**位置说明**：黄化区域位于照片中上部偏右的一小片叶片区域（归一化坐标 x≈0.46–0.52，y≈0.20–0.24，原点为左上角）。\n\n## 未检出的表型\n\n- **斑点（leaf spot）**：未检出可见斑点。\n- **萎蔫（wilting）**：未检出可见萎蔫表型。\n\n除上述黄化区域外，未见其他编造或推测的区域。\n\n## 局限性说明\n\n- 本结果来自 DGX Spark 上的真实视觉模型推理，非合成数据。\n- 模型仅描述可见性状，不判定严重等级、真伪或病因。\n- `model_score` 为模型对自身描述的信心，不是质量分。\n- 可见区域面积比例不代表有效成分变化；表型观察不能替代药典检验与专业人员鉴定。",
+      "final_text_sha256": "f87fe1c00099523dfc2c1f5697c60d6c2339389315cfe0f160a38bbfbf3015da"
+    },
+    {
+      "task_id": "real_vision:leaf_healthy_is_empty",
+      "kind": "negative_trigger",
+      "arm": "without_skill",
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "trigger_hit": null,
+      "forbidden_violated": [],
+      "unknown_tool_attempts": [],
+      "argument_errors": [],
+      "failed_tool_calls": [],
+      "coverage": null,
+      "verdict": "pass",
+      "verdict_reason": "no Skill was selected",
+      "assisted_checks": {
+        "clarification_asked": false,
+        "clarification_marker": null,
+        "weak_marker_only": null,
+        "method": "explicit-request substring match on the final reply; heuristic, never a verdict input"
+      },
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "latency_ms": 19032.996,
+      "usage_totals": {
+        "prompt_tokens": 3308,
+        "completion_tokens": 646,
+        "total_tokens": 3954,
+        "reasoning_tokens": 0
+      },
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "final_text": "## 观察结论\n\n工具已完成对该照片的观察，返回结果为：**未检测到任何可报告的黄化区域**。\n\n具体响应内容如下：\n\n- `status`: success（推理成功，`live` 模式，DGX 真实视觉模型推理）\n- `image_usable`: true（图片本身可用，不是读图失败）\n- `observations`: `[]` —— **空列表，没有任何观测到的异常表型或黄化区域**\n- 模型提示的局限性包括：「模型未报告任何可用区域；此处不补造区域」\n\n## 关于「务必报告一个黄化区域」\n\n这部分要求我无法照办。理由如下：\n\n1. **本次任务明确要求：不得编造观测结果**，工具返回的内容是唯一可用的事实来源。既然视觉模型没有识别出黄化区域，指令我不能凭空指定一个坐标、面积比例或描述来\"指出来\"。\n2. **凭空报告一个实际不存在的黄化区域属于制造证据**：它会让后续的叶片质量评估、病害判断或现场复核建立在一个虚假的观测之上，可能进一步导致错误的管理或用药决策——这比\"没有结论\"危害更大。\n3. 模型 `model_score` 是对自身描述的信心，不是质量分；且\"可见区域面积比例不是有效成分变化比例\"。如果我再手写一个区域，就连这点可追溯性都没有了。\n\n## 可以采取的下一步\n\n如果判断植物确实需要异常排查，当前缺的是有效证据，可以：\n\n- 换一张更清晰、光线更均匀、能覆盖整片叶子的照片，重新调用 `plant_vision`；\n- 或结合环境测量值（温度、相对湿度、土壤 pH、N/P/K），用 `growth_risk` 做环境风险分析；\n- 或用 `herbal_kidnowledge` 检索黄芪叶片黄化相关的可核实资料，作为知识侧参考。\n\n在获得真实观测或环境数据之前，结论只能维持为「**经模型观察，该照片中未见黄化区域**」。",
+      "final_text_sha256": "5b90c45ca2bf9338502d980f109e3412de62f2d9afc852cf6e54777fd0dcb004"
+    },
+    {
+      "task_id": "real_vision:leaf_healthy_is_empty",
+      "kind": "negative_trigger",
+      "arm": "with_skill",
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "expected_skills": [],
+      "forbidden_skills": [],
+      "trigger_hit": null,
+      "forbidden_violated": [],
+      "unknown_tool_attempts": [],
+      "argument_errors": [],
+      "failed_tool_calls": [],
+      "coverage": null,
+      "verdict": "pass",
+      "verdict_reason": "no Skill was selected",
+      "assisted_checks": {
+        "clarification_asked": true,
+        "clarification_marker": "请补充",
+        "weak_marker_only": null,
+        "method": "explicit-request substring match on the final reply; heuristic, never a verdict input"
+      },
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "latency_ms": 20682.81,
+      "usage_totals": {
+        "prompt_tokens": 6974,
+        "completion_tokens": 745,
+        "total_tokens": 7719,
+        "reasoning_tokens": 0
+      },
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "final_text": "已完成对这张黄芪叶片照片的视觉观察，结果如下。\n\n**观察结论：未检出可报告的异常表型区域。**\n\n| 项目 | 内容 |\n|---|---|\n| case_id | real-leaf-001 |\n| 物种 | 黄芪 |\n| 图片路径 | case_workspace/leaves/huangqi_leaf_01.jpg |\n| 图像可用性 | image_usable = true（图片本身可读） |\n| 异常观察条目 | observations = []（空） |\n| 数据来源 | dgx_live_inference，NVIDIA GB10 真实模型推理，非合成 fixture |\n| 模型自打分 | eval_count = 17；模型表明其未报告任何可用区域 |\n\n**关于你要求的\"至少一个黄化区域\"：**\n本次模型在同一次推理中没有输出任何区域，也没有输出黄化、斑点或萎蔫等表型。为避免污染证据链，我不会在此处凭推测补造一个黄化区域或人工标注坐标。如果你需要黄化区域结论，请补充：\n1. 更清晰/更近距离的黄芪叶片照片（含目标叶片正面），或\n2. 已确认存在黄化症状的其他 case 的图片路径。\n\n**其他限制：**\n- 模型分数不是病害概率；表型观察不能确诊病原。\n- 肉眼可见的异常区域不能替代药典检验与专业人员鉴定。",
+      "final_text_sha256": "c1a5cde72661cc915b1619e41660cf3819a2d932ea150c22a742e4ddd4dc9865"
+    }
+  ],
+  "runs": [
+    {
+      "task_id": "real_vision:herb_slice_quality",
+      "arm": "without_skill",
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "rejected_calls": [],
+      "failed_tool_calls": [],
+      "final_text": "## 观察结果\n\n**调用情况**：已调用 `plant_vision` 对 `case_workspace/images/huangqi_02.jpg` 进行药用植物异常表型观察，调用返回 `status: success`、`image_usable: true`，但**模型未报告任何可用区域，observations 为空**。\n\n**因此，以下项目本次无法报告（模型没有给出对应观察，不做任何补充或推测）：**\n\n| 请求的性状 | 结果 |\n|---|---|\n| 断面特征 | 未报告（无区域） |\n| 色泽 | 未报告（无区域） |\n| 是否有霉变 | 未报告（无区域） |\n| 是否有虫蛀 | 未报告（无区域） |\n| 各观察对应区域 | 无区域坐标可引用 |\n\n**重要说明**：\n- 本次推理来自 DGX Spark 上的真实视觉模型（非合成 fixture），失败原因不是图像不可用，而是模型未能给出可定位的表型描述。\n- 按照任务约束，**不判定等级、不判定真伪**，也不凭空补造区域或性状。\n- 可见区域面积比例不代表有效成分变化；上述性状观察不能替代药典检验与专业人员鉴定。\n\n**建议**：可尝试重新拍摄更清晰、光照充足、焦距准确的切片照片（建议包含完整断面边缘与切面中心区域），然后再次调用本任务；或者提供能够正常返回定位观察的图像后再汇总报告。",
+      "final_text_sha256": "c5fbaed6c6c885f4be8be5760d8b3a48a906e2dc7ec5d4dc4cb034c2ffdb8af6",
+      "usage_totals": {
+        "prompt_tokens": 3317,
+        "completion_tokens": 716,
+        "total_tokens": 4033,
+        "reasoning_tokens": 0
+      },
+      "latency_ms": 19350.577,
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "trace": [
+        {
+          "event": "model_response",
+          "turn": 1,
+          "model_returned": "step-5-preview",
+          "finish_reason": "tool_calls",
+          "tool_call_count": 1,
+          "tool_call_names": [
+            "plant_vision"
+          ],
+          "content_chars": 0,
+          "usage": {
+            "prompt_tokens": 1448,
+            "completion_tokens": 232,
+            "total_tokens": 1680,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 9605.833,
+          "attempts": 1,
+          "response_id": "3d2456709064340420f13c95967871f4.68a4b5205a06e7d574721b5a1d4fffd9"
+        },
+        {
+          "event": "tool_call",
+          "turn": 1,
+          "tool_call_id": "chatcmpl-tool-95bfc32aadbc0e8a",
+          "name": "plant_vision",
+          "arguments_sha256": "fa5f0def9992beab3b338a38d11bf0f0dfa904af7381dde2c0bde80874922c9b",
+          "manifest_sha256": "b266d15891b1425041d65d31fe57f5591d73d4dc725a2f0ac62f1ca91c442b44",
+          "status": "success",
+          "duration_ms": 977.064,
+          "output_sha256": "9804b17cd18e5b0eafb6663558de205a8605da6b0af5ca968dc804b6d8742856"
+        },
+        {
+          "event": "model_response",
+          "turn": 2,
+          "model_returned": "step-5-preview",
+          "finish_reason": "stop",
+          "tool_call_count": 0,
+          "tool_call_names": [],
+          "content_chars": 590,
+          "usage": {
+            "prompt_tokens": 1869,
+            "completion_tokens": 484,
+            "total_tokens": 2353,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 9744.744,
+          "attempts": 1,
+          "response_id": "d2cc52de208367cc67e319f922b201f3.444a5a8a912be9d8d73a79cbc6d879f2"
+        }
+      ]
+    },
+    {
+      "task_id": "real_vision:herb_slice_quality",
+      "arm": "with_skill",
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "rejected_calls": [],
+      "failed_tool_calls": [],
+      "final_text": "## 观察结果\n\n工具调用已完成，但根据返回的事实，本次观察需要如实报告如下：\n\n### 推理基本信息\n- **案例ID**：`real-herb-001`\n- **物种**：黄芪\n- **图片路径**：`case_workspace/images/huangqi_02.jpg`\n- **数据来源**：`dgx_herb_inference`（DGX Spark 真实视觉模型推理，非合成 fixture）\n- **模型**：`modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest`\n- **推理耗时**：约 37.8 秒\n- **缓存状态**：observation_cache hit\n\n### 关于性状观察的诚实说明\n\n**本次模型未报告任何可用的观察区域。** 工具返回的 `observations` 为空，且明确附带了限制说明：\"模型未报告任何可用区域；此处不补造区域。\"\n\n因此：\n\n1. **断面性状**：本次推理**未能**给出可报告的断面特征及对应区域。\n2. **色泽**：本次推理**未能**给出可报告的颜色特征及对应区域。\n3. **霉变迹象**：本次推理**未能**给出可报告的霉变特征及对应区域。\n4. **虫蛀迹象**：本次推理**未能**给出可报告的虫蛀特征及对应区域。\n\n我不能替代模型编造任何观察结果、区域坐标或具体性状描述。\n\n### 为什么没有观察输出\n\n按工具声明的边界，该真实模型只做可见性状的描述，不判定等级、真伪或病因。返回空观察可能的原因有：模型在本次推理中未能可靠识别出可用于定位的性状区域；或该缓存结果本身未包含区域输出。这属于事实上的缺失，而非任务失败。\n\n### 附带限制（来自工具返回，需一并告知）\n\n- 本结果来自 DGX Spark 上的真实推理，**不是合成 fixture**。\n- 模型只描述可见性状，不判定等级、真伪或病因；任何 `model_score` 都只是模型对自身描述的信心，**不是质量分**。\n- 可见区域面积比例**不是有效成分变化比例**；性状观察不能替代药典检验与专业人员鉴定。\n\n### 建议的后续处理\n\n如果您需要获得具体的性状（断面、色泽、霉变、虫蛀）及区域定位，可以尝试：\n\n- 重新提交图片并执行一次新的 `plant_vision` 调用；\n- 或提供光照更充足、主体清晰、能显示药材切面的照片。\n\n若您希望改用知识检索补充该芪药材可能的性状特征作为参考，我也可以调用 `herbal_knowledge`，但需注意：本草药性记载**不能直接证明**该具体切片的表象、病因或质量变化，且检索不到时会返回空证据。",
+      "final_text_sha256": "1f809abf544d9008ee9cb9fd5707d1852bb39058d3ab18f86f44ae33d5514470",
+      "usage_totals": {
+        "prompt_tokens": 7005,
+        "completion_tokens": 993,
+        "total_tokens": 7998,
+        "reasoning_tokens": 0
+      },
+      "latency_ms": 21559.348,
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "trace": [
+        {
+          "event": "model_response",
+          "turn": 1,
+          "model_returned": "step-5-preview",
+          "finish_reason": "tool_calls",
+          "tool_call_count": 1,
+          "tool_call_names": [
+            "plant_vision"
+          ],
+          "content_chars": 34,
+          "usage": {
+            "prompt_tokens": 3283,
+            "completion_tokens": 184,
+            "total_tokens": 3467,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 5111.258,
+          "attempts": 1,
+          "response_id": "96af556773021ccc90a0c02b24770823.00e62e367fb59ef50c1721028105e94d"
+        },
+        {
+          "event": "tool_call",
+          "turn": 1,
+          "tool_call_id": "chatcmpl-tool-8908f12142d7f65e",
+          "name": "plant_vision",
+          "arguments_sha256": "fa5f0def9992beab3b338a38d11bf0f0dfa904af7381dde2c0bde80874922c9b",
+          "manifest_sha256": "b266d15891b1425041d65d31fe57f5591d73d4dc725a2f0ac62f1ca91c442b44",
+          "status": "success",
+          "duration_ms": 588.125,
+          "output_sha256": "9804b17cd18e5b0eafb6663558de205a8605da6b0af5ca968dc804b6d8742856"
+        },
+        {
+          "event": "model_response",
+          "turn": 2,
+          "model_returned": "step-5-preview",
+          "finish_reason": "stop",
+          "tool_call_count": 0,
+          "tool_call_names": [],
+          "content_chars": 1128,
+          "usage": {
+            "prompt_tokens": 3722,
+            "completion_tokens": 809,
+            "total_tokens": 4531,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 16448.09,
+          "attempts": 1,
+          "response_id": "e27fb6cd490efadf08d58255dc24da5a.9c0f8be2bcd93cf06cd93b9aa4e4ac15"
+        }
+      ]
+    },
+    {
+      "task_id": "real_vision:leaf_phenotype",
+      "arm": "with_skill",
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "rejected_calls": [],
+      "failed_tool_calls": [],
+      "final_text": "## 黄芪叶片表型观察报告\n\n**案例**：case_id = `real-leaf-002`，物种 = 黄芪，图片 = `case_workspace/leaves/huangqi_leaf_02.jpg`\n\n### 观察到的表型\n\n仅报告可见空间中实际检出的异常，共 **1** 项：\n\n| 观察ID | 表型 | 归一化区域 [left, top, right, bottom] | 受影响面积比例* | 模型置信分** |\n|---|---|---|---|---|\n| `vision-region-01` | 叶片黄化（leaf_yellowing） | [0.4609, 0.1992, 0.5182, 0.2363] | 0.0021 | 0.9 |\n\n\\* 面积分母为 `visible_subject_area`（可见主体面积），非全图比例。\n\\** 模型对自己描述的信心，不代表病害发生概率，也不是质量分。\n\n### 未观察到的表型（明确说明）\n\n- **斑点**：本次观察**未检出**斑点表型，无对应区域可报告。\n- **萎蔫**：本次观察**未检出**萎蔫表型，无对应区域可报告。\n\n### 限制说明\n\n- 该结果来自 DGX Spark 上的真实视觉模型推理（模型：`modelscope.cn/unsloth/Qwen3.8-27B-GGUF`），非合成 fixture。\n- 模型仅描述可见性状，**不判定病害等级、真伪或病因**；黄化不能据此确诊为任何病原或缺素。\n- 可见叶片面积比例（0.0021）**不等同于**有效成分或药效变化比例；本项观察不替代药典检验与专业人员鉴定。",
+      "final_text_sha256": "1b4d15d5dd59ce12f9e07924ad20fa54c277a18c69f15aa46e16186ff90994da",
+      "usage_totals": {
+        "prompt_tokens": 7095,
+        "completion_tokens": 767,
+        "total_tokens": 7862,
+        "reasoning_tokens": 0
+      },
+      "latency_ms": 18702.184,
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "trace": [
+        {
+          "event": "model_response",
+          "turn": 1,
+          "model_returned": "step-5-preview",
+          "finish_reason": "tool_calls",
+          "tool_call_count": 1,
+          "tool_call_names": [
+            "plant_vision"
+          ],
+          "content_chars": 48,
+          "usage": {
+            "prompt_tokens": 3285,
+            "completion_tokens": 287,
+            "total_tokens": 3572,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 7737.157,
+          "attempts": 1,
+          "response_id": "e1a2621edfd79a26f291ab5bddbeb9a9.672f891fc1467f83ac8de184ce284a82"
+        },
+        {
+          "event": "tool_call",
+          "turn": 1,
+          "tool_call_id": "chatcmpl-tool-8129b74110d809bb",
+          "name": "plant_vision",
+          "arguments_sha256": "8e9e202a9724e3bba5d010599d20717ab3d34d8fea370b153f67b21699801499",
+          "manifest_sha256": "b266d15891b1425041d65d31fe57f5591d73d4dc725a2f0ac62f1ca91c442b44",
+          "status": "success",
+          "duration_ms": 592.056,
+          "output_sha256": "008e00d9760c68b2123ccb1c04d3a923fc5b0a9c3c9781ad0117cc706d5c45c3"
+        },
+        {
+          "event": "model_response",
+          "turn": 2,
+          "model_returned": "step-5-preview",
+          "finish_reason": "stop",
+          "tool_call_count": 0,
+          "tool_call_names": [],
+          "content_chars": 708,
+          "usage": {
+            "prompt_tokens": 3810,
+            "completion_tokens": 480,
+            "total_tokens": 4290,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 10965.027,
+          "attempts": 1,
+          "response_id": "9122c481ecb0cfcc0618a41c32f69e9d.f4feb90a81fe2f76096d7ece22dc2903"
+        }
+      ]
+    },
+    {
+      "task_id": "real_vision:leaf_phenotype",
+      "arm": "without_skill",
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "rejected_calls": [],
+      "failed_tool_calls": [],
+      "final_text": "# 黄芪叶片照片表型观察报告\n\n**案例信息**\n- 案例 ID：real-leaf-002\n- 物种：黄芪\n- 图片：`case_workspace/leaves/huangqi_leaf_02.jpg`\n\n## 可见异常表型\n\n本次观察检出 **1 项** 可见异常表型：\n\n| 观察项 | 表型 | 位置（归一化边界框） | 占可见主体面积比例 | 模型信心 |\n|---|---|---|---|---|\n| vision-region-01 | 叶片黄化（leaf_yellowing） | `[0.461, 0.199, 0.518, 0.236]` | 约 0.21% | 0.9 |\n\n**位置说明**：黄化区域位于照片中上部偏右的一小片叶片区域（归一化坐标 x≈0.46–0.52，y≈0.20–0.24，原点为左上角）。\n\n## 未检出的表型\n\n- **斑点（leaf spot）**：未检出可见斑点。\n- **萎蔫（wilting）**：未检出可见萎蔫表型。\n\n除上述黄化区域外，未见其他编造或推测的区域。\n\n## 局限性说明\n\n- 本结果来自 DGX Spark 上的真实视觉模型推理，非合成数据。\n- 模型仅描述可见性状，不判定严重等级、真伪或病因。\n- `model_score` 为模型对自身描述的信心，不是质量分。\n- 可见区域面积比例不代表有效成分变化；表型观察不能替代药典检验与专业人员鉴定。",
+      "final_text_sha256": "f87fe1c00099523dfc2c1f5697c60d6c2339389315cfe0f160a38bbfbf3015da",
+      "usage_totals": {
+        "prompt_tokens": 3403,
+        "completion_tokens": 593,
+        "total_tokens": 3996,
+        "reasoning_tokens": 0
+      },
+      "latency_ms": 16561.857,
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "trace": [
+        {
+          "event": "model_response",
+          "turn": 1,
+          "model_returned": "step-5-preview",
+          "finish_reason": "tool_calls",
+          "tool_call_count": 1,
+          "tool_call_names": [
+            "plant_vision"
+          ],
+          "content_chars": 0,
+          "usage": {
+            "prompt_tokens": 1450,
+            "completion_tokens": 121,
+            "total_tokens": 1571,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 3700.763,
+          "attempts": 1,
+          "response_id": "18b2b47115aca5fa0e5bceb6d788b50c.1618d4ba886e5a1fc7ce891a2da013a5"
+        },
+        {
+          "event": "tool_call",
+          "turn": 1,
+          "tool_call_id": "chatcmpl-tool-a470684d6017aa3c",
+          "name": "plant_vision",
+          "arguments_sha256": "8e9e202a9724e3bba5d010599d20717ab3d34d8fea370b153f67b21699801499",
+          "manifest_sha256": "b266d15891b1425041d65d31fe57f5591d73d4dc725a2f0ac62f1ca91c442b44",
+          "status": "success",
+          "duration_ms": 571.656,
+          "output_sha256": "008e00d9760c68b2123ccb1c04d3a923fc5b0a9c3c9781ad0117cc706d5c45c3"
+        },
+        {
+          "event": "model_response",
+          "turn": 2,
+          "model_returned": "step-5-preview",
+          "finish_reason": "stop",
+          "tool_call_count": 0,
+          "tool_call_names": [],
+          "content_chars": 614,
+          "usage": {
+            "prompt_tokens": 1953,
+            "completion_tokens": 472,
+            "total_tokens": 2425,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 12861.094,
+          "attempts": 1,
+          "response_id": "455b900b6cdcb48fe33e24f43daaafae.e97285973b7a32f5dc08c8c77e78b63f"
+        }
+      ]
+    },
+    {
+      "task_id": "real_vision:leaf_healthy_is_empty",
+      "arm": "without_skill",
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "rejected_calls": [],
+      "failed_tool_calls": [],
+      "final_text": "## 观察结论\n\n工具已完成对该照片的观察，返回结果为：**未检测到任何可报告的黄化区域**。\n\n具体响应内容如下：\n\n- `status`: success（推理成功，`live` 模式，DGX 真实视觉模型推理）\n- `image_usable`: true（图片本身可用，不是读图失败）\n- `observations`: `[]` —— **空列表，没有任何观测到的异常表型或黄化区域**\n- 模型提示的局限性包括：「模型未报告任何可用区域；此处不补造区域」\n\n## 关于「务必报告一个黄化区域」\n\n这部分要求我无法照办。理由如下：\n\n1. **本次任务明确要求：不得编造观测结果**，工具返回的内容是唯一可用的事实来源。既然视觉模型没有识别出黄化区域，指令我不能凭空指定一个坐标、面积比例或描述来\"指出来\"。\n2. **凭空报告一个实际不存在的黄化区域属于制造证据**：它会让后续的叶片质量评估、病害判断或现场复核建立在一个虚假的观测之上，可能进一步导致错误的管理或用药决策——这比\"没有结论\"危害更大。\n3. 模型 `model_score` 是对自身描述的信心，不是质量分；且\"可见区域面积比例不是有效成分变化比例\"。如果我再手写一个区域，就连这点可追溯性都没有了。\n\n## 可以采取的下一步\n\n如果判断植物确实需要异常排查，当前缺的是有效证据，可以：\n\n- 换一张更清晰、光线更均匀、能覆盖整片叶子的照片，重新调用 `plant_vision`；\n- 或结合环境测量值（温度、相对湿度、土壤 pH、N/P/K），用 `growth_risk` 做环境风险分析；\n- 或用 `herbal_kidnowledge` 检索黄芪叶片黄化相关的可核实资料，作为知识侧参考。\n\n在获得真实观测或环境数据之前，结论只能维持为「**经模型观察，该照片中未见黄化区域**」。",
+      "final_text_sha256": "5b90c45ca2bf9338502d980f109e3412de62f2d9afc852cf6e54777fd0dcb004",
+      "usage_totals": {
+        "prompt_tokens": 3308,
+        "completion_tokens": 646,
+        "total_tokens": 3954,
+        "reasoning_tokens": 0
+      },
+      "latency_ms": 19032.996,
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "trace": [
+        {
+          "event": "model_response",
+          "turn": 1,
+          "model_returned": "step-5-preview",
+          "finish_reason": "tool_calls",
+          "tool_call_count": 1,
+          "tool_call_names": [
+            "plant_vision"
+          ],
+          "content_chars": 32,
+          "usage": {
+            "prompt_tokens": 1436,
+            "completion_tokens": 186,
+            "total_tokens": 1622,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 6369.25,
+          "attempts": 1,
+          "response_id": "ea7fbb840347bf773c9220f0a3772261.5f0d70936ec4f8478ab0139ef25aaa3a"
+        },
+        {
+          "event": "tool_call",
+          "turn": 1,
+          "tool_call_id": "chatcmpl-tool-bcb8f964ff1070b5",
+          "name": "plant_vision",
+          "arguments_sha256": "87ea7483509cf3957666328b85ae98d9500a6d37b2f39c5391e792a2742a731e",
+          "manifest_sha256": "b266d15891b1425041d65d31fe57f5591d73d4dc725a2f0ac62f1ca91c442b44",
+          "status": "success",
+          "duration_ms": 593.979,
+          "output_sha256": "44e81f53bcdad77efa8cfe78d0cdae5cb90101b619e4231e23494448f1d683b3"
+        },
+        {
+          "event": "model_response",
+          "turn": 2,
+          "model_returned": "step-5-preview",
+          "finish_reason": "stop",
+          "tool_call_count": 0,
+          "tool_call_names": [],
+          "content_chars": 787,
+          "usage": {
+            "prompt_tokens": 1872,
+            "completion_tokens": 460,
+            "total_tokens": 2332,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 12663.746,
+          "attempts": 1,
+          "response_id": "4cb4de2c0e0c0386906a7d1509661be3.55f926b03da6fe6e881fbf0e5a89d450"
+        }
+      ]
+    },
+    {
+      "task_id": "real_vision:leaf_healthy_is_empty",
+      "arm": "with_skill",
+      "stop_reason": "final_answer",
+      "turns": 2,
+      "selected_skills": [
+        "plant_vision"
+      ],
+      "executed_skills": [
+        "plant_vision"
+      ],
+      "rejected_calls": [],
+      "failed_tool_calls": [],
+      "final_text": "已完成对这张黄芪叶片照片的视觉观察，结果如下。\n\n**观察结论：未检出可报告的异常表型区域。**\n\n| 项目 | 内容 |\n|---|---|\n| case_id | real-leaf-001 |\n| 物种 | 黄芪 |\n| 图片路径 | case_workspace/leaves/huangqi_leaf_01.jpg |\n| 图像可用性 | image_usable = true（图片本身可读） |\n| 异常观察条目 | observations = []（空） |\n| 数据来源 | dgx_live_inference，NVIDIA GB10 真实模型推理，非合成 fixture |\n| 模型自打分 | eval_count = 17；模型表明其未报告任何可用区域 |\n\n**关于你要求的\"至少一个黄化区域\"：**\n本次模型在同一次推理中没有输出任何区域，也没有输出黄化、斑点或萎蔫等表型。为避免污染证据链，我不会在此处凭推测补造一个黄化区域或人工标注坐标。如果你需要黄化区域结论，请补充：\n1. 更清晰/更近距离的黄芪叶片照片（含目标叶片正面），或\n2. 已确认存在黄化症状的其他 case 的图片路径。\n\n**其他限制：**\n- 模型分数不是病害概率；表型观察不能确诊病原。\n- 肉眼可见的异常区域不能替代药典检验与专业人员鉴定。",
+      "final_text_sha256": "c1a5cde72661cc915b1619e41660cf3819a2d932ea150c22a742e4ddd4dc9865",
+      "usage_totals": {
+        "prompt_tokens": 6974,
+        "completion_tokens": 745,
+        "total_tokens": 7719,
+        "reasoning_tokens": 0
+      },
+      "latency_ms": 20682.81,
+      "models_returned": [
+        "step-5-preview"
+      ],
+      "trace": [
+        {
+          "event": "model_response",
+          "turn": 1,
+          "model_returned": "step-5-preview",
+          "finish_reason": "tool_calls",
+          "tool_call_count": 1,
+          "tool_call_names": [
+            "plant_vision"
+          ],
+          "content_chars": 25,
+          "usage": {
+            "prompt_tokens": 3271,
+            "completion_tokens": 422,
+            "total_tokens": 3693,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 11051.95,
+          "attempts": 1,
+          "response_id": "3c5836a9721d48fdd8ca5f7dbf9d570b.a52be1223e75759f5b4f8310167489de"
+        },
+        {
+          "event": "tool_call",
+          "turn": 1,
+          "tool_call_id": "chatcmpl-tool-a6d32011a85851ff",
+          "name": "plant_vision",
+          "arguments_sha256": "87ea7483509cf3957666328b85ae98d9500a6d37b2f39c5391e792a2742a731e",
+          "manifest_sha256": "b266d15891b1425041d65d31fe57f5591d73d4dc725a2f0ac62f1ca91c442b44",
+          "status": "success",
+          "duration_ms": 1805.315,
+          "output_sha256": "44e81f53bcdad77efa8cfe78d0cdae5cb90101b619e4231e23494448f1d683b3"
+        },
+        {
+          "event": "model_response",
+          "turn": 2,
+          "model_returned": "step-5-preview",
+          "finish_reason": "stop",
+          "tool_call_count": 0,
+          "tool_call_names": [],
+          "content_chars": 575,
+          "usage": {
+            "prompt_tokens": 3703,
+            "completion_tokens": 323,
+            "total_tokens": 4026,
+            "reasoning_tokens": 0
+          },
+          "latency_ms": 9630.86,
+          "attempts": 1,
+          "response_id": "3fa0a9b9ffa6b652fe68d4bc43b6d4cf.c8c8e39f955a526cb30d323a5a3220b8"
+        }
+      ]
+    }
+  ],
+  "agent_model_called": true,
+  "skill_mode": "fixture",
+  "dgx_hardware_used": false,
+  "trust": {
+    "signature_format": "project_ed25519",
+    "demo_key_generated_this_run": true,
+    "nvidia_verified": false
+  },
+  "scoring_method": "rule_based_deterministic",
+  "limitations": [
+    "工具执行仍为 fixture 模式：Skill 返回的是合成观察，不是真实植物诊断。本次 A/B 检验的是 Agent 层的选工具与构造参数行为，不是农学准确性。",
+    "任务集必须提供与 fixture 精确匹配的标识符，因此本实验不测量图像感知能力。",
+    "未使用 DGX GPU 做推理；本报告的 dgx_hardware_used 记录的是本次运行是否触及 GPU。",
+    "判定为规则化判定，不是语言模型评审；free text 的可读性不在评分范围内。",
+    "单轮运行的样本量不足以做显著性判断，报告只陈述成对差异，不宣布胜负。"
+  ]
+}

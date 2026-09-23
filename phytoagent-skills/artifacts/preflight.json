@@ -11,7 +11,7 @@
       "total_tokens": 32,
       "reasoning_tokens": 0
     },
-    "latency_ms": 992.618
+    "latency_ms": 1108.782
   },
   "tool_calling": {
     "tool_calls_returned": 1,
@@ -35,7 +35,7 @@
   "failures": [],
   "passed": true,
   "config": {
-    "base_url": "https://api.stepfun.com/v1",
+    "base_url": "https://api.stepfun.com/step_plan/v1",
     "host": "api.stepfun.com",
     "model_requested": "step-5-preview",
     "api_key_present": true,

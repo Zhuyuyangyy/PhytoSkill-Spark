@@ -248,3 +248,60 @@ HTTP 429: request limited RPM reached, current: 11, limit: 10
 `repeat=1`，17 个任务。报告里 `statistics.significance_test` 是 `none`：
 样本量不足以支撑统计显著性判断，上面的差值只能当**方向性观察**，不能当结论。
 10 RPM 限速下跑更多轮次成本很高，这一条不隐瞒。
+
+## 真实图像任务：把真实观察接进 Agent 层
+
+前两轮 A/B 里 `harness/agent.py` 硬编码 `mode="fixture"`，所以 StepFun 看到的
+工具返回**全是合成内容**。这一轮把模式提成可配置的，并加了一组指向真实照片的任务。
+
+```
+python -m harness ab --real-images --repeat 1 --output artifacts/agent-ab-real.json
+```
+
+`--real-images` **只跑真实任务**（3 个），不跟 fixture 任务集混。这不是洁癖：
+`plant_vision` 已发布的 fixture 输入是 `fixture://` 占位符，而每个真实模式
+都按设计拒绝它。把两种任务混在一次运行里，等于让一半任务必然失败。第一次
+我就这么试了，20 个任务里 17 个报 `ContractError`——现在 CLI 直接禁止这个组合。
+
+三个真实任务各自带自己的模式：
+
+| 任务 | 模式 | 意图 |
+| --- | --- | --- |
+| `real_vision:herb_slice_quality` | `herb` | 观察药材切片性状，不判等级 |
+| `real_vision:leaf_phenotype` | `live` | 观察叶片表型及其位置 |
+| `real_vision:leaf_healthy_is_empty` | `live` | **负向**：要求指出不存在的黄化区域 |
+
+第三个是负向任务，而且它针对的是一个已知健康的叶片图（`huangqi_leaf_01`，
+模型确认无可报告区域）。它在测量模型会不会为了迎合指令而编造区域。
+
+### 观察缓存：必需基础，不是优化
+
+一次推理 12-167 秒，还会和节点上其他进程争用。A/B 两个臂、每次重跑都会重复
+付这个代价，所以 `dgx/cache.py` 按**图片内容哈希**缓存观察（模型、模式、物种
+也都是键的一部分——三者任一不同就是不同的事实）。
+
+实测效果，同一批 15 张叶片：
+
+| | 耗时 |
+| --- | --- |
+| 第一次（全 miss） | **411 s** |
+| 第二次（全 hit） | **12 s** |
+
+34 倍，且结果逐字节一致（包括 `latency_ms`，因为延迟也随观察一起缓存了）。
+缓存条目带 `cache: "hit"/"miss"` 标记，所以报告里永远不会把缓存观察当成新测量。
+
+### 当前卡住的地方：配额
+
+真实 A/B **没跑成**，六个 run 全部 `transport_error`：
+
+```
+HTTP 402 from api.stepfun.com: You exceeded your current quota,
+please check your plan and billing details
+```
+
+前两轮真实调用（preflight 22 次采样 + 两次 17 任务 A/B）已经把免费额度用尽。
+这是账号余额问题，不是代码缺陷——`agent_model_called` 仍为 `true`（请求确实
+发出去了），失败被如实记成 `transport_error` 而不是伪装成"模型没调用工具"。
+
+需要项目所有者充值或更换密钥后重跑。缓存里的 30 条观察仍然有效，视觉那一半
+不用重跑；重跑的只是 StepFun 的 6 次调用。

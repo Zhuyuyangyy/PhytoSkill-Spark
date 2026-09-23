@@ -12,3 +12,6 @@ dist/
 *.private.pem
 
 # artifacts/ 保留：pytest/契约评测/release 校验记录属不可再生证据，需入库
+
+# DGX observation cache: derived from images, regenerable, and large.
+artifacts/dgx/cache/

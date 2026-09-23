@@ -25,7 +25,7 @@ from sdk.exceptions import ManifestError, SkillError, UnsupportedModeError
 from sdk.schema import package_file, validate_payload
 
 
-def instantiate(skill_type: type, package: Path) -> BaseSkill:
+def instantiate(skill_type: type, package: Path, *, cache=None) -> BaseSkill:
     """Construct a Skill, supplying optional dependencies it declares.
 
     A Skill may accept keyword-only collaborators (for example a corpus) without
@@ -55,12 +55,17 @@ def instantiate(skill_type: type, package: Path) -> BaseSkill:
         extras["model"] = None
     if "env_file" in accepted:
         extras["env_file"] = None
+    # A shared cache is injected so repeated calls in one run reuse observations
+    # instead of re-running a 12-167 s inference per call.
+    if "cache" in accepted and cache is not None:
+        extras["cache"] = cache
     return skill_type(package, **extras)
 
 
 class SkillExecutor:
-    def __init__(self, registry: SkillRegistry):
+    def __init__(self, registry: SkillRegistry, *, cache=None):
         self.registry = registry
+        self._cache = cache
 
     def execute(self, name: str, payload: dict, *, mode: str = "fixture") -> dict:
         record = self.registry.verify_entry(name)
@@ -81,7 +86,8 @@ class SkillExecutor:
         skill_type = namespace.get(class_name)
         if not isinstance(skill_type, type) or not issubclass(skill_type, BaseSkill):
             raise ManifestError("Entrypoint must be a BaseSkill subclass")
-        return instantiate(skill_type, package).execute(payload, mode=mode)
+        return instantiate(skill_type, package, cache=self._cache).execute(
+            payload, mode=mode)
 
     def call(self, name: str, payload: dict, *, mode: str, tool_call_id: str) -> dict:
         start = perf_counter()

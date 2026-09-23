@@ -50,11 +50,21 @@ def _clip(text: str | None, limit: int = MAX_TRACE_TEXT_CHARS) -> tuple[str | No
 
 
 class AgentHarness:
-    def __init__(self, registry, executor, transport: Transport, config: HarnessConfig):
+    def __init__(self, registry, executor, transport: Transport, config: HarnessConfig,
+                 *, tool_mode: str = "fixture"):
+        """``tool_mode`` selects how the Skills answer tool calls.
+
+        ``fixture`` is the default: every Skill returns its published synthetic
+        case, which keeps an A/B run fast, offline and reproducible. ``live`` and
+        ``herb`` reach the DGX Spark node and return real observations, which is
+        what a claim about real behaviour needs — at the cost of a 12-167 s
+        inference per image, mitigated by the observation cache.
+        """
         self.registry = registry
         self.executor = executor
         self.transport = transport
         self.config = config
+        self.tool_mode = tool_mode
         self._instructions_cache: dict[str, dict] | None = None
 
     @property
@@ -158,7 +168,11 @@ class AgentHarness:
                 "error": {"code": type(exc).__name__, "message": str(exc)},
             }), record
 
-        result = self.executor.call(name, arguments, mode="fixture", tool_call_id=call_id)
+        # A Skill that does not implement tool_mode fails loudly rather than
+        # silently answering with its fixture, which would put synthetic data in
+        # a run presented as real.
+        result = self.executor.call(name, arguments, mode=self.tool_mode,
+                                    tool_call_id=call_id)
         record.update(
             status=result["status"],
             duration_ms=result["duration_ms"],

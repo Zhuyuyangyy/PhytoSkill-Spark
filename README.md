@@ -31,7 +31,7 @@ Skill 是交付物，StepFun 负责规划与报告生成，DGX Spark 是本地�
     │                           evidence_fusion / agentshield_audit
     ├── demo/                   phytoforge_demo（三分钟闭环）、四 Skill 组合、SDK 示例
     ├── evals/                  包内 fixture 契约评测器
-    ├── tests/                  323 项，全离线
+    ├── tests/                  362 项，全离线
     ├── artifacts/              pytest 结果、契约评测、release 校验记录、演示记录、发布包
     └── docs/                   比赛资料对照、开发日志、分轮范围、Harness 运行手册
 ```
@@ -76,7 +76,8 @@ python -m harness ab --repeat 1 --output artifacts/agent-ab.json
 - Compiler **不生成任意代码**：它渲染模板并写出声明式配置，唯一生成的 Python 文件是对所有产物逐字节相同的固定薄执行器。
 - 融合为确定性 ID 连接逻辑（真实执行），不把视觉分数与检索分数组合成疾病概率。
 - `artifacts/` 中的现有报告**全部来自 fixture 或本地确定性代码**，`agent_model_called` 为 `false`。
-- Harness **已真实运行**：`step-5-preview` 上 preflight 三项硬检查全过，A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`。`repeat=1`、17 个任务不足以支撑统计显著性，差值只作方向性观察。
+- Harness **已真实运行**：`step-5-preview` 上 preflight 三项硬检查全过，A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`；3 个真实图像任务也已跑通（`artifacts/agent-ab-real.json`），StepFun 真实调用 `plant_vision` 拿 DGX 推理结果。`repeat=1`、样本量不足以支撑统计显著性，差值只作方向性观察。
+- **Step Plan 是独立额度池**：普通 API 通道耗尽（HTTP 402）时，`/step_plan/v1` 仍可用，且不受 V0 的 10 RPM 限制。配置 `PHYTO_STEPFUN_BASE_URL=step_plan`。
 - **DGX Spark 已连通，两组真实图集已跑通**：`gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0）。实测发现第一组 15 张全是干燥药材切片、第二组 15 张才是植株叶片，因此 `plant_vision` 拆成 `live`（叶片表型）与 `herb`（药材性状）两个真实推理模式。两组共 30 张图全链路跑通（真实视觉 → 本地语料 → 融合 → Claim-Evidence 审计）：79 个观察、139 个 supported claims、0 refused。`live` 只产出 3 个观察是因为那些叶片健康，模型如实报告空结果。**没有地面真值**，不宣称识别准确。产物 `artifacts/dgx/`，实测记录见 `phytoagent-skills/docs/dgx-spark.md`。
 - Registry 的 `scanned` / `evaluated` 状态仍为 `not_checked`；未接入 SkillSpector 或 OMS，**没有** NVIDIA 官方 Verified 声明。项目内部可称 `Validated`，不能冒充官方认证。
 - 项目自有的 `manifest.sig` 是 Ed25519 格式，与 OpenSSF Model Signing 的 `skill.oms.sig` 不能互换。

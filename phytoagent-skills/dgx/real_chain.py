@@ -18,6 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+from dgx.cache import ObservationCache
 from demo.fixture_workspace import PROJECT_ROOT, SKILL_NAMES
 from registry import SkillRegistry
 from registry.signer import generate_keypair, sign_package
@@ -59,7 +60,7 @@ def main() -> int:
     registry.discover()
     runtime = ShieldRuntime(registry, trace_id="trace-real-chain-001")
     from runtime.executor import SkillExecutor
-    executor = SkillExecutor(registry)
+    executor = SkillExecutor(registry, cache=ObservationCache())
 
     cases = []
     images = sorted(directory.glob("*.jpg"))

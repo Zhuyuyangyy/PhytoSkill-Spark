@@ -22,6 +22,7 @@ from pathlib import Path
 from demo.fixture_workspace import PROJECT_ROOT, SKILL_NAMES
 from registry import SkillRegistry
 from registry.signer import generate_keypair, sign_package
+from dgx.cache import ObservationCache
 from runtime.executor import SkillExecutor
 from runtime.shield import ClaimAuditor, ShieldRuntime, load_evidence_index
 from sdk.manifest import seal_manifest
@@ -64,7 +65,7 @@ def main() -> int:
     registry = SkillRegistry(skills, trusted_public_key=public)
     registry.discover()
     runtime = ShieldRuntime(registry, trace_id="trace-dgx-e2e-001")
-    executor = SkillExecutor(registry)
+    executor = SkillExecutor(registry, cache=ObservationCache())
 
     print(f"image   : {image}")
     print(f"species : {species}")

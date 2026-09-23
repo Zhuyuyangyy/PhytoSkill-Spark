@@ -14,6 +14,7 @@ from pathlib import Path
 from demo.fixture_workspace import PROJECT_ROOT, SKILL_NAMES
 from registry import SkillRegistry
 from registry.signer import generate_keypair, sign_package
+from dgx.cache import ObservationCache
 from runtime.executor import SkillExecutor
 from runtime.shield import ShieldRuntime
 from sdk.manifest import seal_manifest
@@ -48,7 +49,7 @@ def main() -> int:
     registry = SkillRegistry(skills, trusted_public_key=public)
     registry.discover()
     runtime = ShieldRuntime(registry, trace_id="trace-herb-batch-001")
-    executor = SkillExecutor(registry)
+    executor = SkillExecutor(registry, cache=ObservationCache())
 
     records = []
     images = sorted(directory.glob("*.jpg")) + sorted(directory.glob("*.png"))

@@ -26,7 +26,7 @@ from pathlib import Path
 
 from demo.fixture_workspace import fixture_registry
 from harness.agent import ARMS, AgentHarness
-from harness.config import HarnessConfig
+from harness.config import MODEL_PRICES_PER_MILLION, HarnessConfig
 from harness.scoring import score_task, summarise
 from harness.tasks import Task, build_tasks, count_by_kind
 from harness.transport import MIN_REQUEST_INTERVAL_SECONDS, Transport
@@ -70,10 +70,37 @@ def probe_environment() -> dict:
     }
 
 
+def estimate_cost(*, tasks: int, arms: int, prompt_tokens: int,
+                  completion_tokens: int, model: str) -> dict:
+    """Estimate what a run will cost, from the published list prices.
+
+    Quota is a hard wall: an exhausted account returns HTTP 402 for every model,
+    and a run that dies halfway produces a partial experiment that looks like a
+    result. Estimating first lets the operator decide.
+    """
+    prices = MODEL_PRICES_PER_MILLION.get(model)
+    if prices is None:
+        return {"model": model, "known_price": False}
+    total_prompt = prompt_tokens * tasks * arms
+    total_completion = completion_tokens * tasks * arms
+    cost = (total_prompt / 1_000_000 * prices["input"]
+            + total_completion / 1_000_000 * prices["output"])
+    return {
+        "model": model,
+        "known_price": True,
+        "input_price_per_million": prices["input"],
+        "output_price_per_million": prices["output"],
+        "estimated_prompt_tokens": total_prompt,
+        "estimated_completion_tokens": total_completion,
+        "estimated_cost_cny": round(cost, 4),
+    }
+
+
 class AbRunner:
     def __init__(self, config: HarnessConfig, *, poster=None, registry_factory=fixture_registry,
                  tasks: list[Task] | None = None, progress=None,
-                 min_request_interval: float | None = MIN_REQUEST_INTERVAL_SECONDS):
+                 min_request_interval: float | None = MIN_REQUEST_INTERVAL_SECONDS,
+                 tool_mode: str = "fixture"):
         self.config = config
         self.poster = poster
         self.registry_factory = registry_factory
@@ -82,6 +109,23 @@ class AbRunner:
         # A scripted poster answers instantly, so throttling it would only make
         # the offline tests slow. Real runs keep the default.
         self.min_request_interval = min_request_interval
+        # How the Skills answer tool calls: "fixture" (default, fast, offline) or
+        # "live"/"herb" (real DGX inference, slow, cached).
+        self.tool_mode = tool_mode
+        # Measured baselines from the first successful full A/B run, used only to
+        # estimate what the next run will cost. Overridden by --baseline-*.
+        self._baseline_prompt_tokens = 6000
+        self._baseline_completion_tokens = 600
+
+    def _cost_estimate(self) -> dict:
+        """A per-run cost estimate from the prices published at config time."""
+        return estimate_cost(
+            tasks=len(self.tasks), arms=len(ARMS),
+            # Both arms are prompted the same way apart from the Skill
+            # instructions, so one measured pair's token counts scale linearly.
+            prompt_tokens=self._baseline_prompt_tokens,
+            completion_tokens=self._baseline_completion_tokens,
+            model=self.config.model)
 
     def run(self, *, repeat: int = 1) -> dict:
         config = self.config
@@ -91,13 +135,18 @@ class AbRunner:
         with self.registry_factory() as registry:
             transport = Transport(config, self.poster,
                                   min_request_interval=self.min_request_interval)
-            harness = AgentHarness(registry, SkillExecutor(registry), transport, config)
+            harness = AgentHarness(registry, SkillExecutor(registry), transport, config,
+                                   tool_mode=self.tool_mode)
             packages = {name: {"manifest_sha256": detail["manifest_sha256"],
                                "instructions_sha256": detail["instructions_sha256"],
                                "instructions_chars": detail["instructions_chars"]}
                         for name, detail in harness.skill_instructions.items()}
             for round_index in range(repeat):
                 for task_index, task in enumerate(self.tasks):
+                    # A task may override the run's default tool mode. Real-image
+                    # tasks carry their own, because a photograph needs a real
+                    # adapter while the rest of the set runs on fixtures.
+                    harness.tool_mode = task.tool_mode or self.tool_mode
                     for arm in self._arm_order(round_index + task_index):
                         self.progress(f"[r{round_index + 1}] {task.task_id} / {arm}")
                         run = harness.run_task(task, arm=arm)
@@ -116,6 +165,10 @@ class AbRunner:
                              "host": config.host, "endpoint_path": "/chat/completions"},
                 "config": config.redacted(),
                 "single_variable": "Skill 指令是否出现在 system prompt 中",
+                "tool_mode": self.tool_mode,
+                "cost_estimate": self._cost_estimate(),
+                "task_tool_modes": {task.task_id: (task.tool_mode or self.tool_mode)
+                                    for task in self.tasks},
                 "held_constant": ["model", "endpoint", "sampling_parameters", "tool_definitions",
                                   "task_set", "harness_code", "max_turns", "turn_loop"],
                 "tool_definitions_sha256": _digest(json.dumps(harness.tool_definitions(),

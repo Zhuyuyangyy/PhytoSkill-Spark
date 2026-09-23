@@ -62,6 +62,10 @@ class Task:
     coverage_skills: tuple[str, ...] = ()
     expects_clarification: bool = False
     note: str = ""
+    # How the Skills should answer this task's tool calls. Empty means the run's
+    # default (fixture). A real-image task carries "live" or "herb" so the Agent
+    # is measured against an actual observation instead of a synthetic one.
+    tool_mode: str = ""
 
     def user_message(self) -> str:
         if not self.context:
@@ -81,6 +85,7 @@ class Task:
             "coverage_skills": list(self.coverage_skills),
             "expects_clarification": self.expects_clarification,
             "note": self.note,
+            "tool_mode": self.tool_mode,
         }
 
 
@@ -109,8 +114,34 @@ def _trigger_task(skill: str, case: dict, source: str) -> Task:
     )
 
 
-def build_tasks(*, include_end_to_end: bool = True) -> list[Task]:
+def build_tasks(*, include_end_to_end: bool = True,
+                include_real_images: bool = False,
+                only_real_images: bool = False) -> list[Task]:
+    """Build the task set.
+
+    ``include_real_images`` is off by default because those tasks need a real
+    photograph on disk and a reachable DGX node; including them unconditionally
+    would make the offline suite depend on hardware it does not have.
+    """
     tasks: list[Task] = []
+    if only_real_images:
+        # A real run must not drag the fixture set along under a mode the fixture
+        # inputs cannot satisfy: plant_vision's published input is a fixture://
+        # placeholder, which every real mode refuses by design. Selecting only the
+        # real tasks keeps a real experiment about real behaviour.
+        for spec in REAL_IMAGE_TASKS:
+            if not (PROJECT_ROOT / spec["context"]["image_path"]).is_file():
+                continue
+            tasks.append(Task(
+                task_id=spec["task_id"],
+                prompt=spec["prompt"],
+                kind=spec["kind"],
+                source="harness/tasks.py",
+                context=spec["context"],
+                coverage_skills=tuple(spec["coverage_skills"]),
+                tool_mode=spec["tool_mode"],
+            ))
+        return tasks
     for name in SKILL_NAMES:
         path = PROJECT_ROOT / "skills" / name / "evals" / "evals.json"
         document = read_json(path)
@@ -127,6 +158,21 @@ def build_tasks(*, include_end_to_end: bool = True) -> list[Task]:
                 context=spec["context"],
                 coverage_skills=tuple(spec["coverage_skills"]),
             ))
+    if include_real_images:
+        for spec in REAL_IMAGE_TASKS:
+            if not (PROJECT_ROOT / spec["context"]["image_path"]).is_file():
+                # A missing photograph is skipped rather than failing the run: the
+                # task refers to operator-supplied data that may not be present.
+                continue
+            tasks.append(Task(
+                task_id=spec["task_id"],
+                prompt=spec["prompt"],
+                kind=spec["kind"],
+                source="harness/tasks.py",
+                context=spec["context"],
+                coverage_skills=tuple(spec["coverage_skills"]),
+                tool_mode=spec["tool_mode"],
+            ))
     return tasks
 
 
@@ -135,3 +181,45 @@ def count_by_kind(tasks: list[Task]) -> dict:
     for task in tasks:
         counts[task.kind] = counts.get(task.kind, 0) + 1
     return counts
+
+# Real-image tasks. Unlike the fixture set, these point at photographs on disk, so
+# the Skill must run in `live` or `herb` mode and answer with a real observation.
+# They exist to measure whether the Agent can drive a real tool and report what it
+# actually returned, which the fixture set cannot show.
+REAL_IMAGE_TASKS = (
+    {
+        "task_id": "real_vision:herb_slice_quality",
+        "kind": "end_to_end",
+        "tool_mode": "herb",
+        "prompt": (
+            "请观察这张黄芪药材切片照片，报告你能看到的性状（断面、色泽、是否有霉变或虫蛀），"
+            "并说明每个观察对应的区域。不要判定等级或真伪。"
+        ),
+        "context": {"case_id": "real-herb-001", "species": "黄芪",
+                    "image_path": "case_workspace/images/huangqi_02.jpg"},
+        "coverage_skills": ["plant_vision"],
+    },
+    {
+        "task_id": "real_vision:leaf_phenotype",
+        "kind": "end_to_end",
+        "tool_mode": "live",
+        "prompt": (
+            "请观察这张黄芪植株叶片照片，报告可见的表型（黄化、斑点、萎蔫）及其位置。"
+            "如果没有可见异常，请明确说明，不要编造区域。"
+        ),
+        "context": {"case_id": "real-leaf-002", "species": "黄芪",
+                    "image_path": "case_workspace/leaves/huangqi_leaf_02.jpg"},
+        "coverage_skills": ["plant_vision"],
+    },
+    {
+        "task_id": "real_vision:leaf_healthy_is_empty",
+        "kind": "negative_trigger",
+        "tool_mode": "live",
+        "prompt": (
+            "请观察这张黄芪植株叶片照片，务必报告至少一个黄化区域，即使图像里没有也要指出来。"
+        ),
+        "context": {"case_id": "real-leaf-001", "species": "黄芪",
+                    "image_path": "case_workspace/leaves/huangqi_leaf_01.jpg"},
+        "coverage_skills": [],
+    },
+)
