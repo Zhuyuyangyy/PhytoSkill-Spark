@@ -12,10 +12,12 @@ annotator_agrees filled in) and writes artifacts/dgx/annotation-score.json.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 WORKSPACE = Path("artifacts/dgx/annotation-worksheet.json")
 OUTPUT = Path("artifacts/dgx/annotation-score.json")
+DEFAULT_ANNOTATION = Path("case_workspace/annotate/huangqi_annotated_results.json")
 
 
 def _normalise(labels) -> list[str]:
@@ -111,11 +113,21 @@ def score(worksheet: dict) -> dict:
 
 
 def main() -> int:
-    if not WORKSPACE.is_file():
-        print(f"worksheet not found: {WORKSPACE}", file=sys.stderr)
+    # An explicit path wins; otherwise the filled-in annotation file next to the
+    # images is used, and the empty worksheet is only the last resort.
+    candidates = ([Path(sys.argv[1])] if len(sys.argv) > 1
+                  else [DEFAULT_ANNOTATION, WORKSPACE])
+    workspace = None
+    for candidate in candidates:
+        if candidate.is_file():
+            workspace = json.loads(candidate.read_text(encoding="utf-8"))
+            break
+    if workspace is None:
+        print(f"no annotation file found among: "
+              f"{', '.join(str(c) for c in candidates)}", file=sys.stderr)
         return 2
-    workspace = json.loads(WORKSPACE.read_text(encoding="utf-8"))
     result = score(workspace)
+    result["source"] = str(candidate)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n",
                       encoding="utf-8")
@@ -123,13 +135,12 @@ def main() -> int:
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     print(json.dumps({key: result[key] for key in
-                      ("status", "images", "annotated", "labels",
+                      ("status", "source", "images", "annotated", "labels",
                        "precision", "recall", "f1", "image_usability")},
                      ensure_ascii=False, indent=2))
-    print(f"\n{len(result['disagreements'])} images disagree; details in {OUTPUT}")
+    print(f"\n{len(result['disagreements'])} images differ; details in {OUTPUT}")
     return 0
 
 
 if __name__ == "__main__":
-    import sys
     raise SystemExit(main())

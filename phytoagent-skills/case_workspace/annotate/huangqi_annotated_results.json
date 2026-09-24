@@ -1,0 +1,998 @@
+{
+  "schema_version": 1,
+  "instructions": [
+    "对每张图，先自己看，再对照 model_predicted。",
+    "annotator_labels 填你认可实际存在的性状（可多选，也可填候选集之外的词）。",
+    "annotator_agrees 填 true/false：模型报的性状你是否认可。",
+    "模型没报但你看到了，算漏检（false negative）；模型报了你没看到，算误报。",
+    "两者都记，才能算 precision 和 recall，只算一个会高估。"
+  ],
+  "images": 30,
+  "annotation_status": "completed",
+  "annotator_agrees_notes": "annotator_agrees 视为布尔：模型报的性状全部认可为 true，存在任一不认可为 false；模型未报任何性状（model_predicted 为空）时无错误预测，记为 true",
+  "entries": [
+    {
+      "image_size": "800x800",
+      "image": "huangqi_01.jpg",
+      "image_path": "case_workspace/annotate/huangqi_01.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "colour_amber",
+        "cut_surface_dense"
+      ],
+      "model_observation_count": 6,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "colour_pale_yellow",
+        "slice_irregular"
+      ],
+      "annotator_agrees": false,
+      "annotator_note": "断面以粉性淡黄为主，未见明显琥珀色与角质化；模型误报 colour_amber、cut_surface_dense。第6片可见纵向裂隙。"
+    },
+    {
+      "image_size": "800x800",
+      "image": "huangqi_02.jpg",
+      "image_path": "case_workspace/annotate/huangqi_02.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "模型漏检：未报任何性状；图中断面粉性与淡黄色泽明显。"
+    },
+    {
+      "image_size": "800x533",
+      "image": "huangqi_03.jpg",
+      "image_path": "case_workspace/annotate/huangqi_03.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow",
+        "slice_irregular"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "模型漏检：粉性、淡黄、厚薄不均均明显，未报任何性状。"
+    },
+    {
+      "image_size": "1200x800",
+      "image": "huangqi_04.jpg",
+      "image_path": "case_workspace/annotate/huangqi_04.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "model_observation_count": 19,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "colour_pale_yellow",
+        "slice_irregular"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "认可 pale_yellow；断面致密略带角质光泽，粉性与厚薄不均明显，均属漏检。"
+    },
+    {
+      "image_size": "3120x3120",
+      "image": "huangqi_05.jpg",
+      "image_path": "case_workspace/annotate/huangqi_05.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "slice_irregular"
+      ],
+      "model_observation_count": 3,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow"
+      ],
+      "annotator_agrees": false,
+      "annotator_note": "模型误报 cut_surface_dense（断面为粉性非角质）与 slice_irregular（2-4mm 相对均匀）；漏报粉性。"
+    },
+    {
+      "image_size": "800x800",
+      "image": "huangqi_06.jpg",
+      "image_path": "case_workspace/annotate/huangqi_06.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "cut_surface_dense",
+        "colour_pale_yellow",
+        "colour_dark_brown"
+      ],
+      "model_observation_count": 15,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "colour_pale_yellow",
+        "slice_irregular"
+      ],
+      "annotator_agrees": false,
+      "annotator_note": "模型误报 colour_dark_brown（未见深褐）；cut_surface_dense 不显著（纤维致密非角质）。多片见放射状细裂隙。"
+    },
+    {
+      "image_size": "800x800",
+      "image": "huangqi_07.jpg",
+      "image_path": "case_workspace/annotate/huangqi_07.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "model_observation_count": 1,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "认可 pale_yellow；补充漏报的粉性（断面金黄心、粉性中等偏上）。"
+    },
+    {
+      "image_size": "1500x1500",
+      "image": "huangqi_08.jpg",
+      "image_path": "case_workspace/annotate/huangqi_08.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "slice_irregular"
+      ],
+      "model_observation_count": 3,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow"
+      ],
+      "annotator_agrees": false,
+      "annotator_note": "模型误报 cut_surface_dense（粉性为主，非角质）与 slice_irregular（2-4mm 相对均匀）。"
+    },
+    {
+      "image_size": "800x800",
+      "image": "huangqi_09.jpg",
+      "image_path": "case_workspace/annotate/huangqi_09.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "模型漏检：粉性突出、淡黄色泽明显，未报任何性状。个别片中心轻微凹陷不致空心。"
+    },
+    {
+      "image_size": "599x400",
+      "image": "huangqi_10.jpg",
+      "image_path": "case_workspace/annotate/huangqi_10.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow",
+        "slice_irregular"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "模型漏检：粉性、淡黄及明显厚薄不均（约2-7mm 混杂）。"
+    },
+    {
+      "image_size": "800x533",
+      "image": "huangqi_11.jpg",
+      "image_path": "case_workspace/annotate/huangqi_11.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "model_observation_count": 8,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "认可 pale_yellow；补充漏报的粉性。片型 2-4mm 相对均匀，边缘轻微角质化倾向不计致密。"
+    },
+    {
+      "image_size": "800x625",
+      "image": "huangqi_12.jpg",
+      "image_path": "case_workspace/annotate/huangqi_12.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "colour_pale_yellow",
+        "slice_irregular"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "模型漏检：多片见放射/环形裂纹、粉性、淡黄、厚薄明显不均（1.5-5mm）。"
+    },
+    {
+      "image_size": "800x533",
+      "image": "huangqi_13.jpg",
+      "image_path": "case_workspace/annotate/huangqi_13.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow",
+        "slice_irregular"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "模型漏检：粉性突出、淡黄、混合切片厚薄批次内不一。"
+    },
+    {
+      "image_size": "800x800",
+      "image": "huangqi_14.jpg",
+      "image_path": "case_workspace/annotate/huangqi_14.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense"
+      ],
+      "model_observation_count": 21,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow"
+      ],
+      "annotator_agrees": false,
+      "annotator_note": "模型误报 cut_surface_dense（切面以粉性为主、纤维偏松散，未见角质化）。"
+    },
+    {
+      "image_size": "700x1053",
+      "image": "huangqi_15.jpg",
+      "image_path": "case_workspace/annotate/huangqi_15.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [
+        "cut_surface_powder",
+        "colour_pale_yellow",
+        "slice_irregular"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "模型漏检：粉性、淡黄及片型厚薄不整（3-5mm，手工切）。"
+    },
+    {
+      "image_size": "478x336",
+      "image": "huangqi_leaf_01.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_01.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": true,
+      "annotator_note": "健康植株，绿叶舒展，无黄化/斑点/萎蔫（对照图）。"
+    },
+    {
+      "image_size": "1920x2560",
+      "image": "huangqi_leaf_02.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_02.jpg",
+      "mode": "live",
+      "model_predicted": [
+        "leaf_yellowing"
+      ],
+      "model_observation_count": 1,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [
+        "leaf_yellowing"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "认可 leaf_yellowing：幼嫩组织与茎基呈淡黄绿/黄化，程度轻。斑点不构成病斑，手持姿态下萎蔫难断，不计。"
+    },
+    {
+      "image_size": "1616x1152",
+      "image": "huangqi_leaf_03.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_03.jpg",
+      "mode": "live",
+      "model_predicted": [
+        "leaf_yellowing"
+      ],
+      "model_observation_count": 1,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "黄化、斑点、萎蔫三者俱全：中下部叶片黄化、2-8mm 褐色叶斑（Ascochyta/Cercospora 类）、小叶内卷下垂。模型漏报 leaf_spot 与 wilting。"
+    },
+    {
+      "image_size": "1024x768",
+      "image": "huangqi_leaf_04.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_04.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": true,
+      "annotator_note": "田间植株健康，无黄化/斑点/萎蔫。"
+    },
+    {
+      "image_size": "600x400",
+      "image": "huangqi_leaf_05.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_05.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": false,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": true,
+      "annotator_note": "开花期植株总体健康；个别老叶自然变黄未达病态阈值。模型标记图像不可用，但图中未见异常。"
+    },
+    {
+      "image_size": "445x315",
+      "image": "huangqi_leaf_06.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_06.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": true,
+      "annotator_note": "植株健康，叶色均匀鲜绿，无异常。"
+    },
+    {
+      "image_size": "751x500",
+      "image": "huangqi_leaf_07.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_07.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "系统性病害后期：下部叶黄化+叶脉间失绿、褐色坏死斑、顶端干枯萎蔫。模型未报任何性状，漏检三种。"
+    },
+    {
+      "image_size": "750x500",
+      "image": "huangqi_leaf_08.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_08.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "黄化约30-40%（叶尖叶缘先发）、1-3mm 黄褐斑点、小叶披垂萎蔫，复合症状。模型漏检。"
+    },
+    {
+      "image_size": "406x612",
+      "image": "huangqi_leaf_09.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_09.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": false,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": true,
+      "annotator_note": "开花期健康单株，叶色鲜绿，无黄化/斑点/萎蔫。模型标记图像不可用，但图中未见异常。"
+    },
+    {
+      "image_size": "500x620",
+      "image": "huangqi_leaf_10.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_10.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [
+        "leaf_yellowing"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "上部/幼叶黄化明显（约15-25%，多呈叶脉间褪绿）；无斑点、无萎蔫。模型漏检黄化。"
+    },
+    {
+      "image_size": "500x375",
+      "image": "huangqi_leaf_11.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_11.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": true,
+      "annotator_note": "健康对照（中国植物图像库），叶色饱满，无异常。"
+    },
+    {
+      "image_size": "750x500",
+      "image": "huangqi_leaf_12.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_12.jpg",
+      "mode": "live",
+      "model_predicted": [
+        "leaf_yellowing"
+      ],
+      "model_observation_count": 1,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [
+        "leaf_yellowing"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "认可 leaf_yellowing：新叶与花序区黄化中等。个别小叶轻度下垂数量少、体态多与自然习性重叠，count 不计 wilting；斑点不明显。"
+    },
+    {
+      "image_size": "475x633",
+      "image": "huangqi_leaf_13.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_13.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": false,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": true,
+      "annotator_note": "单株开花期健康；垂花为该物种正常习性，非萎蔫。模型标记图像不可用，但图中未见异常。"
+    },
+    {
+      "image_size": "612x406",
+      "image": "huangqi_leaf_14.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_14.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "黄化（叶缘/叶脉间斑块状）、褐色坏死斑具同心轮纹及黄晕、顶端小叶沿中脉对折下垂（萎蔫），三症并存。模型漏检。"
+    },
+    {
+      "image_size": "1024x682",
+      "image": "huangqi_leaf_15.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_15.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [
+        "leaf_yellowing",
+        "leaf_spot"
+      ],
+      "annotator_agrees": true,
+      "annotator_note": "叶缘/叶尖轻度黄化，可见1个约1-2mm 坏死斑（早期）；无萎蔫。模型漏检黄化与斑点。"
+    }
+  ]
+}

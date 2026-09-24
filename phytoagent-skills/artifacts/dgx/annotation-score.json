@@ -1,6 +1,383 @@
 {
-  "status": "not_annotated",
+  "status": "scored",
   "images": 30,
-  "annotated": 0,
-  "note": "Fill annotator_labels and/or annotator_agrees, then re-run."
+  "annotated": 30,
+  "labels": {
+    "true_positives": 11,
+    "false_positives": 9,
+    "false_negatives": 48
+  },
+  "precision": 0.55,
+  "recall": 0.1864,
+  "f1": 0.2785,
+  "image_usability": {
+    "both_usable": 0,
+    "both_unusable": 0,
+    "disagree": 0,
+    "annotated": 0
+  },
+  "disagreements": [
+    {
+      "image": "huangqi_01.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_amber",
+        "colour_pale_yellow",
+        "cut_surface_dense"
+      ],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "missed_by_model": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "extra_in_model": [
+        "colour_amber",
+        "cut_surface_dense"
+      ]
+    },
+    {
+      "image": "huangqi_02.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "missed_by_model": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_03.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "missed_by_model": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_04.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "missed_by_model": [
+        "cut_surface_dense",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_05.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "slice_irregular"
+      ],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "missed_by_model": [
+        "cut_surface_powder"
+      ],
+      "extra_in_model": [
+        "cut_surface_dense",
+        "slice_irregular"
+      ]
+    },
+    {
+      "image": "huangqi_06.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_dark_brown",
+        "colour_pale_yellow",
+        "cut_surface_dense"
+      ],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "missed_by_model": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "extra_in_model": [
+        "colour_dark_brown",
+        "cut_surface_dense"
+      ]
+    },
+    {
+      "image": "huangqi_07.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "missed_by_model": [
+        "cut_surface_powder"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_08.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "slice_irregular"
+      ],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "missed_by_model": [
+        "cut_surface_powder"
+      ],
+      "extra_in_model": [
+        "cut_surface_dense",
+        "slice_irregular"
+      ]
+    },
+    {
+      "image": "huangqi_09.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "missed_by_model": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_10.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "missed_by_model": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_11.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "missed_by_model": [
+        "cut_surface_powder"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_12.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "missed_by_model": [
+        "colour_pale_yellow",
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_13.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "missed_by_model": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_14.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense"
+      ],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ],
+      "missed_by_model": [
+        "cut_surface_powder"
+      ],
+      "extra_in_model": [
+        "cut_surface_dense"
+      ]
+    },
+    {
+      "image": "huangqi_15.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "annotator_labels": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "missed_by_model": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_leaf_03.jpg",
+      "mode": "live",
+      "model_predicted": [
+        "leaf_yellowing"
+      ],
+      "annotator_labels": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ],
+      "missed_by_model": [
+        "leaf_spot",
+        "wilting"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_leaf_07.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "annotator_labels": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ],
+      "missed_by_model": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_leaf_08.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "annotator_labels": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ],
+      "missed_by_model": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_leaf_10.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "annotator_labels": [
+        "leaf_yellowing"
+      ],
+      "missed_by_model": [
+        "leaf_yellowing"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_leaf_14.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "annotator_labels": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ],
+      "missed_by_model": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ],
+      "extra_in_model": []
+    },
+    {
+      "image": "huangqi_leaf_15.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "annotator_labels": [
+        "leaf_spot",
+        "leaf_yellowing"
+      ],
+      "missed_by_model": [
+        "leaf_spot",
+        "leaf_yellowing"
+      ],
+      "extra_in_model": []
+    }
+  ],
+  "caveats": [
+    "样本量小（当前标注 30 张），这些数字只能当方向性观察。",
+    "标注者只有一人，没有第二人交叉验证，标注者间一致性未测。",
+    "precision 与 recall 同时报：只报一个会高估。"
+  ],
+  "source": "case_workspace\\annotate\\huangqi_annotated_results.json"
 }
