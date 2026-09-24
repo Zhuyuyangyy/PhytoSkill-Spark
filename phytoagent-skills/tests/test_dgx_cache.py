@@ -39,11 +39,50 @@ def test_different_bytes_get_different_keys():
     ("model", "other-model"),
     ("mode", "live"),
     ("species", "人参"),
+    ("prompt", "a different prompt"),
 ])
 def test_every_input_that_changes_the_answer_is_part_of_the_key(field, value):
     base = {"image_bytes": b"img", "model": MODEL, "mode": "herb", "species": "黄芪"}
     other = dict(base, **{field: value})
     assert cache_key(**base) != cache_key(**other)
+
+
+def test_a_prompt_change_must_invalidate_the_cache():
+    """A calibration run edits the prompt and re-runs the same images.
+
+    If the key ignored the prompt, every image would be served the old
+    observation and the experiment would measure nothing. This is not
+    hypothetical: the key originally omitted the prompt.
+    """
+    base = dict(image_bytes=b"img", model="m", mode="herb", species="黄芪")
+    before = cache_key(prompt="Rule: only report high-confidence anomalies.", **base)
+    after = cache_key(prompt="Rule: report every visible property, even mild.", **base)
+    assert before != after
+
+
+def test_the_wrapper_recomputes_when_the_prompt_changes(tmp_path):
+    """End to end: the second prompt costs a real inference, not a cache hit."""
+    calls: list[int] = []
+
+    def runner(client, *, image_bytes, species, model, timeout):
+        calls.append(1)
+        return {"regions": [], "image_usable": True, "latency_ms": 1.0, "gpu": {}}
+
+    cache = ObservationCache(tmp_path / "cache")
+    for _ in range(3):
+        cached_vision(None, cache=cache, image_bytes=b"img", species="黄芪",
+                      model="m", mode="herb", runner=runner, prompt="V1")
+    assert len(calls) == 1
+    cached_vision(None, cache=cache, image_bytes=b"img", species="黄芪",
+                  model="m", mode="herb", runner=runner, prompt="V2")
+    assert len(calls) == 2
+
+
+def test_an_empty_prompt_is_a_distinct_key_that_never_invalidates():
+    """Callers that omit the prompt get a stable key, and must know it."""
+    base = dict(image_bytes=b"img", model="m", mode="herb", species="黄芪")
+    assert cache_key(prompt="", **base) == cache_key(prompt="", **base)
+    assert cache_key(prompt="", **base) != cache_key(prompt="x", **base)
 
 
 def test_the_digest_is_a_sha256_hex():

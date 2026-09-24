@@ -42,16 +42,36 @@ PHENOTYPES = (
     "unknown",
 )
 
+# num_predict is the real constraint on the prompt, not its character count. A
+# photo with many slices makes the model enumerate them one by one: the worst
+# observed case ran to 1500 tokens and still had finished reporting, because
+# _salvage_regions recovers the completed entries. 1500 was reached on 4 of 15
+# images, so the budget was raised rather than the prompt trimmed — cutting the
+# phenotype definitions to fit would have reintroduced the very confusion they
+# exist to prevent.
+NUM_PREDICT = 3000
 PROMPT_TEMPLATE = """Observe this photograph of dried sliced medicinal herb material. Report what is visible as JSON only.
 
 Format: {"image_usable": true, "regions": [{"phenotype": "<one of PHENOTYPES>", "label": "short text", "bbox": [l, t, r, b], "confidence": 0-1}]}
 
 PHENOTYPES = @@PHENOTYPES@@
 
+Definitions that matter (read before choosing):
+- cut_surface_powder: the cut face looks starchy or mealy, sheds fine powder,
+  matte and slightly granular. THIS IS THE NORMAL STATE for sliced Astragalus.
+- cut_surface_dense: the cut face is glassy, translucent or waxy, NOT powdery,
+  and cleanly compact such that you could not rub powder off it. Only choose this
+  when powdery is clearly absent. A firm but powdery face is powder, NOT dense.
+- cut_surface_fissure: a visible crack, split or shatter running into the slice.
+- cut_surface_hollow: a real cavity or central void, not just a shallow dish.
+- colour_amber: the cut face itself reads amber/honey-brown overall.
+- colour_dark_brown: genuinely dark brown or scorched areas, not bark.
+
 Rules:
 - bbox normalised 0-1 (divide pixel coordinates by image width and height).
-- Describe the cut surface, colour and any visible defects only.
+- Bark/skin colour is not cut-surface colour; describe it only as part of the label.
 - Never state a quality grade, price, authenticity verdict, or cause. You are describing, not judging.
+- If the only visible property is colour, report colour; do not add texture.
 - No visible feature of interest -> {"image_usable": false, "regions": []}.
 - JSON only, no explanation, no markdown fence.
 
@@ -78,7 +98,7 @@ payload = {{
     "prompt": PROMPT,
     "images": [IMAGE_B64],
     "stream": False,
-    "options": {{"temperature": 0, "num_predict": 1500}},
+    "options": {{"temperature": 0, "num_predict": {num_predict}}},
 }}
 
 request = urllib.request.Request(
@@ -124,7 +144,8 @@ def build_remote_script(*, model: str, image_b64: str, species: str,
     """Render the script that runs on the node. Kept separate so tests can
     assert on the prompt without touching a live GPU."""
     return REMOTE_SCRIPT.format(model=model, image_b64=image_b64,
-                                species=species, prompt=prompt)
+                                species=species, prompt=prompt,
+                                num_predict=NUM_PREDICT)
 
 
 def _extract_json(text: str) -> dict | None:

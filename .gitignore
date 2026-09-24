@@ -22,3 +22,8 @@ dist/
 
 # 临时归档
 /*.zip
+
+# Scratch left by other tools/sessions in the shared workspace, not this project's output
+phytoagent-skills/case_workspace/annotate/herbal-ai/
+phytoagent-skills/case_workspace/annotate/.tmp_*.json
+reasonix.toml

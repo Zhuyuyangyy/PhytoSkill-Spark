@@ -62,6 +62,13 @@ def _image_size(image_bytes: bytes) -> tuple[int, int] | None:
         return None
 
 
+def build_prompt(*, species: str) -> str:
+    """Render the prompt for one species. Exposed so a caller can feed the exact
+    text to the observation cache; without it a prompt edit would reuse stale
+    observations."""
+    return PROMPT_TEMPLATE.replace("@@SPECIES@@", species)
+
+
 def _extract_json(text: str) -> dict | None:
     """Pull the first JSON object out of a free-form model reply."""
     if not text:
@@ -203,9 +210,8 @@ def run_vision(client: DgxClient, *, image_bytes: bytes, species: str,
     guessed one.
     """
     image_size = _image_size(image_bytes)
-    """Run one real vision inference on the node and return a parsed record."""
     image_b64 = base64.b64encode(image_bytes).decode("ascii")
-    prompt = PROMPT_TEMPLATE.replace("@@SPECIES@@", species)
+    prompt = build_prompt(species=species)
     script = build_remote_script(model=model, image_b64=image_b64,
                                  species=species, prompt=prompt)
     result = client.run_script(script, timeout=timeout)

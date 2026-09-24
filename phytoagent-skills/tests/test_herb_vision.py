@@ -49,9 +49,36 @@ def test_the_prompt_demands_normalised_coordinates():
     assert "normalised 0-1" in build_prompt(species="黄芪")
 
 
-def test_the_prompt_stays_short_enough_for_the_token_budget():
-    """A long prompt made the model exhaust num_predict before answering."""
-    assert len(build_prompt(species="黄芪")) < 1200
+def test_the_prompt_is_short_relative_to_the_generation_budget():
+    """The prompt must leave room for the answer.
+
+    The constraint is not a character count: it is that prompt plus reply must fit
+    the model's budget. A long prompt made one version exhaust ``num_predict``
+    before answering at all, so the ratio is what the test guards.
+
+    The prompt later grew to ~1670 characters when the phenotype definitions were
+    written out. That was deliberate and correct — the definitions exist to stop
+    exactly the ``cut_surface_dense`` / ``cut_surface_powder`` confusion the
+    annotations found. The budget was raised instead of trimming them.
+    """
+    from dgx.herb_vision import NUM_PREDICT
+    prompt = build_prompt(species="黄芪")
+    # Roughly 1 token per 3 characters for mixed English/CJK; the reply needs at
+    # least as much room as the prompt consumes.
+    prompt_tokens_estimate = len(prompt) / 3
+    assert prompt_tokens_estimate < NUM_PREDICT / 2, (
+        f"prompt ~{prompt_tokens_estimate:.0f} tokens leaves too little of the "
+        f"{NUM_PREDICT}-token generation budget")
+
+
+def test_the_generation_budget_is_headroom_for_many_slices():
+    """A photo with many slices makes the model enumerate each one.
+
+    The worst observed case reached the previous 1500-token budget, so the budget
+    must stay above that or the tail of the report is lost.
+    """
+    from dgx.herb_vision import NUM_PREDICT
+    assert NUM_PREDICT > 1500
 
 
 def test_the_herb_vocabulary_is_not_the_leaf_vocabulary():
@@ -239,6 +266,28 @@ def test_the_marker_list_covers_both_languages():
 
 
 # ── remote script ────────────────────────────────────────────────────────────
+
+
+def test_the_rendered_remote_script_is_self_contained():
+    """The remote script runs in a separate interpreter on the node.
+
+    A local constant referenced by name is NOT in scope there, so the value has to
+    be interpolated at render time. This bit for real: a ``num_predict:
+    NUM_PREDICT`` reached the node as a bare name and every call died with
+    NameError.
+    """
+    script = build_remote_script(model=MODEL, image_b64="AAAA",
+                                 species="黄芪", prompt="look")
+    assert "num_predict" in script
+    assert "NUM_PREDICT" not in script  # no unresolved local name
+    compile(script, "<remote>", "exec")   # must parse standalone
+
+
+def test_the_remote_script_reports_the_real_generation_budget():
+    from dgx.herb_vision import NUM_PREDICT
+    script = build_remote_script(model=MODEL, image_b64="AAAA",
+                                 species="黄芪", prompt="look")
+    assert str(NUM_PREDICT) in script
 
 
 def test_the_remote_script_carries_the_prompt_and_model():

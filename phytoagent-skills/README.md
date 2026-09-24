@@ -8,11 +8,11 @@ PhytoSkill-Spark 把药用植物异常研判拆成四个可独立发现、调用
 
 **0.3.0 新增：Skill Compiler（`compiler/`）、AgentShield 编译门禁（`shield/gate.py`）、AgentShield Runtime 中间件与 Claim-Evidence 审计（`runtime/shield.py`）、工作流 Skill 执行器（`runtime/workflow.py`）、可调用审计 Skill（`skills/agentshield_audit/`）、本地语料检索（`corpus/`）与三分钟演示（`demo/phytoforge_demo.py`）。**
 
-测试 **233 项，全部离线通过**。契约评测 **28/28**。
+测试 **362 项，全部离线通过**。契约评测 **28/28**。
 
 **真实模型已跑通**：`step-5-preview` 上 preflight 三项硬检查全过，A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`。真实差异见 [真实 Harness](docs/harness.md)。
 
-**DGX Spark 已连通，真实数据集已跑通**：`gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0），`plant_vision` 新增 `live`（叶片表型）与 `herb`（药材性状）两个真实推理模式。两组真实图集（药材切片 15 张 + 植株叶片 15 张）全链路跑通：真实视觉 → 本地语料 → 融合 → Claim-Evidence 审计，共 79 个观察、139 个 supported claims、0 refused。产物 `artifacts/dgx/`。见 [DGX 实测](docs/dgx-spark.md)。
+**DGX Spark 已连通，真实数据集已跑通**：`gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0），`plant_vision` 新增 `live`（叶片表型）与 `herb`（药材性状）两个真实推理模式。两组真实图集（药材切片 15 张 + 植株叶片 15 张）全链路跑通：真实视觉 → 本地语料 → 融合 → Claim-Evidence 审计，共 79 个观察、139 个 supported claims、0 refused。**人工标注后 recall 仅 0.1864**——漏检是主要问题，详见下文。产物 `artifacts/dgx/`。见 [DGX 实测](docs/dgx-spark.md)。
 
 ## 立即运行
 
@@ -132,9 +132,60 @@ huangqi-health-assessment/
 | `herb` | 药材切片 | 76 | 106 |
 | `live` | 植株叶片 | 3 | 33 |
 
-`live` 只产出 3 个观察不是失败——那些叶片是健康的，模型如实报告"没有可报告区域"，`schema` 允许空结果，强制非空等于强制编造。
+### 人工标注：模型在真实数据上远不够好
 
-**没有地面真值。** 两组共 30 个观察全是模型的描述，没有人标注过这些图该有什么性状。这一轮证明链路能跑通、能结构化、能审计、能在证据不足时如实报告空结果，**不证明识别准确率**。
+30 张已由人工逐张标注（`case_workspace/annotate/huangqi_annotated_results.json`），
+评分结果 `artifacts/dgx/annotation-score.json`：
+
+| 指标 | herb | live | 总体 |
+| --- | --- | --- | --- |
+| precision | 0.4706 (8/17) | 1.0000 (3/3) | 0.55 (11/20) |
+| recall | 0.1905 (8/42) | 0.1765 (3/17) | 0.1864 (11/59) |
+
+**`live` 只产出 3 个观察不是因为叶片健康。** 人工标注显示 `huangqi_leaf_03/07/08/14`
+共四张存在黄化、斑点、萎蔫的复合症状，10 有黄化，15 有斑点——模型全部漏报。
+`live` 的 precision 1.0 来自它几乎不报：**靠弃权换来的不漏错，代价是大量漏检。**
+
+主要失效模式（`artifacts/dgx/error-taxonomy.json`）：
+
+- **系统性误报**：`cut_surface_dense` 在 5 张被报，标注者 1 张都不认可——黄芪切片断面
+  本就是粉性/纤维性，模型把"结实"当成了"致密角质"。
+- **过度弃权**：7 张 herb 图空预测，而"粉性 + 淡黄"是黄芪切片的标配，几乎每张都有。
+  问题不是识别不到，是模型选择不报。
+
+### 错误驱动的校准（calibration，不是验证）
+
+这 30 张现在是 **Dev-30**（`artifacts/dgx/baseline-v1.json`，指标已冻结不覆盖）。
+它已被人工看过，所以针对它的 prompt 修改结果只能称为 calibration——
+否则就是 evaluation leakage，与 AgentShield 在 Agent 侧防的是同一件事。
+
+错误分类见 `artifacts/dgx/error-taxonomy.json`：
+
+- **系统性误报** `cut_surface_dense`：5 张报，标注 0 张认可。模型把"结实"
+  理解成"致密角质"，而黄芪切片断面本就是粉性/纤维性。
+- **系统性漏报** `cut_surface_powder` ×15、`colour_pale_yellow` ×7、
+  `slice_irregular` ×8 —— "粉性 + 淡黄"是黄芪切片标配，模型几乎不报。
+- **过度弃权**：12 张图模型完全没报，但标注显示有内容。
+
+只修 prompt 中 `dense` 与 `powder` 的判别边界（明确"粉性是黄芪常态，
+dense 仅在粉性明显缺失且切面呈角质光泽时才选"），重跑 Dev-30：
+
+| herb 模式 | 校准前 | 校准后 |
+| --- | --- | --- |
+| precision | 0.4706 (8/17) | **1.0 (16/16)** |
+| recall | 0.1905 (8/42) | **0.381 (16/42)** |
+| F1 | 0.2712 | **0.5517** |
+
+FP 从 9 降到 0，TP 翻倍。产物 `artifacts/dgx/calibration-v1.json`
+自带 `is_generalisation_evidence: false` 并说明原因——**这个提升不能当作
+泛化能力**，因为 prompt 是在看过这些错误之后写的。
+
+泛化证据需要一批未看过的新图做 blind holdout：先冻结 prompt，再盲标，再算分。
+标注者是单人，故称 human reference annotations，不称 gold standard。
+
+顺带修掉一个会让校准完全失效的缺陷：观察缓存的键原本不含 prompt，
+改 prompt 后重跑会原样返回旧观察——那这个实验什么也测不到。现在 prompt
+是键的一部分（`dgx/cache.py`），并有测试锁定。
 
 ## 工程结构
 

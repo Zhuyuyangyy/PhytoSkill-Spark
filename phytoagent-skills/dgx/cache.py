@@ -30,9 +30,17 @@ def image_digest(image_bytes: bytes) -> str:
     return hashlib.sha256(image_bytes).hexdigest()
 
 
-def cache_key(*, image_bytes: bytes, model: str, mode: str, species: str) -> str:
-    """Everything that changes the answer, hashed into one key."""
-    payload = "|".join([image_digest(image_bytes), model, mode, species])
+def cache_key(*, image_bytes: bytes, model: str, mode: str, species: str,
+              prompt: str = "") -> str:
+    """Everything that changes the answer, hashed into one key.
+
+    ``prompt`` is part of the key for a reason that cost a real experiment: the
+    cache originally keyed on image + model + mode + species, so editing the
+    prompt and re-running returned the *old* observations verbatim. A/B on a
+    prompt change would then have measured nothing. Any prompt change must miss.
+    """
+    payload = "|".join([image_digest(image_bytes), model, mode, species,
+                        hashlib.sha256(prompt.encode("utf-8")).hexdigest()])
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -88,15 +96,21 @@ class ObservationCache:
 
 
 def cached_vision(client, *, cache: ObservationCache, image_bytes: bytes,
-                  species: str, model: str, mode: str, runner, timeout: int = 900) -> dict:
+                  species: str, model: str, mode: str, runner, timeout: int = 900,
+                  prompt: str = "") -> dict:
     """Run one vision inference, or serve it from the cache.
 
     ``runner`` is the mode-specific callable (``dgx.vision.run_vision`` or
     ``dgx.herb_vision.run_vision``). The returned record carries a ``cache``
     field saying whether it was computed now, so a report can never present a
     cached observation as a fresh measurement.
+
+    ``prompt`` must be the exact text the runner will send. Leaving it empty is
+    allowed, but then a prompt edit will not invalidate the cache — which is why
+    callers that care pass it in.
     """
-    key = cache_key(image_bytes=image_bytes, model=model, mode=mode, species=species)
+    key = cache_key(image_bytes=image_bytes, model=model, mode=mode,
+                    species=species, prompt=prompt)
     record = cache.get(key)
     if record is not None:
         served = dict(record)

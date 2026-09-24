@@ -1,0 +1,217 @@
+{
+  "threshold_for_systematic": 3,
+  "false_positives": {
+    "cut_surface_dense": 5,
+    "slice_irregular": 2,
+    "colour_amber": 1,
+    "colour_dark_brown": 1
+  },
+  "false_negatives": {
+    "cut_surface_powder": 15,
+    "slice_irregular": 8,
+    "colour_pale_yellow": 7,
+    "leaf_spot": 5,
+    "leaf_yellowing": 5,
+    "wilting": 4,
+    "cut_surface_fissure": 3,
+    "cut_surface_dense": 1
+  },
+  "abstentions": [
+    {
+      "image": "huangqi_02.jpg",
+      "mode": "herb",
+      "missed": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_03.jpg",
+      "mode": "herb",
+      "missed": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ]
+    },
+    {
+      "image": "huangqi_09.jpg",
+      "mode": "herb",
+      "missed": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_10.jpg",
+      "mode": "herb",
+      "missed": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ]
+    },
+    {
+      "image": "huangqi_12.jpg",
+      "mode": "herb",
+      "missed": [
+        "colour_pale_yellow",
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "slice_irregular"
+      ]
+    },
+    {
+      "image": "huangqi_13.jpg",
+      "mode": "herb",
+      "missed": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ]
+    },
+    {
+      "image": "huangqi_15.jpg",
+      "mode": "herb",
+      "missed": [
+        "colour_pale_yellow",
+        "cut_surface_powder",
+        "slice_irregular"
+      ]
+    },
+    {
+      "image": "huangqi_leaf_07.jpg",
+      "mode": "live",
+      "missed": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ]
+    },
+    {
+      "image": "huangqi_leaf_08.jpg",
+      "mode": "live",
+      "missed": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ]
+    },
+    {
+      "image": "huangqi_leaf_10.jpg",
+      "mode": "live",
+      "missed": [
+        "leaf_yellowing"
+      ]
+    },
+    {
+      "image": "huangqi_leaf_14.jpg",
+      "mode": "live",
+      "missed": [
+        "leaf_spot",
+        "leaf_yellowing",
+        "wilting"
+      ]
+    },
+    {
+      "image": "huangqi_leaf_15.jpg",
+      "mode": "live",
+      "missed": [
+        "leaf_spot",
+        "leaf_yellowing"
+      ]
+    }
+  ],
+  "abstention_count": 12,
+  "per_label": {
+    "slice_irregular": {
+      "tp": 0,
+      "fp": 2,
+      "fn": 8
+    },
+    "colour_amber": {
+      "tp": 0,
+      "fp": 1,
+      "fn": 0
+    },
+    "colour_pale_yellow": {
+      "tp": 8,
+      "fp": 0,
+      "fn": 7
+    },
+    "cut_surface_powder": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 15
+    },
+    "cut_surface_dense": {
+      "tp": 0,
+      "fp": 5,
+      "fn": 1
+    },
+    "cut_surface_fissure": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 3
+    },
+    "colour_dark_brown": {
+      "tp": 0,
+      "fp": 1,
+      "fn": 0
+    },
+    "leaf_yellowing": {
+      "tp": 3,
+      "fp": 0,
+      "fn": 5
+    },
+    "leaf_spot": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 5
+    },
+    "wilting": {
+      "tp": 0,
+      "fp": 0,
+      "fn": 4
+    }
+  },
+  "classes": {
+    "systematic_fp": [
+      "cut_surface_dense"
+    ],
+    "systematic_fn": [
+      "slice_irregular",
+      "cut_surface_powder",
+      "cut_surface_fissure",
+      "colour_pale_yellow",
+      "leaf_spot",
+      "wilting",
+      "leaf_yellowing"
+    ],
+    "abstention_images": [
+      "huangqi_02.jpg",
+      "huangqi_03.jpg",
+      "huangqi_09.jpg",
+      "huangqi_10.jpg",
+      "huangqi_12.jpg",
+      "huangqi_13.jpg",
+      "huangqi_15.jpg",
+      "huangqi_leaf_07.jpg",
+      "huangqi_leaf_08.jpg",
+      "huangqi_leaf_10.jpg",
+      "huangqi_leaf_14.jpg",
+      "huangqi_leaf_15.jpg"
+    ],
+    "isolated": [
+      "fp:colour_amber x1",
+      "fp:slice_irregular x2",
+      "fp:colour_dark_brown x1",
+      "fn:cut_surface_dense x1"
+    ]
+  },
+  "readable": {
+    "systematic_fp": "模型系统性误报同一个标签；改一处定义可清掉多张图的错误",
+    "systematic_fn": "模型系统性漏报同一个标签",
+    "abstention_images": "模型完全没报，但标注显示有内容——过度弃权"
+  }
+}

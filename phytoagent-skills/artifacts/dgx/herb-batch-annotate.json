@@ -1,0 +1,969 @@
+{
+  "scope": "dgx_herb_batch",
+  "species": "黄芪",
+  "mode": "herb",
+  "excluded_prefix": "huangqi_leaf",
+  "images": 15,
+  "records": [
+    {
+      "image": "huangqi_01.jpg",
+      "case_id": "herb-001",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 16217.7,
+      "eval_count": 80,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_02.jpg",
+      "case_id": "herb-002",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 13705.0,
+      "eval_count": 152,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_03.jpg",
+      "case_id": "herb-003",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Cut faces of the dried slices read pale yellow to cream overall",
+            "bbox_normalized": [
+              0.17,
+              0.16,
+              0.79,
+              0.85
+            ]
+          },
+          "affected_area_fraction": 0.4278,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.92
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "Matte, starchy cut surface with a fine granular, powdery texture",
+            "bbox_normalized": [
+              0.2,
+              0.2,
+              0.75,
+              0.8
+            ]
+          },
+          "affected_area_fraction": 0.33,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.85
+        }
+      ],
+      "latency_ms": 35073.8,
+      "eval_count": 425,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_04.jpg",
+      "case_id": "herb-004",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried herb slices exhibits a matte, starchy, and slightly",
+            "bbox_normalized": [
+              0.2625,
+              0.2875,
+              0.38333333333333336,
+              0.8125
+            ]
+          },
+          "affected_area_fraction": 0.0634,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried herb slices exhibits a matte, starchy, and slightly",
+            "bbox_normalized": [
+              0.3416666666666667,
+              0.34375,
+              0.5791666666666667,
+              0.69375
+            ]
+          },
+          "affected_area_fraction": 0.0831,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried herb slices exhibits a matte, starchy, and slightly",
+            "bbox_normalized": [
+              0.020833333333333332,
+              0.64375,
+              0.2625,
+              0.925
+            ]
+          },
+          "affected_area_fraction": 0.068,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-04",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried herb slices exhibits a matte, starchy, and slightly",
+            "bbox_normalized": [
+              0.6041666666666666,
+              0.45625,
+              0.6958333333333333,
+              0.83125
+            ]
+          },
+          "affected_area_fraction": 0.0344,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-05",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried herb slices is predominantly pale yellow.",
+            "bbox_normalized": [
+              0.2625,
+              0.2875,
+              0.38333333333333336,
+              0.8125
+            ]
+          },
+          "affected_area_fraction": 0.0634,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-06",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried herb slices is predominantly pale yellow.",
+            "bbox_normalized": [
+              0.3416666666666667,
+              0.34375,
+              0.5791666666666667,
+              0.69375
+            ]
+          },
+          "affected_area_fraction": 0.0831,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-07",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried herb slices is predominantly pale yellow.",
+            "bbox_normalized": [
+              0.020833333333333332,
+              0.64375,
+              0.2625,
+              0.925
+            ]
+          },
+          "affected_area_fraction": 0.068,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-08",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried herb slices is predominantly pale yellow.",
+            "bbox_normalized": [
+              0.6041666666666666,
+              0.45625,
+              0.6958333333333333,
+              0.83125
+            ]
+          },
+          "affected_area_fraction": 0.0344,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        }
+      ],
+      "latency_ms": 77714.3,
+      "eval_count": 950,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_05.jpg",
+      "case_id": "herb-005",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices exhibits a matte, starchy, and slightly gran",
+            "bbox_normalized": [
+              0.0641025641025641,
+              0.08012820512820513,
+              0.2564102564102564,
+              0.25
+            ]
+          },
+          "affected_area_fraction": 0.0327,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is predominantly pale yellow to off-white in",
+            "bbox_normalized": [
+              0.0641025641025641,
+              0.08012820512820513,
+              0.2564102564102564,
+              0.25
+            ]
+          },
+          "affected_area_fraction": 0.0327,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        }
+      ],
+      "latency_ms": 22556.5,
+      "eval_count": 153,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_06.jpg",
+      "case_id": "herb-006",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 8444.6,
+      "eval_count": 84,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_07.jpg",
+      "case_id": "herb-007",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.15625,
+              0.39,
+              0.35625,
+              0.59375
+            ]
+          },
+          "affected_area_fraction": 0.0408,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.39375,
+              0.44,
+              0.59375,
+              0.64375
+            ]
+          },
+          "affected_area_fraction": 0.0408,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.65,
+              0.44,
+              0.85,
+              0.64375
+            ]
+          },
+          "affected_area_fraction": 0.0408,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-04",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.14375,
+              0.565,
+              0.34375,
+              0.765
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-05",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.40625,
+              0.565,
+              0.60625,
+              0.765
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-06",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.65,
+              0.615,
+              0.85,
+              0.815
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-07",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.14375,
+              0.715,
+              0.34375,
+              0.915
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-08",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.40625,
+              0.715,
+              0.60625,
+              0.915
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-09",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "The cut surface of the dried slices is matte and granular, consistent with a sta",
+            "bbox_normalized": [
+              0.65,
+              0.715,
+              0.85,
+              0.915
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-10",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.15625,
+              0.39,
+              0.35625,
+              0.59375
+            ]
+          },
+          "affected_area_fraction": 0.0408,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-11",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.39375,
+              0.44,
+              0.59375,
+              0.64375
+            ]
+          },
+          "affected_area_fraction": 0.0408,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-12",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.65,
+              0.44,
+              0.85,
+              0.64375
+            ]
+          },
+          "affected_area_fraction": 0.0408,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-13",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.14375,
+              0.565,
+              0.34375,
+              0.765
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-14",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.40625,
+              0.565,
+              0.60625,
+              0.765
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-15",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.65,
+              0.615,
+              0.85,
+              0.815
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-16",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.14375,
+              0.715,
+              0.34375,
+              0.915
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-17",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.40625,
+              0.715,
+              0.60625,
+              0.915
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        },
+        {
+          "observation_id": "vision-region-18",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "The cut surface of the dried slices is pale yellow.",
+            "bbox_normalized": [
+              0.65,
+              0.715,
+              0.85,
+              0.915
+            ]
+          },
+          "affected_area_fraction": 0.04,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.95
+        }
+      ],
+      "latency_ms": 94113.0,
+      "eval_count": 1150,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_08.jpg",
+      "case_id": "herb-008",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "pale yellow starchy cut face with tan bark edge",
+            "bbox_normalized": [
+              0.3,
+              0.2,
+              0.7,
+              0.35
+            ]
+          },
+          "affected_area_fraction": 0.06,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "cream matte cut surface with central ring",
+            "bbox_normalized": [
+              0.24,
+              0.3,
+              0.58,
+              0.49
+            ]
+          },
+          "affected_area_fraction": 0.0646,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.88
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut face, brownish skin on rim",
+            "bbox_normalized": [
+              0.15,
+              0.42,
+              0.45,
+              0.64
+            ]
+          },
+          "affected_area_fraction": 0.066,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.85
+        },
+        {
+          "observation_id": "vision-region-04",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "mealy pale yellow cut surface",
+            "bbox_normalized": [
+              0.23,
+              0.64,
+              0.65,
+              0.8
+            ]
+          },
+          "affected_area_fraction": 0.0672,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.87
+        },
+        {
+          "observation_id": "vision-region-05",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "pale yellow cut face with tan bark",
+            "bbox_normalized": [
+              0.56,
+              0.37,
+              0.83,
+              0.65
+            ]
+          },
+          "affected_area_fraction": 0.0756,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.85
+        }
+      ],
+      "latency_ms": 99231.8,
+      "eval_count": 1164,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_09.jpg",
+      "case_id": "herb-009",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 12993.1,
+      "eval_count": 140,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_10.jpg",
+      "case_id": "herb-010",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "Large upper-right slice with brown bark edge and starchy pale cut face",
+            "bbox_normalized": [
+              0.63,
+              0.1,
+              0.87,
+              0.4
+            ]
+          },
+          "affected_area_fraction": 0.072,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.88
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "Central cluster of overlapping slices with mealy pale-yellow cut surfaces",
+            "bbox_normalized": [
+              0.32,
+              0.25,
+              0.72,
+              0.7
+            ]
+          },
+          "affected_area_fraction": 0.18,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        },
+        {
+          "observation_id": "vision-region-03",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Left-side slices showing pale yellow cut faces with thin bark rim",
+            "bbox_normalized": [
+              0.07,
+              0.35,
+              0.3,
+              0.72
+            ]
+          },
+          "affected_area_fraction": 0.0851,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.85
+        },
+        {
+          "observation_id": "vision-region-04",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "Lower slices with granular starchy cut surfaces and pale yellow tone",
+            "bbox_normalized": [
+              0.25,
+              0.62,
+              0.72,
+              0.95
+            ]
+          },
+          "affected_area_fraction": 0.1551,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.87
+        }
+      ],
+      "latency_ms": 66108.9,
+      "eval_count": 812,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_11.jpg",
+      "case_id": "herb-011",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 7877.6,
+      "eval_count": 81,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_12.jpg",
+      "case_id": "herb-012",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 8717.8,
+      "eval_count": 90,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_13.jpg",
+      "case_id": "herb-013",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "Sliced Astragalus cut faces appear matte and starchy/mealy, typical powdery text",
+            "bbox_normalized": [
+              0.11,
+              0.13,
+              0.9,
+              0.87
+            ]
+          },
+          "affected_area_fraction": 0.5846,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.92
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Cut surfaces read pale yellow to light tan overall",
+            "bbox_normalized": [
+              0.11,
+              0.13,
+              0.9,
+              0.87
+            ]
+          },
+          "affected_area_fraction": 0.5846,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        }
+      ],
+      "latency_ms": 33703.0,
+      "eval_count": 404,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_14.jpg",
+      "case_id": "herb-014",
+      "status": "success",
+      "image_usable": true,
+      "observations": [
+        {
+          "observation_id": "vision-region-01",
+          "phenotype": "cut_surface_powder",
+          "region": {
+            "label": "Sliced Astragalus cut faces appear matte and starchy with a fine granular, mealy",
+            "bbox_normalized": [
+              0.13,
+              0.11,
+              0.88,
+              0.86
+            ]
+          },
+          "affected_area_fraction": 0.5625,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.92
+        },
+        {
+          "observation_id": "vision-region-02",
+          "phenotype": "colour_pale_yellow",
+          "region": {
+            "label": "Cut surfaces read pale yellow to light tan overall, with slightly darker tan bar",
+            "bbox_normalized": [
+              0.13,
+              0.11,
+              0.88,
+              0.86
+            ]
+          },
+          "affected_area_fraction": 0.5625,
+          "area_basis": "visible_subject_area",
+          "model_score": 0.9
+        }
+      ],
+      "latency_ms": 43270.4,
+      "eval_count": 520,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    },
+    {
+      "image": "huangqi_15.jpg",
+      "case_id": "herb-015",
+      "status": "success",
+      "image_usable": true,
+      "observations": [],
+      "latency_ms": 14727.5,
+      "eval_count": 161,
+      "gpu": {
+        "index": "0",
+        "name": "NVIDIA GB10",
+        "driver": "580.142",
+        "memory_total": "[N/A]",
+        "memory_used": "[N/A]",
+        "processes": []
+      }
+    }
+  ],
+  "trace": {
+    "trace_id": "trace-herb-batch-001",
+    "scope": "agentshield_runtime_local",
+    "agent_model_called": false,
+    "dgx_hardware_used": false,
+    "nvidia_verified": false,
+    "calls": [],
+    "blocked": []
+  }
+}

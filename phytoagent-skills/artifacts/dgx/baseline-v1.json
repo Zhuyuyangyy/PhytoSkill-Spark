@@ -1,0 +1,29 @@
+{
+  "name": "Dev-30",
+  "frozen": true,
+  "provenance": {
+    "source": "case_workspace\\annotate\\huangqi_annotated_results.json",
+    "annotator": "single human annotator (no second pass)",
+    "annotated_at": "2026-09-24",
+    "note": "Single-annotator reference labels. Called human reference annotations, not gold standard, until a second annotator or an inter-annotator agreement measure exists."
+  },
+  "images": 30,
+  "herb_images": 15,
+  "leaf_images": 15,
+  "intended_use": [
+    "Prompt calibration runs report against this and must be labelled 'calibration on Dev-30', never 'validation'.",
+    "Generalisation evidence requires a separate blind holdout that was never inspected while tuning."
+  ],
+  "metrics": {
+    "precision": 0.55,
+    "recall": 0.1864,
+    "f1": 0.2785,
+    "labels": {
+      "true_positives": 11,
+      "false_positives": 9,
+      "false_negatives": 48
+    },
+    "images": 30,
+    "annotated": 30
+  }
+}

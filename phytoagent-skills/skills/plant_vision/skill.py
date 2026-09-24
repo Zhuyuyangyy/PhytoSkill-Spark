@@ -23,7 +23,9 @@ from pathlib import Path
 
 from dgx.cache import ObservationCache, cached_vision
 from dgx.client import DgxClient, load_credentials
+from dgx.herb_vision import build_prompt as build_herb_prompt
 from dgx.herb_vision import run_vision as run_herb_vision
+from dgx.vision import build_prompt as build_leaf_prompt
 from dgx.vision import run_vision as run_leaf_vision
 from sdk import BaseSkill, ContractError
 from sdk.exceptions import UnsupportedModeError
@@ -70,10 +72,12 @@ class PlantVisionSkill(BaseSkill):
             return self._run_fixture(payload)
         if mode == "live":
             return self._run_real(payload, mode=mode, runner=run_leaf_vision,
-                                  data_origin="dgx_live_inference")
+                                  data_origin="dgx_live_inference",
+                                  build_prompt=build_leaf_prompt)
         if mode == "herb":
             return self._run_real(payload, mode=mode, runner=run_herb_vision,
-                                  data_origin="dgx_herb_inference")
+                                  data_origin="dgx_herb_inference",
+                                  build_prompt=build_herb_prompt)
         raise UnsupportedModeError(f"plant_vision does not support mode {mode!r}")
 
     # ── modes ─────────────────────────────────────────────────────────────
@@ -82,7 +86,8 @@ class PlantVisionSkill(BaseSkill):
         """Delegate to the sealed fixture; a mismatch is an explicit failure."""
         return FixtureSkill.run(self, payload, mode="fixture")
 
-    def _run_real(self, payload: dict, *, mode: str, runner, data_origin: str) -> dict:
+    def _run_real(self, payload: dict, *, mode: str, runner, data_origin: str,
+                  build_prompt) -> dict:
         """Run real inference on the DGX Spark node. No fixture fallback."""
         image_path = payload.get("image_path")
         if not isinstance(image_path, str) or not image_path.strip():
@@ -107,9 +112,10 @@ class PlantVisionSkill(BaseSkill):
             # A large photograph on a contended node takes minutes: the observed
             # range is ~12 s to ~167 s for the same code path. 600 s is not
             # generous, it is what the slowest real image needed.
+            prompt = build_prompt(species=species)
             call = cached_vision(client, cache=self._cache, image_bytes=image_bytes,
                                  species=species, model=self._model, mode=mode,
-                                 runner=runner, timeout=900)
+                                 runner=runner, timeout=900, prompt=prompt)
 
         observations = []
         for index, region in enumerate(call["regions"], start=1):

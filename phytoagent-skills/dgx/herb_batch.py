@@ -34,6 +34,7 @@ def main() -> int:
     directory = Path(sys.argv[1])
     species = sys.argv[2] if len(sys.argv) > 2 else "黄芪"
     mode = sys.argv[3] if len(sys.argv) > 3 else "herb"
+    exclude_prefix = sys.argv[4] if len(sys.argv) > 4 else ""
 
     root = Path(tempfile.mkdtemp(prefix="phyto-herb-batch-"))
     private, public = root / "p.pem", root / "pub.pem"
@@ -53,6 +54,12 @@ def main() -> int:
 
     records = []
     images = sorted(directory.glob("*.jpg")) + sorted(directory.glob("*.png"))
+    if exclude_prefix:
+        # The annotate folder holds both subjects, and the leaf files share the
+        # "huangqi_" stem — so filtering by include-prefix does not separate them.
+        # A herb calibration must not spend node time re-reading leaf photographs
+        # with the herb prompt.
+        images = [path for path in images if not path.name.startswith(exclude_prefix)]
     for index, image in enumerate(images, start=1):
         case_id = f"herb-{index:03d}"
         response = executor.call("plant_vision", {
@@ -83,6 +90,7 @@ def main() -> int:
     out = Path(f"artifacts/dgx/{mode}-batch-{_slug(directory.name)}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"scope": f"dgx_{mode}_batch", "species": species, "mode": mode,
+                               "excluded_prefix": exclude_prefix or None,
                                "images": len(images), "records": records,
                                "trace": runtime.report()},
                               ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

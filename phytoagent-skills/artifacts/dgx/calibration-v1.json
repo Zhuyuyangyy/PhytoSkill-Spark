@@ -1,0 +1,130 @@
+{
+  "scope": "calibration_on_dev30",
+  "is_generalisation_evidence": false,
+  "why_not": "Dev-30 was inspected before this prompt was written. A metric from it measures error-driven calibration, not generalisation. Generalisation requires a blind holdout that was never looked at while tuning.",
+  "mode": "herb",
+  "baseline": {
+    "precision": 0.4706,
+    "recall": 0.1905,
+    "f1": 0.2712,
+    "true_positives": 8,
+    "false_positives": 9,
+    "false_negatives": 34,
+    "images": 15
+  },
+  "calibrated": {
+    "precision": 1.0,
+    "recall": 0.381,
+    "f1": 0.5517,
+    "true_positives": 16,
+    "false_positives": 0,
+    "false_negatives": 26
+  },
+  "predictions_changed": 11,
+  "changes": [
+    {
+      "image": "huangqi_01.jpg",
+      "before": [
+        "colour_amber",
+        "colour_pale_yellow",
+        "cut_surface_dense"
+      ],
+      "after": []
+    },
+    {
+      "image": "huangqi_03.jpg",
+      "before": [],
+      "after": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_04.jpg",
+      "before": [
+        "colour_pale_yellow"
+      ],
+      "after": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_05.jpg",
+      "before": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "slice_irregular"
+      ],
+      "after": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_06.jpg",
+      "before": [
+        "colour_dark_brown",
+        "colour_pale_yellow",
+        "cut_surface_dense"
+      ],
+      "after": []
+    },
+    {
+      "image": "huangqi_07.jpg",
+      "before": [
+        "colour_pale_yellow"
+      ],
+      "after": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_08.jpg",
+      "before": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "slice_irregular"
+      ],
+      "after": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_10.jpg",
+      "before": [],
+      "after": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_11.jpg",
+      "before": [
+        "colour_pale_yellow"
+      ],
+      "after": []
+    },
+    {
+      "image": "huangqi_13.jpg",
+      "before": [],
+      "after": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    },
+    {
+      "image": "huangqi_14.jpg",
+      "before": [
+        "colour_pale_yellow",
+        "cut_surface_dense"
+      ],
+      "after": [
+        "colour_pale_yellow",
+        "cut_surface_powder"
+      ]
+    }
+  ]
+}
