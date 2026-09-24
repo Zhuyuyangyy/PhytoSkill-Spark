@@ -1,0 +1,6 @@
+{
+  "status": "not_annotated",
+  "images": 30,
+  "annotated": 0,
+  "note": "Fill annotator_labels and/or annotator_agrees, then re-run."
+}

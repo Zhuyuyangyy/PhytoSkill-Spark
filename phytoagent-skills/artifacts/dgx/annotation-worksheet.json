@@ -1,0 +1,885 @@
+{
+  "schema_version": 1,
+  "instructions": [
+    "对每张图，先自己看，再对照 model_predicted。",
+    "annotator_labels 填你认可实际存在的性状（可多选，也可填候选集之外的词）。",
+    "annotator_agrees 填 true/false：模型报的性状你是否认可。",
+    "模型没报但你看到了，算漏检（false negative）；模型报了你没看到，算误报。",
+    "两者都记，才能算 precision 和 recall，只算一个会高估。"
+  ],
+  "images": 30,
+  "entries": [
+    {
+      "image": "huangqi_01.jpg",
+      "image_path": "case_workspace/images/huangqi_01.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "colour_amber",
+        "cut_surface_dense"
+      ],
+      "model_observation_count": 6,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_02.jpg",
+      "image_path": "case_workspace/images/huangqi_02.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_03.jpg",
+      "image_path": "case_workspace/images/huangqi_03.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_04.jpg",
+      "image_path": "case_workspace/images/huangqi_04.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "model_observation_count": 19,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_05.jpg",
+      "image_path": "case_workspace/images/huangqi_05.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "slice_irregular"
+      ],
+      "model_observation_count": 3,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_06.jpg",
+      "image_path": "case_workspace/images/huangqi_06.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "cut_surface_dense",
+        "colour_pale_yellow",
+        "colour_dark_brown"
+      ],
+      "model_observation_count": 15,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_07.jpg",
+      "image_path": "case_workspace/images/huangqi_07.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "model_observation_count": 1,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_08.jpg",
+      "image_path": "case_workspace/images/huangqi_08.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense",
+        "slice_irregular"
+      ],
+      "model_observation_count": 3,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_09.jpg",
+      "image_path": "case_workspace/images/huangqi_09.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_10.jpg",
+      "image_path": "case_workspace/images/huangqi_10.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_11.jpg",
+      "image_path": "case_workspace/images/huangqi_11.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow"
+      ],
+      "model_observation_count": 8,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_12.jpg",
+      "image_path": "case_workspace/images/huangqi_12.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_13.jpg",
+      "image_path": "case_workspace/images/huangqi_13.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_14.jpg",
+      "image_path": "case_workspace/images/huangqi_14.jpg",
+      "mode": "herb",
+      "model_predicted": [
+        "colour_pale_yellow",
+        "cut_surface_dense"
+      ],
+      "model_observation_count": 21,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_15.jpg",
+      "image_path": "case_workspace/images/huangqi_15.jpg",
+      "mode": "herb",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "cut_surface_fissure",
+        "cut_surface_powder",
+        "cut_surface_dense",
+        "cut_surface_hollow",
+        "colour_pale_yellow",
+        "colour_amber",
+        "colour_dark_brown",
+        "mould_visible",
+        "insect_damage",
+        "slice_irregular"
+      ],
+      "candidate_labels_zh": {
+        "cut_surface_fissure": "断面裂隙/炸裂",
+        "cut_surface_powder": "断面粉性",
+        "cut_surface_dense": "断面致密/角质",
+        "cut_surface_hollow": "断面空心",
+        "colour_pale_yellow": "色泽淡黄（硫熏后常见）",
+        "colour_amber": "色泽黄棕/琥珀",
+        "colour_dark_brown": "色泽深褐/焦褐",
+        "mould_visible": "可见霉斑",
+        "insect_damage": "虫蛀孔道",
+        "slice_irregular": "片型不整/厚薄不均"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_01.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_01.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_02.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_02.jpg",
+      "mode": "live",
+      "model_predicted": [
+        "leaf_yellowing"
+      ],
+      "model_observation_count": 1,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_03.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_03.jpg",
+      "mode": "live",
+      "model_predicted": [
+        "leaf_yellowing"
+      ],
+      "model_observation_count": 1,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_04.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_04.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_05.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_05.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": false,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_06.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_06.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_07.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_07.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_08.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_08.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_09.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_09.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": false,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_10.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_10.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_11.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_11.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_12.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_12.jpg",
+      "mode": "live",
+      "model_predicted": [
+        "leaf_yellowing"
+      ],
+      "model_observation_count": 1,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_13.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_13.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": false,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_14.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_14.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    },
+    {
+      "image": "huangqi_leaf_15.jpg",
+      "image_path": "case_workspace/leaves/huangqi_leaf_15.jpg",
+      "mode": "live",
+      "model_predicted": [],
+      "model_observation_count": 0,
+      "model_image_usable": true,
+      "candidate_labels": [
+        "leaf_yellowing",
+        "leaf_spot",
+        "wilting"
+      ],
+      "candidate_labels_zh": {
+        "leaf_yellowing": "叶片黄化",
+        "leaf_spot": "叶片斑点",
+        "wilting": "萎蔫"
+      },
+      "annotator_labels": [],
+      "annotator_agrees": null,
+      "annotator_note": ""
+    }
+  ],
+  "annotation_status": "not_started"
+}
