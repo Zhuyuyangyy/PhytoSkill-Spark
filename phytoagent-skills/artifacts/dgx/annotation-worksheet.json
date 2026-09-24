@@ -10,8 +10,9 @@
   "images": 30,
   "entries": [
     {
+      "image_size": "800x800",
       "image": "huangqi_01.jpg",
-      "image_path": "case_workspace/images/huangqi_01.jpg",
+      "image_path": "case_workspace/annotate/huangqi_01.jpg",
       "mode": "herb",
       "model_predicted": [
         "colour_pale_yellow",
@@ -49,8 +50,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x800",
       "image": "huangqi_02.jpg",
-      "image_path": "case_workspace/images/huangqi_02.jpg",
+      "image_path": "case_workspace/annotate/huangqi_02.jpg",
       "mode": "herb",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -84,8 +86,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x533",
       "image": "huangqi_03.jpg",
-      "image_path": "case_workspace/images/huangqi_03.jpg",
+      "image_path": "case_workspace/annotate/huangqi_03.jpg",
       "mode": "herb",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -119,8 +122,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "1200x800",
       "image": "huangqi_04.jpg",
-      "image_path": "case_workspace/images/huangqi_04.jpg",
+      "image_path": "case_workspace/annotate/huangqi_04.jpg",
       "mode": "herb",
       "model_predicted": [
         "colour_pale_yellow"
@@ -156,8 +160,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "3120x3120",
       "image": "huangqi_05.jpg",
-      "image_path": "case_workspace/images/huangqi_05.jpg",
+      "image_path": "case_workspace/annotate/huangqi_05.jpg",
       "mode": "herb",
       "model_predicted": [
         "colour_pale_yellow",
@@ -195,8 +200,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x800",
       "image": "huangqi_06.jpg",
-      "image_path": "case_workspace/images/huangqi_06.jpg",
+      "image_path": "case_workspace/annotate/huangqi_06.jpg",
       "mode": "herb",
       "model_predicted": [
         "cut_surface_dense",
@@ -234,8 +240,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x800",
       "image": "huangqi_07.jpg",
-      "image_path": "case_workspace/images/huangqi_07.jpg",
+      "image_path": "case_workspace/annotate/huangqi_07.jpg",
       "mode": "herb",
       "model_predicted": [
         "colour_pale_yellow"
@@ -271,8 +278,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "1500x1500",
       "image": "huangqi_08.jpg",
-      "image_path": "case_workspace/images/huangqi_08.jpg",
+      "image_path": "case_workspace/annotate/huangqi_08.jpg",
       "mode": "herb",
       "model_predicted": [
         "colour_pale_yellow",
@@ -310,8 +318,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x800",
       "image": "huangqi_09.jpg",
-      "image_path": "case_workspace/images/huangqi_09.jpg",
+      "image_path": "case_workspace/annotate/huangqi_09.jpg",
       "mode": "herb",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -345,8 +354,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "599x400",
       "image": "huangqi_10.jpg",
-      "image_path": "case_workspace/images/huangqi_10.jpg",
+      "image_path": "case_workspace/annotate/huangqi_10.jpg",
       "mode": "herb",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -380,8 +390,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x533",
       "image": "huangqi_11.jpg",
-      "image_path": "case_workspace/images/huangqi_11.jpg",
+      "image_path": "case_workspace/annotate/huangqi_11.jpg",
       "mode": "herb",
       "model_predicted": [
         "colour_pale_yellow"
@@ -417,8 +428,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x625",
       "image": "huangqi_12.jpg",
-      "image_path": "case_workspace/images/huangqi_12.jpg",
+      "image_path": "case_workspace/annotate/huangqi_12.jpg",
       "mode": "herb",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -452,8 +464,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x533",
       "image": "huangqi_13.jpg",
-      "image_path": "case_workspace/images/huangqi_13.jpg",
+      "image_path": "case_workspace/annotate/huangqi_13.jpg",
       "mode": "herb",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -487,8 +500,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "800x800",
       "image": "huangqi_14.jpg",
-      "image_path": "case_workspace/images/huangqi_14.jpg",
+      "image_path": "case_workspace/annotate/huangqi_14.jpg",
       "mode": "herb",
       "model_predicted": [
         "colour_pale_yellow",
@@ -525,8 +539,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "700x1053",
       "image": "huangqi_15.jpg",
-      "image_path": "case_workspace/images/huangqi_15.jpg",
+      "image_path": "case_workspace/annotate/huangqi_15.jpg",
       "mode": "herb",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -560,8 +575,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "478x336",
       "image": "huangqi_leaf_01.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_01.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_01.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -581,8 +597,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "1920x2560",
       "image": "huangqi_leaf_02.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_02.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_02.jpg",
       "mode": "live",
       "model_predicted": [
         "leaf_yellowing"
@@ -604,8 +621,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "1616x1152",
       "image": "huangqi_leaf_03.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_03.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_03.jpg",
       "mode": "live",
       "model_predicted": [
         "leaf_yellowing"
@@ -627,8 +645,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "1024x768",
       "image": "huangqi_leaf_04.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_04.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_04.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -648,8 +667,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "600x400",
       "image": "huangqi_leaf_05.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_05.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_05.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -669,8 +689,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "445x315",
       "image": "huangqi_leaf_06.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_06.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_06.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -690,8 +711,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "751x500",
       "image": "huangqi_leaf_07.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_07.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_07.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -711,8 +733,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "750x500",
       "image": "huangqi_leaf_08.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_08.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_08.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -732,8 +755,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "406x612",
       "image": "huangqi_leaf_09.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_09.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_09.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -753,8 +777,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "500x620",
       "image": "huangqi_leaf_10.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_10.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_10.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -774,8 +799,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "500x375",
       "image": "huangqi_leaf_11.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_11.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_11.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -795,8 +821,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "750x500",
       "image": "huangqi_leaf_12.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_12.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_12.jpg",
       "mode": "live",
       "model_predicted": [
         "leaf_yellowing"
@@ -818,8 +845,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "475x633",
       "image": "huangqi_leaf_13.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_13.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_13.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -839,8 +867,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "612x406",
       "image": "huangqi_leaf_14.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_14.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_14.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,
@@ -860,8 +889,9 @@
       "annotator_note": ""
     },
     {
+      "image_size": "1024x682",
       "image": "huangqi_leaf_15.jpg",
-      "image_path": "case_workspace/leaves/huangqi_leaf_15.jpg",
+      "image_path": "case_workspace/annotate/huangqi_leaf_15.jpg",
       "mode": "live",
       "model_predicted": [],
       "model_observation_count": 0,

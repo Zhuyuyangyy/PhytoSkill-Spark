@@ -57,6 +57,24 @@ def _predictions(observations: list[dict]) -> list[str]:
     return seen
 
 
+def entry_path(image: str) -> Path:
+    """Where the annotator opens the image from."""
+    return Path("case_workspace/annotate") / image
+
+
+def _image_size(path: Path) -> str | None:
+    """Width x height, read from the file itself."""
+    try:
+        from PIL import Image
+    except ModuleNotFoundError:  # pragma: no cover - Pillow is a test extra
+        return None
+    try:
+        with Image.open(path) as image:
+            return f"{image.size[0]}x{image.size[1]}"
+    except Exception:  # noqa: BLE001 - an unreadable image just shows no size
+        return None
+
+
 def build_worksheet() -> dict:
     herb_cases = _load(Path("artifacts/dgx/real-chain.json"))
     leaf_cases = _load(Path("artifacts/dgx/real-chain-live-leaves.json"))
@@ -68,9 +86,12 @@ def build_worksheet() -> dict:
         for case in cases:
             observations = case["vision"]["observations"]
             entries.append({
+                "image_size": _image_size(entry_path(case["image"])),
                 "image": case["image"],
-                "image_path": (f"case_workspace/images/{case['image']}" if mode == "herb"
-                               else f"case_workspace/leaves/{case['image']}"),
+                # One folder for everything, so an annotator opens one directory
+                # instead of hunting through two. The images are byte-identical
+                # copies; only the location changed.
+                "image_path": f"case_workspace/annotate/{case['image']}",
                 "mode": mode,
                 "model_predicted": _predictions(observations),
                 "model_observation_count": len(observations),
@@ -117,12 +138,12 @@ def render_markdown(worksheet: dict) -> str:
                                for key in first["candidate_labels"])
             lines.append(f"候选性状：{labels}")
             lines.append("")
-        lines.append("| 图片 | 模型预测 | 观察数 | 你认可的性状（待填） | 模型对不对（待填） |")
-        lines.append("| --- | --- | --- | --- | --- |")
+        lines.append("| 图片（文件名） | 尺寸 | 模型预测 | 观察数 | 你认可的性状（待填） | 模型对不对（待填） |")
+        lines.append("| --- | --- | --- | --- | --- | --- |")
         for entry in entries:
             predicted = "、".join(entry["model_predicted"]) or "（模型未报告任何区域）"
-            lines.append(f"| `{entry['image']}` | {predicted} "
-                         f"| {entry['model_observation_count']} |  |  |")
+            lines.append(f"| `{entry['image']}` | {entry.get('image_size') or '?'} "
+                         f"| {predicted} | {entry['model_observation_count']} |  |  |")
         lines.append("")
     lines += [
         "## 填完之后",
