@@ -13,5 +13,12 @@ dist/
 
 # artifacts/ 保留：pytest/契约评测/release 校验记录属不可再生证据，需入库
 
-# DGX observation cache: derived from images, regenerable, and large.
+# Observation caches: derived from images, regenerable, and large. The path
+# changed from artifacts/dgx/cache when the cache became hardware-independent;
+# entries are content-addressed, so they can be moved by hand and stay valid.
 artifacts/dgx/cache/
+artifacts/vision-cache/
+
+# Unrelated course work that was dropped into the annotation workspace.
+case_workspace/annotate/*.docx
+case_workspace/annotate/herbal-ai/

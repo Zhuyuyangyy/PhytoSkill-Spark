@@ -48,9 +48,16 @@ def test_live_mode_refuses_a_missing_image(domain_registry):
             executor.execute("plant_vision", payload, mode=mode)
 
 
-def test_a_missing_credential_is_an_error_not_a_fallback(domain_registry, tmp_path):
-    """No key means no inference. It must not quietly become a fixture answer."""
+def test_a_missing_credential_is_an_error_not_a_fallback(domain_registry, tmp_path,
+                                                          monkeypatch):
+    """No key means no inference. It must not quietly become a fixture answer.
+
+    The backend is configured (an SSH node) but its credential file is absent.
+    The point of the test is unchanged: a real request must fail loudly rather
+    than fall back to synthetic data.
+    """
     executor = SkillExecutor(domain_registry)
+    monkeypatch.setenv("PHYTO_VISION_BACKEND", "dgx_spark")
     payload = dict(LEAF, image_path=str(tmp_path / "real.jpg"))
     (tmp_path / "real.jpg").write_bytes(b"not really a jpeg")
     package = _package_dir(domain_registry)
@@ -61,7 +68,28 @@ def test_a_missing_credential_is_an_error_not_a_fallback(domain_registry, tmp_pa
     exec(compile(source, str(Path(package) / "skill.py"), "exec"), namespace)
     skill = namespace["PlantVisionSkill"](
         Path(package), env_file=tmp_path / "absent.env")
-    with pytest.raises(ContractError, match="DGX credentials unavailable"):
+    with pytest.raises(ContractError, match="vision backend unavailable"):
+        skill.run(payload, mode="live")
+
+
+def test_an_unconfigured_backend_is_an_error_not_a_guess(domain_registry, tmp_path,
+                                                          monkeypatch):
+    """With no backend configured, refuse rather than pick one silently.
+
+    Two machines that silently choose different hardware would produce
+    incomparable results from the same commit.
+    """
+    monkeypatch.delenv("PHYTO_VISION_BACKEND", raising=False)
+    payload = dict(LEAF, image_path=str(tmp_path / "real.jpg"))
+    (tmp_path / "real.jpg").write_bytes(b"not really a jpeg")
+    package = _package_dir(domain_registry)
+    from pathlib import Path
+
+    source = (Path(package) / "skill.py").read_text(encoding="utf-8")
+    namespace = {"__name__": "degrade", "__file__": str(Path(package) / "skill.py")}
+    exec(compile(source, str(Path(package) / "skill.py"), "exec"), namespace)
+    skill = namespace["PlantVisionSkill"](Path(package))
+    with pytest.raises(ContractError, match="vision backend unavailable"):
         skill.run(payload, mode="live")
 
 

@@ -95,7 +95,8 @@
             ]
           },
           "dgx_hardware_used": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "历史字段名，保留是为了不破坏既有产物与下游校验。语义为「本次调用是否观测到 GPU」，取值来自后端自身的报告，与具体硬件品牌无关；改名属于独立的清理项。"
           },
           "gpu": {
             "type": [

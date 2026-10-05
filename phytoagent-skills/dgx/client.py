@@ -21,11 +21,16 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-try:  # pragma: no cover - exercised only on a machine with paramiko
+try:
     import paramiko
-except ModuleNotFoundError as exc:  # pragma: no cover
-    raise ModuleNotFoundError(
-        "paramiko is required for DGX Spark access: pip install paramiko") from exc
+except ModuleNotFoundError:  # pragma: no cover - depends on the machine
+    # Deferred, not raised. Importing this module must not require the SSH
+    # library: the prompt and parsing code in dgx.vision / dgx.herb_vision is
+    # hardware-independent and is reused by non-SSH backends. The requirement is
+    # enforced at connect() time instead, where the message is actionable.
+    paramiko = None
+
+PARAMIKO_HINT = "paramiko is required for SSH backends: pip install paramiko"
 
 ENV_HOST = "PHYTO_DGX_HOST"
 ENV_PORT = "PHYTO_DGX_PORT"
@@ -97,13 +102,15 @@ class DgxClient:
 
     def __init__(self, credentials: dict):
         self.credentials = credentials
-        self._client: paramiko.SSHClient | None = None
+        self._client: "paramiko.SSHClient | None" = None
 
     # ── connection ────────────────────────────────────────────────────────
 
     def connect(self) -> "DgxClient":
         if self._client is not None:
             return self
+        if paramiko is None:
+            raise ModuleNotFoundError(PARAMIKO_HINT)
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         kwargs = dict(hostname=self.credentials["host"], port=self.credentials["port"],

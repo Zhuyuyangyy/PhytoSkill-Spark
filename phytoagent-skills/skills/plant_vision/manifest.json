@@ -39,10 +39,10 @@
     "fixture.json": "bcf6b3ea96343b90e8f7e519f4b95b4634513290546cccc05d02e187041c628d",
     "metadata.json": "f0095eafa3ddbc3ec860d5df0f340c1c6644251922114bee1b13f28bd8c69e3a",
     "references/contract.md": "ae94958f9a892bf8601ad7421c050270ee77c93629ba542b40b69ab1cc4988ab",
-    "schema.json": "f49c1ab6050638bac46f0c2a0b8f8ffa9830f9dcd2fa60ff9a13e95970397f7b",
+    "schema.json": "89b71492263196d7e9bae1b529d24ddb6f050de8543db5ea3446b286b8541dbf",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "f1771e1d3bafd26f3fb949eea72d3dadb0ed2134469e3bf38053ea8e1dd672ab",
-    "skill.py": "b716c201481fe0aea48ae117ee1260fbaf7da7382315580fdcb71a57a195cee2"
+    "skill.py": "c9f67a6f09548db4ecc0bda8da2850d62355886aa1f55ccc229956e7d69f2fec"
   },
-  "manifest_sha256": "29c0684eb8fab24cb0f2b30bd017349522b4ced767c78b5a8e80945b299e6acf"
+  "manifest_sha256": "4cc46b9fab89f330ef001c50cf4f75ed09d43c92507c22915b5b07ff92961bcf"
 }

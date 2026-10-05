@@ -8,7 +8,9 @@ PhytoSkill-Spark 把药用植物异常研判拆成四个可独立发现、调用
 
 **0.3.0 新增：Skill Compiler（`compiler/`）、AgentShield 编译门禁（`shield/gate.py`）、AgentShield Runtime 中间件与 Claim-Evidence 审计（`runtime/shield.py`）、工作流 Skill 执行器（`runtime/workflow.py`）、可调用审计 Skill（`skills/agentshield_audit/`）、本地语料检索（`corpus/`）与三分钟演示（`demo/phytoforge_demo.py`）。**
 
-测试 **362 项，全部离线通过**。契约评测 **28/28**。
+测试 **387 项，全部离线通过**。契约评测 **28/28**。
+
+**推理不再绑定某一台机器**：`backends/` 把「在哪儿跑」变成配置。本机 ollama、CUDA 工作站、租用 GPU、经 SSH 的远程节点、离线回放五种后端共用同一套提示词与解析器，`PHYTO_VISION_BACKEND` 一个变量切换；未配置则报错而非猜测。DGX Spark 是其中一种，不是前提。
 
 **真实模型已跑通**：`step-5-preview` 上 preflight 三项硬检查全过，A/B 两臂各 17 个任务，产物 `artifacts/agent-ab.json`。真实差异见 [真实 Harness](docs/harness.md)。
 
@@ -202,14 +204,15 @@ phytoagent-skills/
 ├── shield/gate.py         AgentShield 编译门禁（六项检查 + 隔离 + 修复项）
 ├── corpus/                vendored 语料索引与确定性检索器
 ├── harness/               真实StepFun调度：配置、传输、工具循环、任务集、规则化评分、A/B
+├── backends/              执行后端：协议、ollama HTTP、SSH、离线回放、提示词与解析门面
 ├── skills/
 │   ├── plant_vision/  growth_risk/  herbal_knowledge/  evidence_fusion/
 │   └── agentshield_audit/
 ├── demo/                  phytoforge_demo（三分钟闭环）、四Skill组合、SDK示例
 ├── evals/                 包内fixture契约评测器
 ├── scripts/seal_skills.py 发布者显式封包
-├── dgx/                   DGX Spark：SSH 客户端、叶片/药材视觉推理、批量与全链路脚本
-└── tests/                 362 项全离线测试
+├── dgx/                   SSH 传输实现 + 叶片/药材视觉提示词与解析器（可选后端之一）
+└── tests/                 387 项全离线测试
 ```
 
 ## 治理与评测的实际范围
@@ -227,11 +230,12 @@ phytoagent-skills/
 | Step Plan 通道 | **另一额度池**：普通 API 返回 402 时此通道仍可用，`PHYTO_STEPFUN_BASE_URL=step_plan`；不受 V0 的 10 RPM 限制 |
 | 降级矩阵 | 缺凭据/缺图/fixture 占位/损坏缓存/不支持的模式，全部明确报错不回退 |
 | DGX Spark 实测 | 已连通 `gx10-9ec6`（GB10 / aarch64 / CUDA 13.0），真实视觉推理已跑通，`artifacts/dgx/` |
-| plant_vision live / herb 模式 | 真实 GPU 推理；无 fixture 回退，缺节点或缺密钥即报错 |
+| plant_vision live / herb 模式 | 真实推理，由 `PHYTO_VISION_BACKEND` 决定在哪儿跑；无 fixture 回退，未配置/不可达/未鉴权即报错 |
 | Agent 触发与 A/B | **已真实运行**：`step-5-preview`，17 任务 × 2 臂见 `artifacts/agent-ab.json`；3 个真实图像任务见 `artifacts/agent-ab-real.json` |
 | 真实图像任务 | **已跑通**：3 个任务 × 2 臂，StepFun 真实调用 `plant_vision` 并报告 DGX 真实推理结果；负向任务两臂都拒绝编造 |
 | SkillSpector / OMS | 未接入；**没有** NVIDIA 官方 Verified 声明 |
-| DGX / 模型准确率 | **未实测**，不提供推算指标 |
+| 人工标注与准确率 | Dev-30（30 张，单人标注）已评分：整体 P 0.550 / R 0.1864 / F1 0.2785；药材切片校准后 P 1.000 / R 0.3810 / F1 0.5517。**属 calibration，不是泛化证据** |
+| 泛化能力 / unseen holdout | **未测**，不提供推算指标 |
 | 本地语料 | 已 vendored 并带哈希；确定性检索，无 Embedding / 向量库 |
 
 `manifest.sig` 是项目格式，与 OpenSSF Model Signing 的 `skill.oms.sig` 不能互换。临时 Demo 密钥只验证本次流程，不认证第三方发布者。
@@ -242,7 +246,7 @@ SDK 使用 Draft 2020-12，只允许本地 JSON Pointer 引用；拒绝非有限
 
 必须明确：Python 仍运行在本进程，**尚无安全沙箱**、并发文件修改隔离或强制超时。签名证明来源和完整性，不证明行为安全。编译门禁与 Runtime 中间件是策略层，不是隔离层。
 
-未实现的 `live`/`replay` 明确失败，不回退 fixture。`harness/` 是唯一会发起网络请求的模块，必须显式配置端点与密钥（`.env` 已被 gitignore），缺密钥直接报错而不是退回 fixture。密钥不入库。
+未实现的模式明确失败，不回退 fixture。会发起网络请求的只有两处：`harness/`（模型端点）与后端层（ollama HTTP 或 SSH），两者都必须显式配置端点与密钥（`.env`、`.dgx.env` 已被 gitignore），缺失直接报错而不是退回 fixture。密钥不入库。离线回放后端不发任何请求。
 
 A/B 已真实运行，但 `repeat=1`、17 个任务，样本量不足以支撑统计显著性；报告里 `significance_test` 是 `none`，差值只能当方向性观察。免费额度 10 RPM，`harness/transport.py` 因此有请求间隔节流；跑更多轮次受限于配额。
 

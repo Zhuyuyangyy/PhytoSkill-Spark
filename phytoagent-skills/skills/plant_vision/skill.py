@@ -2,9 +2,9 @@
 
 * ``fixture`` — the published synthetic case. Answers exactly one input and
   refuses everything else, which is what makes the contract testable offline.
-* ``live`` — real inference on the DGX Spark node, observing **field/leaf**
+* ``live`` — real inference on the configured backend, observing **field/leaf**
   phenotypes (yellowing, spots, wilting). Requires a real image path.
-* ``herb`` — real inference on the same node, observing **dried sliced herb
+* ``herb`` — real inference on the same backend, observing **dried sliced herb
   material** (cut-surface texture, colour, mould, insect damage, slice shape).
 
 ``herb`` exists because the supplied image set is 15 photographs of sliced
@@ -12,56 +12,64 @@ Astragalus root, not growing plants. Asking a leaf-chlorosis prompt about a plat
 of root slices returns either nothing or a region covering the whole plate; the
 instrument has to match the subject.
 
-Every real mode has **no fixture fallback**: a missing node, a missing credential,
-a ``fixture://`` placeholder or an absent file are all hard errors. Answering a
-real request with synthetic data would be a fabricated observation.
+**Which machine runs the inference is configuration, not code.** This Skill used
+to import the DGX Spark SSH client directly, which made one specific piece of
+hardware a precondition for running the package at all. It now takes a backend
+from ``backends/`` — a local ollama server, a CUDA workstation, a rented GPU, a
+remote node over SSH, or recorded observations replayed offline. See
+``backends.registry.resolve``.
+
+Every real mode has **no fixture fallback**: an unconfigured backend, a missing
+credential, an unreachable endpoint or an absent file are all hard errors.
+Answering a real request with synthetic data would be a fabricated observation.
 """
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
-from dgx.cache import ObservationCache, cached_vision
-from dgx.client import DgxClient, load_credentials
-from dgx.herb_vision import build_prompt as build_herb_prompt
-from dgx.herb_vision import run_vision as run_herb_vision
-from dgx.vision import build_prompt as build_leaf_prompt
-from dgx.vision import run_vision as run_leaf_vision
 from sdk import BaseSkill, ContractError
 from sdk.exceptions import UnsupportedModeError
 from sdk.fixture_skill import FixtureSkill
 
 DEFAULT_MODEL = "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest"
 
+# The backend layer is imported lazily, inside the real modes. A signed package
+# may be copied anywhere and executed on its own; importing a backend at module
+# scope would make even the offline fixture mode fail on a machine that has no
+# backend layer installed. Fixture mode must always work; inference mode is
+# allowed to require one.
 
-def _default_env_file() -> Path:
-    """Locate the credential file relative to the *source* checkout.
-
-    ``__file__`` is wrong here: a signed copy of this package is frequently run
-    from a temporary directory (the demo and the gate both do that), where no
-    credential file exists. Walking up from the current working directory finds
-    the checkout the run was started from, which is where the operator put it.
-    """
-    for candidate in (Path.cwd(), *Path.cwd().parents):
-        path = candidate / ".dgx.env"
-        if path.is_file():
-            return path
-    return Path(".dgx.env")
+# ``data_origin`` values are unchanged from the DGX era. They name the
+# observation vocabulary, not the hardware; renaming them is a separate change
+# because the value is asserted by the evidence_fusion schema too.
+DATA_ORIGIN_BY_MODE = {"live": "dgx_live_inference", "herb": "dgx_herb_inference"}
 
 
 class PlantVisionSkill(BaseSkill):
     """One narrowly scoped, contract-validated capability."""
 
     def __init__(self, package_dir, *, model: str | None = None,
-                 env_file: str | Path | None = None,
-                 cache: ObservationCache | None = None):
+                 backend=None,
+                 cache=None,
+                 cache_dir: str | Path | None = None,
+                 env_file: str | Path | None = None):
+        """
+        ``backend`` may be injected directly. When it is omitted, one is resolved
+        from ``PHYTO_VISION_BACKEND`` at first use; an unset variable is a hard
+        error rather than a guess, so two machines never silently disagree about
+        where an observation came from.
+
+        ``env_file`` is accepted for compatibility. It is only meaningful to an
+        SSH backend, which reads node credentials from it.
+        """
         super().__init__(package_dir)
         self._model = model or DEFAULT_MODEL
-        # None means "use the repository default", not "no credentials".
-        self._env_file = Path(env_file) if env_file is not None else _default_env_file()
-        # One inference costs 12-167 s and contends with other work on the node.
-        # Both A/B arms and every rerun would otherwise pay it again.
-        self._cache = cache if cache is not None else ObservationCache()
+        self._backend = backend
+        self._env_file = Path(env_file) if env_file is not None else None
+        self._cache = cache
+        self._cache_dir = cache_dir
 
     @property
     def model(self) -> str:
@@ -70,14 +78,8 @@ class PlantVisionSkill(BaseSkill):
     def run(self, payload: dict, *, mode: str) -> dict:
         if mode == "fixture":
             return self._run_fixture(payload)
-        if mode == "live":
-            return self._run_real(payload, mode=mode, runner=run_leaf_vision,
-                                  data_origin="dgx_live_inference",
-                                  build_prompt=build_leaf_prompt)
-        if mode == "herb":
-            return self._run_real(payload, mode=mode, runner=run_herb_vision,
-                                  data_origin="dgx_herb_inference",
-                                  build_prompt=build_herb_prompt)
+        if mode in DATA_ORIGIN_BY_MODE:
+            return self._run_real(payload, mode=mode)
         raise UnsupportedModeError(f"plant_vision does not support mode {mode!r}")
 
     # ── modes ─────────────────────────────────────────────────────────────
@@ -86,9 +88,8 @@ class PlantVisionSkill(BaseSkill):
         """Delegate to the sealed fixture; a mismatch is an explicit failure."""
         return FixtureSkill.run(self, payload, mode="fixture")
 
-    def _run_real(self, payload: dict, *, mode: str, runner, data_origin: str,
-                  build_prompt) -> dict:
-        """Run real inference on the DGX Spark node. No fixture fallback."""
+    def _run_real(self, payload: dict, *, mode: str) -> dict:
+        """Run real inference on the configured backend. No fixture fallback."""
         image_path = payload.get("image_path")
         if not isinstance(image_path, str) or not image_path.strip():
             raise ContractError("real mode requires a non-empty image_path")
@@ -103,19 +104,27 @@ class PlantVisionSkill(BaseSkill):
             raise ContractError(f"image not found: {image_path}")
 
         try:
-            credentials = load_credentials(self._env_file)
-        except ValueError as exc:
-            raise ContractError(f"DGX credentials unavailable: {exc}") from exc
+            from backends.base import BackendUnavailable
+            from backends.observation_cache import cached_observation
+            from backends.parsing import build_prompt
+        except ImportError as exc:  # pragma: no cover - depends on install layout
+            raise ContractError(f"vision backend layer unavailable: {exc}") from exc
 
+        backend = self._require_backend()
         image_bytes = path.read_bytes()
-        with DgxClient(credentials) as client:
-            # A large photograph on a contended node takes minutes: the observed
-            # range is ~12 s to ~167 s for the same code path. 600 s is not
-            # generous, it is what the slowest real image needed.
-            prompt = build_prompt(species=species)
-            call = cached_vision(client, cache=self._cache, image_bytes=image_bytes,
-                                 species=species, model=self._model, mode=mode,
-                                 runner=runner, timeout=900, prompt=prompt)
+        # Part of the cache key: an edited prompt must not reuse old observations.
+        prompt = build_prompt(species=species, mode=mode)
+
+        try:
+            # A large photograph on a contended machine takes minutes: the
+            # observed range was ~12 s to ~167 s for the same code path. 900 s
+            # is not generous, it is what the slowest real image needed.
+            call = cached_observation(
+                backend, cache=self._observation_cache(), image_bytes=image_bytes,
+                species=species, model=self._model, mode=mode, timeout=900,
+                prompt=prompt)
+        except BackendUnavailable as exc:
+            raise ContractError(f"vision backend unavailable: {exc}") from exc
 
         observations = []
         for index, region in enumerate(call["regions"], start=1):
@@ -128,27 +137,42 @@ class PlantVisionSkill(BaseSkill):
                 "area_basis": "visible_subject_area",
                 "model_score": region["model_score"],
             })
+
+        identity = call.get("backend") or {}
+        where = f"{identity.get('name', 'unknown')}（{identity.get('kind', 'unknown')}）"
         limitations = [
-            "本次结果来自 DGX Spark 上的真实视觉模型推理，不是合成 fixture。",
+            f"本次结果来自 {where} 后端上的真实视觉模型推理，不是合成 fixture。",
             "模型只描述可见性状，不判定等级、真伪或病因；model_score 是模型对自己描述的信心，不是质量分。",
             "可见区域面积比例不是有效成分变化比例；性状观察不能替代药典检验与专业人员鉴定。",
         ]
+        if call.get("cache") == "hit":
+            limitations.append(
+                "本条观察来自观察缓存：内容与首次推理一致，耗时不代表本次推理。")
+        if call.get("cache") == "replay":
+            limitations.append(
+                "本条观察来自已记录产物回放，内容为当时真实推理所得；"
+                "latency 属于原始运行，不代表本次性能。")
         if not call["image_usable"]:
             limitations.append("模型判定图像不可用；未据此产生任何表型结论。")
         if not observations:
             limitations.append("模型未报告任何可用区域；此处不补造区域。")
+
         return {
             "status": "success",
             "case_id": payload.get("case_id", ""),
             "species": species,
             "provenance": {
-                "data_origin": data_origin,
+                "data_origin": DATA_ORIGIN_BY_MODE[mode],
                 "skill": "plant_vision",
                 "version": self.version,
                 "model_called": True,
                 "model": call["model"],
-                "dgx_hardware_used": True,
-                "gpu": call["gpu"],
+                # Historical field name. It records whether a GPU was observed
+                # during this call, whatever the backend was; it is driven by
+                # the backend's own report and never hard-coded.
+                "dgx_hardware_used": bool(identity.get("gpu_observed")),
+                "backend": identity,
+                "gpu": call.get("gpu"),
                 "latency_ms": call["latency_ms"],
                 "eval_count": call["eval_count"],
                 "observation_cache": call.get("cache", "unknown"),
@@ -159,6 +183,31 @@ class PlantVisionSkill(BaseSkill):
         }
 
     # ── helpers ───────────────────────────────────────────────────────────
+
+    def _require_backend(self):
+        """Return the backend, resolving it from configuration on first use."""
+        if self._backend is not None:
+            return self._backend
+        try:
+            from backends.base import BackendUnavailable
+            from backends.registry import resolve as resolve_backend
+        except ImportError as exc:  # pragma: no cover - depends on install layout
+            raise ContractError(f"vision backend layer unavailable: {exc}") from exc
+        try:
+            self._backend = resolve_backend(environ=os.environ, env_file=self._env_file)
+        except BackendUnavailable as exc:
+            raise ContractError(f"vision backend unavailable: {exc}") from exc
+        return self._backend
+
+    def _observation_cache(self):
+        """One inference may cost minutes; both A/B arms and every rerun would
+        otherwise pay for it again. Created lazily so fixture mode needs nothing."""
+        if self._cache is None:
+            from backends.observation_cache import DEFAULT_CACHE_DIR, ObservationCache
+
+            self._cache = ObservationCache(
+                self._cache_dir if self._cache_dir is not None else DEFAULT_CACHE_DIR)
+        return self._cache
 
     @staticmethod
     def _area(bbox: list[float]) -> float:

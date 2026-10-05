@@ -4,19 +4,24 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "phytoagent-skills"
-version = "0.2.0"
+version = "0.3.0"
 description = "Medicinal-plant Skill packages, contracts and local registry"
 requires-python = ">=3.11"
 dependencies = ["jsonschema>=4.22,<5", "cryptography>=42,<47", "PyYAML>=6,<7"]
 
+# The default install needs no SSH library. A local ollama server, a CUDA box
+# with an exposed ollama port, and an offline replay of recorded observations all
+# work out of the box; only reaching a node over SSH needs more.
 [project.optional-dependencies]
 test = ["pytest>=8,<10"]
+ssh = ["paramiko>=3,<5"]
 
 [project.scripts]
 phyto-registry = "registry.__main__:main"
 
 [tool.setuptools.packages.find]
-include = ["sdk*", "registry*", "runtime*", "compiler*", "shield*", "corpus*"]
+include = ["sdk*", "registry*", "runtime*", "compiler*", "shield*", "corpus*",
+           "backends*", "dgx*"]
 
 [tool.setuptools.package-data]
 registry = ["registry.json"]
