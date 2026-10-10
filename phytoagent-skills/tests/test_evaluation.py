@@ -1,0 +1,342 @@
+"""Evaluation layer: selective metrics, the freeze, and the one-shot holdout rule.
+
+Offline: no model, no image, no network. The arithmetic is checked against
+hand-computed values, and one test pins the frozen Dev-30 baseline so a
+regression in the metric code cannot pass unnoticed.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from evaluation.agreement import (ACCEPT_BOTH, ACCEPT_REFERENCE, adjudicate,
+                                  cohen_kappa, multilabel_agreement, resolution_queue)
+from evaluation.metrics import (Evaluation, LabelCounts, evaluate, normalise_labels,
+                                risk_coverage_curve, stratify)
+from evaluation.split import (DatasetSplit, FreezeError, HoldoutAlreadyRun,
+                              HoldoutLedger, freeze, split_entries)
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ANNOTATION = PROJECT_ROOT / "case_workspace" / "annotate" / "huangqi_annotated_results.json"
+BASELINE = PROJECT_ROOT / "artifacts" / "dgx" / "baseline-v1.json"
+
+# One image per interesting case: a hit + a miss, an abstention, a spurious
+# answer, and an image where both sides are empty.
+SAMPLE = [
+    {"mode": "herb", "image": "i1",
+     "model_predicted": ["a", "b"], "annotator_labels": ["a", "c"]},
+    {"mode": "herb", "image": "i2",
+     "model_predicted": [], "annotator_labels": ["d"]},
+    {"mode": "herb", "image": "i3",
+     "model_predicted": ["e"], "annotator_labels": []},
+    {"mode": "live", "image": "i4",
+     "model_predicted": [], "annotator_labels": []},
+]
+
+
+# ── counts and the headline ratios ───────────────────────────────────────────
+
+
+def test_micro_counts_match_hand_computation():
+    evaluation = evaluate(SAMPLE)
+    assert evaluation.images == 4
+    assert evaluation.annotated == 4
+    assert (evaluation.micro.tp, evaluation.micro.fp, evaluation.micro.fn) == (1, 2, 2)
+    assert evaluation.precision == 0.3333
+    assert evaluation.recall == 0.3333
+    assert evaluation.f1 == 0.3333
+
+
+def test_answered_and_abstained_are_different_from_merely_empty():
+    """An image where both sides are empty is correctly silent — not an abstention.
+
+    i3 predicted something (answered), i2 withheld where the reference had a
+    label (abstained), i4 was empty on both sides (neither).
+    """
+    evaluation = evaluate(SAMPLE)
+    assert evaluation.answered == 2
+    assert evaluation.abstained == 1
+    assert evaluation.coverage == 0.5
+    assert evaluation.abstention_rate == 0.25
+
+
+def test_abstention_costs_recall_but_can_never_cost_precision():
+    """The structural fact this whole module exists to expose."""
+    evaluation = evaluate(SAMPLE)
+    # An empty prediction cannot produce a false positive, so the two coincide.
+    assert evaluation.selective_precision == evaluation.precision
+    # Selective recall excludes the labels lost to abstention, so it is the
+    # optimistic view: 1/2 on the answered images versus 1/3 overall.
+    assert evaluation.selective_recall == 0.5
+    assert evaluation.recall == 0.3333
+    assert evaluation.selective_recall > evaluation.recall
+    assert evaluation.risk_at_coverage == 0.6667
+
+
+def test_f1_comes_from_raw_counts_not_from_rounded_ratios():
+    """The Dev-30 counts: 22/79 = 0.2785, not the 0.2784 a rounded P/R gives."""
+    counts = LabelCounts(tp=11, fp=9, fn=48)
+    assert counts.precision == 0.55
+    assert counts.recall == 0.1864
+    assert counts.f1 == 0.2785
+
+
+def test_a_zero_denominator_is_none_not_zero():
+    """"No opportunity to be right" is a different claim from "wrong every time"."""
+    counts = LabelCounts(tp=0, fp=0, fn=3)
+    assert counts.precision is None      # nothing was ever predicted
+    assert counts.recall == 0.0          # three chances, all missed
+    assert evaluate([{"annotator_labels": []}]).precision is None
+
+
+def test_entries_without_a_reference_are_skipped():
+    """An unlabelled image is not evidence, and must not be counted as a miss."""
+    entries = [*SAMPLE, {"mode": "herb", "image": "i5", "model_predicted": ["x"]}]
+    evaluation = evaluate(entries)
+    assert evaluation.images == 5
+    assert evaluation.annotated == 4
+
+
+def test_normalise_labels_ignores_casing_and_repeats():
+    assert normalise_labels([" A ", "a", "B", "", None, 7]) == ["a", "b"]
+
+
+# ── macro / per-label ────────────────────────────────────────────────────────
+
+
+def test_a_label_with_support_but_no_prediction_scores_zero_in_macro():
+    """Skipping it would let a model raise its macro score by ignoring a label."""
+    # 'z' occurs on two images and is never predicted.
+    entries = [{"model_predicted": ["a"], "annotator_labels": ["a", "z"]},
+               {"model_predicted": ["a"], "annotator_labels": ["a", "z"]}]
+    evaluation = evaluate(entries)
+    assert evaluation.per_label["z"].support == 2
+    assert evaluation.per_label["z"].precision is None
+    # macro averages 'a' (F1 1.0) and 'z' (counted as 0.0), not just 'a'.
+    assert evaluation.macro_f1 == 0.5
+
+
+def test_a_label_the_reference_never_uses_is_excluded_and_listed():
+    evaluation = evaluate(SAMPLE)
+    assert evaluation.labels_without_support == ["b", "e"]
+    assert "b" not in {name for name, counts in evaluation.per_label.items()
+                       if counts.support > 0}
+
+
+def test_stratify_reports_each_mode_and_the_overall():
+    by_mode = stratify(SAMPLE, key="mode")
+    assert set(by_mode) == {"herb", "live", "overall"}
+    assert by_mode["herb"].annotated == 3
+    assert by_mode["live"].annotated == 1
+    assert by_mode["overall"].annotated == 4
+
+
+# ── risk / coverage curve ────────────────────────────────────────────────────
+
+
+def test_risk_coverage_curve_needs_a_confidence_and_does_not_invent_one():
+    assert risk_coverage_curve(SAMPLE) is None
+    ranked = [dict(entry, model_confidence=confidence)
+              for entry, confidence in zip(SAMPLE, (0.9, 0.8, 0.5, 0.1))]
+    curve = risk_coverage_curve(ranked)
+    assert [point["coverage"] for point in curve] == [0.25, 0.5, 0.75, 1.0]
+    # The top-confidence image carries one hit and one spurious label.
+    assert curve[0]["risk"] == 0.5
+
+
+# ── the frozen baseline must not drift ───────────────────────────────────────
+
+
+def test_the_metrics_reproduce_the_frozen_dev30_baseline():
+    """A regression in the metric code would silently disagree with a frozen number."""
+    if not ANNOTATION.is_file() or not BASELINE.is_file():
+        pytest.skip("annotation or baseline artifact not present")
+    entries = json.loads(ANNOTATION.read_text(encoding="utf-8"))["entries"]
+    frozen = json.loads(BASELINE.read_text(encoding="utf-8"))["metrics"]
+    evaluation = evaluate(entries)
+    assert evaluation.images == frozen["images"]
+    assert evaluation.annotated == frozen["annotated"]
+    assert (evaluation.micro.tp, evaluation.micro.fp, evaluation.micro.fn) == (
+        frozen["labels"]["true_positives"], frozen["labels"]["false_positives"],
+        frozen["labels"]["false_negatives"])
+    assert evaluation.precision == frozen["precision"]
+    assert evaluation.recall == frozen["recall"]
+    assert evaluation.f1 == frozen["f1"]
+
+
+# ── the freeze ───────────────────────────────────────────────────────────────
+
+
+def test_the_freeze_is_deterministic_for_the_same_code_and_model():
+    first = freeze(model="m", quantization="q4")
+    second = freeze(model="m", quantization="q4")
+    assert first.freeze_id == second.freeze_id
+    assert len(first.freeze_id) == 64
+
+
+def test_a_different_model_or_quantisation_is_a_different_experiment():
+    base = freeze(model="m", quantization="q4")
+    assert freeze(model="other", quantization="q4").freeze_id != base.freeze_id
+    assert freeze(model="m", quantization="q8").freeze_id != base.freeze_id
+
+
+def test_a_freeze_must_name_a_model_and_a_quantisation():
+    with pytest.raises(FreezeError):
+        freeze(model="", quantization="q4")
+
+
+def test_the_freeze_covers_the_semantics_the_scorer_and_the_prompt():
+    frozen = freeze(model="m", quantization="q4")
+    # Four independent fingerprints: editing any one of them changes the freeze.
+    assert len({frozen.prompt_hash, frozen.parser_hash, frozen.ontology_hash,
+                frozen.scorer_hash}) == 4
+
+
+# ── dataset roles ────────────────────────────────────────────────────────────
+
+
+def test_an_image_cannot_be_in_two_roles():
+    with pytest.raises(FreezeError, match="both"):
+        DatasetSplit(holdout=("a",), calibration=("a",))
+
+
+def test_split_entries_rejects_a_holdout_image_that_is_not_in_the_dataset():
+    with pytest.raises(FreezeError, match="not in the dataset"):
+        split_entries(SAMPLE, holdout=("nope",))
+
+
+def test_split_entries_defaults_everything_else_to_calibration():
+    split = split_entries(SAMPLE, holdout=("i4",), development=("i3",))
+    assert split.holdout == ("i4",)
+    assert split.development == ("i3",)
+    assert split.calibration == ("i1", "i2")
+    assert split.role_of("i4") == "holdout"
+
+
+# ── the one-shot holdout ledger ──────────────────────────────────────────────
+
+
+def test_a_holdout_freeze_cannot_be_run_twice(tmp_path):
+    """The rule the whole protocol rests on."""
+    ledger = HoldoutLedger.load(tmp_path / "ledger.json")
+    frozen = freeze(model="m", quantization="q4")
+    ledger.record(frozen, metrics={"f1": 0.1})
+    with pytest.raises(HoldoutAlreadyRun, match="already evaluated"):
+        ledger.guard(frozen)
+
+
+def test_superseding_a_holdout_records_what_it_replaced(tmp_path):
+    ledger = HoldoutLedger.load(tmp_path / "ledger.json")
+    frozen = freeze(model="m", quantization="q4")
+    first = ledger.record(frozen, metrics={"f1": 0.1})
+    second = ledger.record(frozen, metrics={"f1": 0.2}, supersede=True,
+                           note="prompt was edited; the first run is void")
+    assert second["supersedes"] == [first["at"]]
+    assert len(ledger.runs_for(frozen.freeze_id)) == 2
+
+
+def test_the_ledger_survives_a_round_trip(tmp_path):
+    path = tmp_path / "ledger.json"
+    frozen = freeze(model="m", quantization="q4")
+    HoldoutLedger.load(path).record(frozen, metrics={"f1": 0.1})
+    reloaded = HoldoutLedger.load(path)
+    assert reloaded.has_run(frozen.freeze_id)
+    with pytest.raises(HoldoutAlreadyRun):
+        reloaded.guard(frozen)
+
+
+def test_a_development_run_is_not_subject_to_the_one_shot_rule(tmp_path):
+    ledger = HoldoutLedger.load(tmp_path / "ledger.json")
+    frozen = freeze(model="m", quantization="q4")
+    ledger.record(frozen, metrics={}, role="development")
+    ledger.record(frozen, metrics={}, role="development")
+
+
+# ── inter-annotator agreement ────────────────────────────────────────────────
+
+
+def test_kappa_is_one_for_perfect_agreement_with_variance():
+    assert cohen_kappa([True, False, True, False], [True, False, True, False]) == 1.0
+
+
+def test_kappa_is_none_when_there_is_no_variance_to_explain():
+    """Both annotators always saying "absent" agree on nothing worth measuring."""
+    assert cohen_kappa([False, False, False], [False, False, False]) is None
+    assert cohen_kappa([True, True], [True, True]) is None
+
+
+def test_kappa_is_negative_when_the_raters_are_systematically_opposed():
+    assert cohen_kappa([True, True, False, False], [False, False, True, True]) == -1.0
+
+
+def test_kappa_matches_a_hand_computed_example():
+    first = [True, True, True, True, False, False, False, False, False, False]
+    second = [True, True, True, False, False, False, False, False, False, False]
+    # po=0.9, pe=0.54, kappa=0.36/0.46
+    assert cohen_kappa(first, second) == 0.7826
+
+
+def test_multilabel_agreement_compares_only_shared_images():
+    first = {"i1": ["a"], "i2": ["b"], "i3": ["a"]}
+    second = {"i1": ["a"], "i2": ["c"], "i9": ["z"]}
+    report = multilabel_agreement(first, second)
+    assert report["common_images"] == 2
+    assert report["only_in_first"] == ["i3"]
+    assert report["only_in_second"] == ["i9"]
+    assert report["per_label"]["a"]["kappa"] == 1.0
+
+
+def test_multilabel_agreement_says_so_when_there_is_no_overlap():
+    report = multilabel_agreement({"i1": ["a"]}, {"i2": ["a"]})
+    assert report["status"] == "no_overlap"
+
+
+def test_the_resolution_queue_lists_only_the_disagreements():
+    first = {"i1": ["a"], "i2": ["a", "b"]}
+    second = {"i1": ["a"], "i2": ["a", "c"]}
+    queue = resolution_queue(first, second)
+    assert [item.image for item in queue] == ["i2"]
+    assert queue[0].only_in_first == ["b"]
+    assert queue[0].only_in_second == ["c"]
+
+
+def test_adjudication_refuses_to_guess_an_undecided_disagreement():
+    first = {"i1": ["a", "b"]}
+    second = {"i1": ["a", "c"]}
+    with pytest.raises(ValueError, match="without a recorded decision"):
+        adjudicate(first, second, {})
+
+
+def test_adjudication_applies_the_recorded_decisions():
+    first = {"i1": ["a", "b"], "i2": ["x"]}
+    second = {"i1": ["a", "c"], "i2": ["x"]}
+    assert adjudicate(first, second, {"i1": ACCEPT_BOTH})["i1"] == ["a", "b", "c"]
+    assert adjudicate(first, second, {"i1": ACCEPT_REFERENCE})["i1"] == ["a", "b"]
+
+
+# ── the CLI ──────────────────────────────────────────────────────────────────
+
+
+def test_cli_report_writes_a_report_with_the_selective_metrics(tmp_path):
+    from evaluation.__main__ import main
+
+    output = tmp_path / "report.json"
+    assert main(["report", str(ANNOTATION), "--output", str(output)]) == 0
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert report["modes"]["overall"]["coverage"] is not None
+    assert report["modes"]["overall"]["abstention_rate"] is not None
+    assert report["risk_coverage"]["available"] is False
+
+
+def test_cli_holdout_refuses_a_second_run_of_the_same_freeze(tmp_path):
+    from evaluation.__main__ import main
+
+    ledger, output = tmp_path / "ledger.json", tmp_path / "holdout.json"
+    argv = ["holdout", str(ANNOTATION), "--model", "m", "--quantization", "q4",
+            "--ledger", str(ledger), "--output", str(output)]
+    assert main(argv) == 0
+    # Same freeze, same holdout: the protocol forbids looking twice.
+    assert main(argv) == 2
