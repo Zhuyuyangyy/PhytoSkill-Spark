@@ -26,8 +26,8 @@ from evaluation.agreement import multilabel_agreement, resolution_queue
 from evaluation.frozen import (DEFAULT_MANIFEST, assert_manifest, verify_manifest,
                                write_manifest)
 from evaluation.metrics import risk_coverage_curve, stratify
-from evaluation.split import (DEFAULT_LEDGER, HoldoutLedger, freeze as make_freeze,
-                              split_entries)
+from evaluation.split import (DEFAULT_LEDGER, FreezeError, HoldoutLedger,
+                              freeze as make_freeze, split_entries)
 
 DEFAULT_ANNOTATION = Path("case_workspace/annotate/huangqi_annotated_results.json")
 REPORT_PATH = Path("artifacts/evaluations/dev30-report.json")
@@ -36,6 +36,15 @@ HOLDOUT_PATH = Path("artifacts/evaluations/holdout-run.json")
 
 def _read(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _sha256_file(path: Path) -> str:
+    import hashlib
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _entries(path: Path) -> list[dict]:
@@ -107,9 +116,12 @@ def _split(args: argparse.Namespace) -> int:
 def _freeze(args: argparse.Namespace) -> int:
     """Write the committed freeze manifest: the record the holdout is held to."""
     manifest = write_manifest(Path(args.manifest), model=args.model,
-                              quantization=args.quantization)
+                              quantization=args.quantization,
+                              model_digest=args.model_digest)
     print(json.dumps({"written": str(args.manifest),
                       "freeze_id": manifest["freeze_id"],
+                      "model_digest": manifest["freeze"]["model_digest"],
+                      "weight_identity_source": manifest["weight_identity_source"],
                       "inputs": len(manifest["inputs"])}, ensure_ascii=False, indent=2))
     return 0
 
@@ -128,31 +140,65 @@ def _verify_freeze(args: argparse.Namespace) -> int:
 def _holdout(args: argparse.Namespace) -> int:
     # A holdout run on a drifted configuration is not the frozen experiment.
     # The ledger guards re-runs of the *same* freeze; this guards the freeze
-    # itself against silent edits between freezing and running.
-    if Path(args.manifest).is_file():
-        assert_manifest(Path(args.manifest), model=args.model,
-                        quantization=args.quantization)
+    # itself against silent edits between freezing and running. The manifest
+    # is mandatory: a missing one is a refusal, not a skip.
+    manifest_path = Path(args.manifest)
+    if not manifest_path.is_file():
+        raise FreezeError(
+            f"no freeze manifest at {manifest_path}; the holdout gate is not "
+            "optional — freeze first (python -m evaluation freeze ...)")
+    assert_manifest(manifest_path, model=args.model, quantization=args.quantization)
+
+    # The holdout set is mandatory. Without an explicit list every entry would
+    # default to the calibration role and then be scored as holdout anyway —
+    # a "blind test" over data the prompts were developed against.
+    if not args.holdout:
+        raise FreezeError(
+            "a holdout run must name its holdout images (--holdout, repeatable); "
+            "an undeclared holdout scores whatever it is given")
     entries = _entries(Path(args.annotations))
-    split = split_entries(entries, holdout=tuple(args.holdout or ()))
-    if args.holdout:
-        entries = [entry for entry in entries if entry.get("image") in set(args.holdout)]
+    holdout = tuple(args.holdout)
+    split = split_entries(entries, holdout=holdout)
+    entries = [entry for entry in entries if entry.get("image") in set(holdout)]
+    if not entries:
+        raise FreezeError("no annotation entries matched the declared holdout set")
+    # Development and calibration samples must never be scored as holdout: the
+    # split already assigned them, and the metrics below cover the holdout only.
+    if any(entry.get("image") in set(split.development) | set(split.calibration)
+           for entry in entries):
+        raise FreezeError("holdout entries overlap the development or calibration set")
+
     frozen = make_freeze(model=args.model, quantization=args.quantization)
     ledger = HoldoutLedger.load(Path(args.ledger))
     metrics = stratify(entries, key="mode")
+    # The predictions are the artifact the numbers were computed from; their
+    # hash is recorded so a later reader can tell which bytes were scored.
+    inputs_sha256 = _sha256_file(Path(args.annotations))
     payload = {
         "scope": "holdout_evaluation",
         "freeze": frozen.summary(),
         "split": split.to_dict(),
+        "inputs_sha256": inputs_sha256,
+        "scored_entries": len(entries),
         "metrics": {name: evaluation.to_dict() for name, evaluation in metrics.items()},
     }
     # The ledger write is what enforces the one-shot rule; it happens after the
     # numbers are computed so a refusal leaves no half-recorded run behind.
     ledger.record(frozen, metrics=payload["metrics"], note=args.note,
                   supersede=args.supersede)
-    _write(Path(args.output), payload)
+    output = Path(args.output)
+    _write(output, payload)
+    # The report's own identity goes into the ledger, not into itself: a file
+    # cannot contain its own hash, and the ledger is the audit trail.
+    entry = ledger.runs[-1]
+    entry["output_sha256"] = _sha256_file(output)
+    entry["inputs_sha256"] = inputs_sha256
+    ledger.save()
     print(json.dumps({"freeze_id": frozen.freeze_id[:12],
                       "holdout_images": len(entries),
-                      "written": str(args.output),
+                      "inputs_sha256": inputs_sha256[:12],
+                      "output_sha256": entry["output_sha256"][:12],
+                      "written": str(output),
                       "ledger": str(ledger.path)}, ensure_ascii=False, indent=2))
     return 0
 
@@ -183,6 +229,9 @@ def main(argv: list[str] | None = None) -> int:
     frozen = commands.add_parser("freeze", help="write the committed freeze manifest")
     frozen.add_argument("--model", required=True)
     frozen.add_argument("--quantization", required=True)
+    frozen.add_argument("--model-digest", default="",
+                        help="the weights' digest; defaults to the identity "
+                             "recorded by an earlier real run")
     frozen.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     frozen.set_defaults(handler=_freeze)
 
@@ -194,7 +243,10 @@ def main(argv: list[str] | None = None) -> int:
     holdout.add_argument("annotations", nargs="?", default=str(DEFAULT_ANNOTATION))
     holdout.add_argument("--model", required=True)
     holdout.add_argument("--quantization", required=True)
-    holdout.add_argument("--holdout", nargs="*", default=[])
+    # action=append, not nargs="*": repeating the flag must accumulate the
+    # holdout set. With nargs="*" a second --holdout silently replaces the
+    # first, and half the declared blind set would vanish without a word.
+    holdout.add_argument("--holdout", action="append", default=[])
     holdout.add_argument("--note", default="")
     holdout.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     holdout.add_argument("--output", default=str(HOLDOUT_PATH))

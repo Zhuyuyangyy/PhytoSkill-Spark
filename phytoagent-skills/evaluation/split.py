@@ -57,12 +57,24 @@ def _canonical(value) -> bytes:
                       separators=(",", ":"), allow_nan=False).encode("utf-8")
 
 
+def _normalise(data: bytes) -> bytes:
+    """Line-ending-normalised bytes: CRLF and LF are the same text.
+
+    Git checks out with the platform's convention and the working tree may
+    hold either, so a raw byte hash of a source file differs between a fresh
+    clone and the machine that froze it. The freeze would then report drift
+    for a file nobody edited — on Windows, for every file. Normalising first
+    makes the fingerprint about the *text*, which is what decides an answer.
+    """
+    return data.replace(b"\r\n", b"\n")
+
+
 def _module_source_hash(module) -> str:
     """Hash a module's source file. Over-invalidates on a comment edit, on purpose."""
     path = Path(getattr(module, "__file__", ""))
     if not path.is_file():
         raise FreezeError(f"cannot fingerprint module source: {module!r}")
-    return _sha256(path.read_bytes())
+    return _sha256(_normalise(path.read_bytes()))
 
 
 def prompt_fingerprint() -> str:
@@ -160,7 +172,9 @@ def protocol_fingerprint() -> str:
     protocol = PROJECT_ROOT / "docs" / "evaluation.md"
     if not protocol.is_file():
         raise FreezeError("the evaluation protocol document is missing")
-    return _sha256(protocol.read_bytes())
+    # Normalised like every other frozen input: the protocol is text, and the
+    # platform's line-ending convention is not part of the experiment.
+    return _sha256(_normalise(protocol.read_bytes()))
 
 
 @dataclass(frozen=True)
@@ -184,6 +198,13 @@ class Freeze:
     auditor_hash: str
     retriever_hash: str
     protocol_hash: str
+    # The model *name* is not an identity: a ":latest" tag can be re-pulled as
+    # different weights, and two runs of the same code would then not be the
+    # same experiment. The digest is the weights' own identity, observed from
+    # a recorded run; it belongs in the freeze id for the same reason the code
+    # hashes do.
+    model_digest: str = ""
+    model_size_bytes: int | None = None
 
     @property
     def freeze_id(self) -> str:
@@ -201,6 +222,8 @@ class Freeze:
             "auditor_hash": self.auditor_hash,
             "retriever_hash": self.retriever_hash,
             "protocol_hash": self.protocol_hash,
+            "model_digest": self.model_digest,
+            "model_size_bytes": self.model_size_bytes,
         }
 
     def summary(self) -> dict:
@@ -210,12 +233,15 @@ class Freeze:
                 "freeze_id": self.freeze_id[:12]}
 
 
-def freeze(*, model: str, quantization: str) -> Freeze:
+def freeze(*, model: str, quantization: str, model_digest: str = "",
+            model_size_bytes: int | None = None) -> Freeze:
     """Fingerprint the current code and the named model.
 
     ``model`` and ``quantization`` are caller-supplied because they are runtime
     configuration, not source: the same code against a different quantisation is
-    a different experiment.
+    a different experiment. ``model_digest`` pins *which weights*: a tag like
+    ``:latest`` can be re-pulled as different bytes, and a freeze that does not
+    name the weights cannot tell two runs of the same code apart.
     """
     if not model or not quantization:
         raise FreezeError("a freeze must name both the model and its quantisation")
@@ -227,7 +253,38 @@ def freeze(*, model: str, quantization: str) -> Freeze:
                   schema_hash=schema_fingerprint(),
                   auditor_hash=auditor_fingerprint(),
                   retriever_hash=retriever_fingerprint(),
-                  protocol_hash=protocol_fingerprint())
+                  protocol_hash=protocol_fingerprint(),
+                  model_digest=model_digest, model_size_bytes=model_size_bytes)
+
+
+def recorded_model_identity(model: str | None = None) -> dict:
+    """The model identity as a *recorded run* observed it.
+
+    A name like ``...:latest`` is a moving tag; the digest and byte size a
+    serving endpoint reported are not. The recorded DGX runs carry both, so a
+    freeze can be pinned to weights that demonstrably produced the recorded
+    observations instead of to a tag that may since have been re-pulled.
+
+    Returns ``{"digest": ..., "size_bytes": ..., "source": ...}`` — with an
+    empty digest when no recorded run is available, which the caller must
+    treat as "weight identity not observed" rather than invent one.
+    """
+    from demo.fixture_workspace import PROJECT_ROOT
+
+    sources = sorted((PROJECT_ROOT / "artifacts" / "dgx").glob("*.json"))
+    for path in sources:
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        for entry in ((data.get("gpu_ps") or {}).get("models") or []):
+            if not isinstance(entry, dict) or not entry.get("digest"):
+                continue
+            if model and entry.get("name") not in (None, model):
+                continue
+            return {"digest": entry["digest"], "size_bytes": entry.get("size"),
+                    "source": str(path.relative_to(PROJECT_ROOT))}
+    return {"digest": "", "size_bytes": None, "source": ""}
 
 
 # ── dataset roles ────────────────────────────────────────────────────────────
@@ -372,5 +429,6 @@ __all__ = ["DEFAULT_LEDGER", "DatasetSplit", "Freeze", "FreezeError",
            "HoldoutAlreadyRun", "HoldoutLedger", "ROLES", "ROLE_CALIBRATION",
            "ROLE_DEVELOPMENT", "ROLE_HOLDOUT", "auditor_fingerprint", "freeze",
            "ontology_fingerprint", "parser_fingerprint", "prompt_fingerprint",
-           "protocol_fingerprint", "retriever_fingerprint", "schema_fingerprint",
-           "scorer_fingerprint", "split_entries"]
+           "protocol_fingerprint", "recorded_model_identity",
+           "retriever_fingerprint", "schema_fingerprint", "scorer_fingerprint",
+           "split_entries"]

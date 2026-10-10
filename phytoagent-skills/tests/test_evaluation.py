@@ -340,10 +340,14 @@ def test_cli_holdout_refuses_a_second_run_of_the_same_freeze(tmp_path):
     # this test freezes its own ("m", "q4") configuration rather than borrowing
     # the committed one — its subject is the ledger rule, not the freeze.
     manifest = tmp_path / "frozen.json"
-    write_manifest(manifest, model="m", quantization="q4")
+    # A freeze pins the weights' identity; a test model gets a test digest
+    # explicitly — the command would otherwise refuse to freeze at all.
+    write_manifest(manifest, model="m", quantization="q4",
+                   model_digest="a" * 64)
     argv = ["holdout", str(ANNOTATION), "--model", "m", "--quantization", "q4",
             "--ledger", str(ledger), "--output", str(output),
-            "--manifest", str(manifest)]
+            "--manifest", str(manifest),
+            "--holdout", "huangqi_01.jpg", "--holdout", "huangqi_02.jpg"]
     assert main(argv) == 0
     # Same freeze, same holdout: the protocol forbids looking twice.
     assert main(argv) == 2
@@ -369,11 +373,13 @@ def test_the_manifest_round_trips_through_the_file(tmp_path):
     from evaluation.frozen import build_manifest, load_manifest, write_manifest
     from evaluation.split import freeze as make_freeze
 
-    frozen = make_freeze(model=MODEL, quantization=QUANTIZATION)
+    frozen = make_freeze(model=MODEL, quantization=QUANTIZATION,
+                         model_digest="b" * 64)
     manifest = build_manifest(frozen, at="2026-10-10T00:00:00+00:00")
     path = tmp_path / "frozen.json"
     write_manifest(path, model=MODEL, quantization=QUANTIZATION,
-                   at="2026-10-10T00:00:00+00:00")
+                   at="2026-10-10T00:00:00+00:00",
+                   model_digest="b" * 64)
     loaded = load_manifest(path)
     assert loaded["freeze_id"] == manifest["freeze_id"] == frozen.freeze_id
     assert [item["path"] for item in loaded["inputs"]] == [
@@ -456,3 +462,138 @@ def test_assert_manifest_raises_on_drift(tmp_path):
     path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     with pytest.raises(FreezeError, match="fingerprints"):
         assert_manifest(path)
+
+
+# ── the holdout gate is mandatory, and the experiment has an identity ───────
+
+
+def test_a_holdout_run_without_a_manifest_is_refused(tmp_path):
+    """The gate must not be optional: a missing manifest used to skip the
+    freeze check entirely, so a drifted tree could still be scored."""
+    from evaluation.__main__ import main
+
+    argv = ["holdout", str(ANNOTATION), "--model", MODEL, "--quantization", QUANTIZATION,
+            "--ledger", str(tmp_path / "ledger.json"),
+            "--output", str(tmp_path / "out.json"),
+            "--manifest", str(tmp_path / "does-not-exist.json"),
+            "--holdout", "huangqi_01.jpg"]
+    # The CLI reports a refusal as a non-zero exit with the reason on stderr;
+    # main() never tracebacks at a caller.
+    assert main(argv) == 2
+
+
+def test_a_holdout_run_without_a_declared_holdout_is_refused(tmp_path):
+    """An undeclared holdout scores whatever it is given — including data the
+    prompts were developed against. That is the bypass this closes."""
+    from evaluation.__main__ import main
+    from evaluation.frozen import write_manifest
+
+    manifest = tmp_path / "frozen.json"
+    write_manifest(manifest, model=MODEL, quantization=QUANTIZATION,
+                   model_digest="c" * 64)
+    argv = ["holdout", str(ANNOTATION), "--model", MODEL, "--quantization", QUANTIZATION,
+            "--ledger", str(tmp_path / "ledger.json"),
+            "--output", str(tmp_path / "out.json"),
+            "--manifest", str(manifest)]
+    assert main(argv) == 2
+    # The refusal is attributable: the message names the rule that refused.
+    import contextlib
+    import io
+    buffer = io.StringIO()
+    with contextlib.redirect_stderr(buffer):
+        main(argv)
+    assert "must name its holdout" in buffer.getvalue()
+
+
+def test_the_committed_freeze_pins_the_weights_identity():
+    """A model name is not an identity: ':latest' can be re-pulled as different
+    bytes. The committed manifest pins the digest a recorded run observed, and
+    says where it was observed."""
+    from evaluation.frozen import DEFAULT_MANIFEST, load_manifest
+
+    manifest = load_manifest(DEFAULT_MANIFEST)
+    digest = manifest["freeze"]["model_digest"]
+    assert len(digest) == 64 and digest.strip("0") != ""
+    assert manifest["freeze"]["model_size_bytes"] > 0
+    assert manifest["weight_identity_source"]
+
+
+def test_the_recorded_identity_matches_the_committed_freeze():
+    """The digest in the manifest is the one the recorded run reported — the
+    manifest and the artifact cannot disagree about which weights ran."""
+    from evaluation.frozen import DEFAULT_MANIFEST, load_manifest
+    from evaluation.split import recorded_model_identity
+
+    manifest = load_manifest(DEFAULT_MANIFEST)
+    recorded = recorded_model_identity(manifest["freeze"]["model"])
+    assert recorded["digest"] == manifest["freeze"]["model_digest"]
+
+
+def test_the_holdout_record_identifies_the_predictions_it_scored(tmp_path):
+    """The scored predictions and the written report are both hashed: a later
+    reader can tell which bytes produced the numbers."""
+    from evaluation.__main__ import main
+    from evaluation.frozen import write_manifest
+    from evaluation.split import HoldoutLedger
+
+    manifest = tmp_path / "frozen.json"
+    write_manifest(manifest, model=MODEL, quantization=QUANTIZATION,
+                   model_digest="d" * 64)
+    ledger_path = tmp_path / "ledger.json"
+    output = tmp_path / "holdout.json"
+    argv = ["holdout", str(ANNOTATION), "--model", MODEL, "--quantization", QUANTIZATION,
+            "--ledger", str(ledger_path), "--output", str(output),
+            "--manifest", str(manifest),
+            "--holdout", "huangqi_01.jpg", "--holdout", "huangqi_02.jpg"]
+    assert main(argv) == 0
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    assert len(payload["inputs_sha256"]) == 64
+    assert payload["scored_entries"] == 2
+    entry = HoldoutLedger.load(ledger_path).runs[-1]
+    assert entry["inputs_sha256"] == payload["inputs_sha256"]
+    assert len(entry["output_sha256"]) == 64
+    assert entry["output_sha256"] != payload["inputs_sha256"]
+
+
+def test_the_freeze_covers_the_workflow_that_produces_the_verdict():
+    """An end-to-end trust level is computed by the workflow runner as much as
+    by the auditor: its quality gate and linkage rules are frozen too."""
+    from evaluation.frozen import FREEZE_INPUTS
+
+    paths = {relative for relative, _ in FREEZE_INPUTS}
+    assert "runtime/workflow.py" in paths
+
+
+
+def test_the_freeze_verifies_from_a_fresh_checkout(tmp_path):
+    """The manifest must verify against the repository's own bytes, not just
+    the machine that froze it.
+
+    Git checks out with the platform's line-ending convention, so a raw byte
+    hash would report drift for every untouched file on a fresh clone. The
+    hashes normalise line endings first; this pins that by re-hashing a copy
+    of a frozen input with the other convention and comparing.
+    """
+    from evaluation.frozen import FREEZE_INPUTS, _project_root, input_hashes
+
+    root = tmp_path / "tree"
+    project = _project_root()
+    for relative, _ in FREEZE_INPUTS:
+        destination = root / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes((project / relative).read_bytes())
+    victim = next(relative for relative, _ in FREEZE_INPUTS
+                  if b"\n" in (project / relative).read_bytes())
+    target = root / victim
+    original = target.read_bytes()
+    # Flip to the *other* convention: a CRLF file becomes LF, an LF file
+    # becomes CRLF. Either way the text is identical and the hash must be.
+    if b"\r\n" in original:
+        flipped = original.replace(b"\r\n", b"\n")
+    else:
+        flipped = original.replace(b"\n", b"\r\n")
+    assert flipped != original, "the flip must actually change the bytes"
+    target.write_bytes(flipped)
+    assert input_hashes(root)[victim] == input_hashes()[victim], (
+        "line endings changed the hash; a fresh checkout would report drift")
+

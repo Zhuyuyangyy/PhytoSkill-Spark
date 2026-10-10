@@ -242,7 +242,7 @@ class ShieldRuntime:
             "trace_id": self.trace_id,
             "scope": "agentshield_runtime_local",
             "agent_model_called": False,
-            "dgx_hardware_used": False,
+            "gpu_observed": False,
             "nvidia_verified": False,
             "calls": self.trace,
             "blocked": [r.to_dict() for r in self.audit_log if r.status == "blocked"],

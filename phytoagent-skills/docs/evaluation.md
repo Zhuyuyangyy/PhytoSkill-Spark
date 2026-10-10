@@ -118,7 +118,7 @@ python -m evaluation freeze --model modelscope.cn/unsloth/Qwen3.8-27B-GGUF:lates
 
 只在运行时算一次指纹是不够的——打进日志的指纹可以事后修改，那时就无法区分
 「调过参数重跑」和「原来的实验」。所以冻结写出一份**入库的清单**
-（`evaluation/frozen.json`）：13 个冻结输入，每个带 SHA-256 和「它为什么
+（`evaluation/frozen.json`）：14 个冻结输入，每个带 SHA-256 和「它为什么
 决定答案」的一句话理由，外加聚合指纹与 `freeze_id`。
 
 ```bash
@@ -130,8 +130,29 @@ python -m evaluation verify-freeze     # 重算并比对；有任何漂移则非
 清单——**在已经漂移的配置上跑盲测，不是那个盲测**。重新冻结是显式的、需评审的
 动作，绝不是调参的副作用。
 
+**权重身份，不只是模型名。** `...:latest` 是一个会变的标签：重新拉取就可能
+是不同的权重字节，同代码的两次运行于是不再是同一个实验。清单钉住实跑记录里
+观测到的 digest 与字节数（`model_digest` / `model_size_bytes`），并记录它是从
+哪个产物读到的（`weight_identity_source`）。没有可观测的权重身份时 `freeze`
+**拒绝写入**——只有模型名的冻结不是冻结。`freeze --model-digest` 可显式指定。
+
+**冻结范围与评价对象绑定。** 本清单按「端到端评价证据可信等级」划定：除了
+prompt / parser / 词表 / 契约 / 审计规则 / 检索 / scorer / 协议，还包含
+`runtime/workflow.py`——质量门与证据关联规则由它执行，端到端信任级别由它算出。
+若某次评价只针对视觉标签准确率，该条目依然在位但不起作用（不影响标签），
+这不是疏漏；反之，评价端到端信任级别而工作流未冻结，才是缺口。
+
+**门禁没有开关。** `holdout` 运行前：清单缺失 → 拒绝（不是跳过）；未声明
+`--holdout` → 拒绝（否则会把开发集当初试集评分）；calibration / development
+条目不得进入 holdout 指标。重复的 `--holdout` 标志是累加的，不是互相覆盖。
+
+**预测产物身份。** holdout 产物记录 `inputs_sha256`（被评分的预测字节）、
+`scored_entries`，账本记录 `output_sha256`（报告自身哈希，文件不能含自己的
+哈希，账本才是审计轨迹）——事后可以说清数字是哪份字节算出来的。
+
 当前正式冻结：模型 `modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest`，量化
-`Q4_K_M`（取自 `artifacts/dgx/vision-leaf-01.json` 等实跑记录），
+`Q4_K_M`，权重 digest `95c9635e…9904f74`（33,380,567,612 字节，观测自
+`artifacts/dgx/vision-leaf-01.json` 的 `gpu_ps` 记录），
 `freeze_id` 见 `evaluation/frozen.json`。
 
 ---
