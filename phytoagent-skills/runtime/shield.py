@@ -25,7 +25,8 @@ from typing import Any
 
 from registry.loader import SkillRegistry
 from runtime.executor import SkillExecutor
-from sdk.exceptions import (BudgetExceeded, PermissionViolation, ShieldError, TraceError)
+from sdk.exceptions import (BudgetExceeded, PermissionViolation, ShieldError, SkillError,
+                            TraceError)
 
 TRUST_SUPPORTED = "SUPPORTED"
 TRUST_LIMITED = "LIMITED"
@@ -101,7 +102,23 @@ class ShieldRuntime:
                 detail="BudgetExceeded"))
             raise BudgetExceeded(f"Session exceeded the {self.max_calls}-call budget")
         self._calls += 1
-        record = self.registry.verify_entry(name)
+        try:
+            record = self.registry.verify_entry(name)
+        except SkillError as exc:
+            # A package that fails registry verification — unknown name,
+            # changed files, invalid signature — is refused like any other
+            # governance rejection: recorded in the audit log, and surfaced as
+            # a structured ShieldError the caller can handle. Without this, a
+            # RegistryError or SignatureError would bypass the audit trail
+            # entirely and abort a Harness task loop that only knows ShieldError.
+            # The original type is kept in the detail and the exception chain.
+            self.audit_log.append(CallRecord(
+                trace_id=self.trace_id, tool_call_id=tool_call_id, skill=name,
+                manifest_sha256="", status="blocked", duration_ms=0.0,
+                permissions_used=sorted(set(requested_permissions or [])),
+                detail=type(exc).__name__))
+            raise ShieldError(
+                f"{name} failed registry verification ({type(exc).__name__}): {exc}") from exc
         manifest = record["manifest"]
         start = perf_counter()
         try:
@@ -256,6 +273,14 @@ def _record_supports(record: dict, key: str, value: str) -> bool:
     return record.get(key) == value
 
 
+def _record_id(record: dict) -> str:
+    """The identifier a record carries, whichever collection it came from."""
+    for field_name in ("evidence_id", "observation_id", "factor_id"):
+        if record.get(field_name):
+            return str(record[field_name])
+    return "<unnamed>"
+
+
 @dataclass
 class ClaimVerdict:
     text: str
@@ -366,6 +391,23 @@ class ClaimAuditor:
                         f"no single cited record establishes {', '.join(sorted(asserts))}",
                         asserts=echoed))
                     violations.append(f"unsupported assertion refused: {text}")
+                    continue
+                # Support from one record is not permission for the rest: every
+                # cited record that carries a case identity must belong to the
+                # asserted context. Otherwise an observation from another case
+                # rides along on the first record's support.
+                foreign = sorted({
+                    f"{_record_id(record)} belongs to another {key}"
+                    for record in records
+                    for key in ("case_id", "species")
+                    if asserts.get(key) is not None
+                    and record.get(key) is not None
+                    and record.get(key) != asserts[key]})
+                if foreign:
+                    verdicts.append(ClaimVerdict(
+                        text, evidence_ids, "refused",
+                        "; ".join(foreign), asserts=echoed))
+                    violations.append(f"cross-context citation refused: {text}")
                     continue
             verdicts.append(ClaimVerdict(text, evidence_ids, "supported", asserts=echoed))
         trust = self._trust_level(verdicts, violations, report)

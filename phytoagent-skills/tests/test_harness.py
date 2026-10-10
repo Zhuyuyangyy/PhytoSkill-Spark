@@ -21,6 +21,7 @@ from harness.scoring import score_task
 from harness.tasks import Task, build_tasks
 from harness.transport import Transport
 from runtime.shield import BROKER_INFERENCE, ShieldRuntime
+from sdk.exceptions import RegistryError
 from sdk.schema import package_file, read_json
 
 # A deliberately non-secret value. Shaped unlike a real credential (hyphenated,
@@ -728,6 +729,44 @@ class TestAbRunner:
         assert governance["with_skill"]["tool_calls_traced"] == 2
         assert governance["without_skill"]["blocked_tool_calls"] == []
         assert governance["with_skill"]["blocked_tool_calls"] == []
+
+    def test_a_registry_verification_failure_does_not_abort_the_task(self):
+        """A changed package or invalid signature is a structured rejection.
+
+        RegistryError is not a ShieldError; before the conversion it would
+        escape the harness's rejection handling and abort the task loop. The
+        Shield must record it, and the task must finish with the model told.
+        """
+
+        class FailingRegistry:
+            catalog = [{"name": "plant_vision"}]
+            available_tools: list[dict] = []
+
+            def load_skill(self, name):
+                return {"manifest_sha256": "0" * 64}
+
+            def get(self, name):
+                return {"manifest": {"permissions": {"filesystem": ["case_workspace:read"]}}}
+
+            def verify_entry(self, name):
+                raise RegistryError("Unknown Skill: plant_vision")
+
+        poster = ScriptedPoster([
+            (200, completion(tool_calls=tool_call("plant_vision", {}))),
+            (200, completion(content="该调用未通过包校验，未执行。")),
+        ])
+        transport, config = make_transport(poster)
+        shield = ShieldRuntime(FailingRegistry())
+        harness = AgentHarness(FailingRegistry(), shield, transport, config)
+        run = harness.run_task(Task(task_id="t", prompt="看看这张黄芪叶片",
+                                    kind="positive_trigger", source="test"),
+                               arm="without_skill")
+        assert run["executed_skills"] == []
+        assert run["rejected_calls"] == [{"name": "plant_vision", "code": "ShieldError"}]
+        assert run["stop_reason"] == "final_answer"
+        blocked = shield.report()["blocked"]
+        assert len(blocked) == 1
+        assert blocked[0]["detail"] == "RegistryError"
 
     def test_the_per_arm_budget_scales_with_repeat(self):
         """A multi-round run must not be truncated by a single-round budget.

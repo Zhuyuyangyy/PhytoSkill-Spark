@@ -71,8 +71,36 @@ def test_the_call_budget_is_enforced(runtime):
 
 
 def test_an_unknown_skill_is_refused(runtime):
-    with pytest.raises(RegistryError, match="Unknown Skill"):
+    """An unknown package is a governance refusal: recorded and structured.
+
+    RegistryError is not a ShieldError, so letting it propagate would both skip
+    the audit log and abort a Harness loop that only handles ShieldError.
+    """
+    with pytest.raises(ShieldError, match="registry verification") as error:
         runtime.call("not_a_skill", {}, tool_call_id="call-1")
+    assert isinstance(error.value.__cause__, RegistryError)
+    blocked = runtime.report()["blocked"]
+    assert blocked
+    assert blocked[-1]["skill"] == "not_a_skill"
+    assert blocked[-1]["detail"] == "RegistryError"
+
+
+def test_a_registry_verification_failure_is_recorded_and_structured():
+    """A changed package or invalid signature must not bypass the audit trail."""
+
+    class FailingRegistry:
+        def verify_entry(self, name):
+            raise RegistryError("Unknown Skill: plant_vision")
+
+    runtime = ShieldRuntime(FailingRegistry())
+    with pytest.raises(ShieldError) as error:
+        runtime.call("plant_vision", {}, tool_call_id="call-1")
+    assert isinstance(error.value.__cause__, RegistryError)
+    blocked = runtime.report()["blocked"]
+    assert len(blocked) == 1
+    assert blocked[0]["skill"] == "plant_vision"
+    assert blocked[0]["detail"] == "RegistryError"
+    assert "RegistryError" in str(error.value)
 
 
 def test_skipping_the_audit_skill_does_not_remove_interception(runtime):
@@ -416,3 +444,50 @@ def test_one_record_establishing_every_asserted_key_is_supported():
         "asserts": {"phenotype": "leaf_yellowing", "case_id": "c1", "species": "黄芪"}}]})
     assert verdict["claims"][0]["status"] == "supported"
     assert verdict["trust_level"] == TRUST_SUPPORTED
+
+
+def test_a_citation_from_another_case_blocks_an_otherwise_supported_claim():
+    """One record's support does not license citations from other contexts.
+
+    The first record establishes every asserted key on its own; the second
+    belongs to a different case and must not ride along on that support.
+    """
+    index = load_evidence_index(
+        {"case_id": "case-a", "observations": [
+            {"observation_id": "o1", "phenotype": "leaf_yellowing"}]},
+        {"case_id": "case-b", "observations": [
+            {"observation_id": "o2", "phenotype": "leaf_yellowing"}]})
+    auditor = ClaimAuditor(available_evidence=index)
+    verdict = auditor.audit({"claims": [{
+        "text": "观察结论", "evidence_ids": ["o1", "o2"],
+        "asserts": {"phenotype": "leaf_yellowing", "case_id": "case-a"}}]})
+    assert verdict["claims"][0]["status"] == "refused"
+    assert "another case_id" in verdict["claims"][0]["reason"]
+    assert verdict["trust_level"] == TRUST_INSUFFICIENT
+
+
+def test_citing_only_the_matching_record_is_supported():
+    index = load_evidence_index(
+        {"case_id": "case-a", "observations": [
+            {"observation_id": "o1", "phenotype": "leaf_yellowing"}]},
+        {"case_id": "case-b", "observations": [
+            {"observation_id": "o2", "phenotype": "leaf_yellowing"}]})
+    auditor = ClaimAuditor(available_evidence=index)
+    verdict = auditor.audit({"claims": [{
+        "text": "观察结论", "evidence_ids": ["o1"],
+        "asserts": {"phenotype": "leaf_yellowing", "case_id": "case-a"}}]})
+    assert verdict["claims"][0]["status"] == "supported"
+
+
+def test_a_citation_from_another_species_blocks_the_claim():
+    index = load_evidence_index(
+        {"case_id": "c1", "species": "黄芪", "observations": [
+            {"observation_id": "o1", "phenotype": "leaf_yellowing"}]},
+        {"case_id": "c1", "species": "人参", "observations": [
+            {"observation_id": "o2", "phenotype": "leaf_yellowing"}]})
+    auditor = ClaimAuditor(available_evidence=index)
+    verdict = auditor.audit({"claims": [{
+        "text": "观察结论", "evidence_ids": ["o1", "o2"],
+        "asserts": {"phenotype": "leaf_yellowing", "species": "黄芪"}}]})
+    assert verdict["claims"][0]["status"] == "refused"
+    assert "another species" in verdict["claims"][0]["reason"]
