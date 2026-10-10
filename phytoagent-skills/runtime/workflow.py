@@ -46,7 +46,15 @@ class WorkflowRunner:
         self.runtime = runtime
         self.package_dir = Path(package_dir).absolute()
 
-    def run(self, payload: dict, *, mode: str = "fixture", tool_call_id: str) -> dict:
+    def run(self, payload: dict, *, mode: str = "fixture", tool_call_id: str,
+            provider_modes: dict[str, str] | None = None) -> dict:
+        """Run the workflow.
+
+        ``provider_modes`` overrides the mode for named providers — the shape
+        the real chains need: the vision leg runs against a backend while the
+        deterministic legs (retrieval, rules) run in their own modes. Without
+        it every step uses ``mode``, which is what a fixture run wants.
+        """
         workflow = read_json(package_file(self.package_dir, "workflow.json"))
         manifest = read_json(package_file(self.package_dir, "manifest.json"))
         name = manifest["name"]
@@ -67,8 +75,10 @@ class WorkflowRunner:
         # declares. A provider whose manifest claims more than the workflow was
         # compiled with does not get it — the task term narrows the call.
         task_grants = list((manifest.get("permissions") or {}).get("filesystem") or [])
+        overrides = dict(provider_modes or {})
         for index, step in enumerate(steps, start=1):
             provider = step["provider_skill"]
+            step_mode = overrides.get(provider, mode)
             # A capability id is not automatically a provider. Only the audited
             # catalogue's provider names may be delegated to, and the package must
             # declare them. Checking the manifest alone would let a step name any
@@ -99,11 +109,12 @@ class WorkflowRunner:
                 if call["status"] != "success":
                     missing.append(provider)
                     report_steps.append({"id": step["id"], "provider_skill": provider,
-                                         "status": "failed",
+                                         "status": "failed", "mode": step_mode,
                                          "detail": call["error"]["code"]})
                     continue
                 payload = {**payload, "fusion": call["data"]}
-                report_steps.append({"id": step["id"], "provider_skill": provider, "status": "success",
+                report_steps.append({"id": step["id"], "provider_skill": provider,
+                                     "status": "success", "mode": "fixture",
                                      "evidence_ids": collect_evidence_ids(call["data"])})
                 continue
             request_field, provider_key, result_key = _SOURCE_FIELD[provider]
@@ -121,14 +132,14 @@ class WorkflowRunner:
             record = self.runtime.registry.get(provider)
             if not isinstance(record, dict) or not record.get("manifest"):
                 raise ShieldError(f"Provider {provider} is not registered; refusing to fabricate it")
-            call = self.runtime.call(provider, provider_input, mode=mode,
+            call = self.runtime.call(provider, provider_input, mode=step_mode,
                                      tool_call_id=f"{tool_call_id}:step{index}",
                                      requested_permissions=list(PROVIDER_PERMISSIONS[provider]),
                                      task_grants=task_grants)
             if call["status"] != "success":
                 missing.append(provider)
                 report_steps.append({"id": step["id"], "provider_skill": provider,
-                                     "status": "failed",
+                                     "status": "failed", "mode": step_mode,
                                      "detail": call["error"]["code"]})
                 continue
             # A provider result that does not belong to this request must not
@@ -139,7 +150,8 @@ class WorkflowRunner:
             if produced.get("species") != payload.get("species"):
                 raise ShieldError(f"{provider} returned a different species; refusing to fuse it")
             payload = {**payload, result_key: produced}
-            report_steps.append({"id": step["id"], "provider_skill": provider, "status": "success",
+            report_steps.append({"id": step["id"], "provider_skill": provider,
+                                 "status": "success", "mode": step_mode,
                                  "evidence_ids": collect_evidence_ids(call["data"])})
         self._guard_fusion_inputs(payload, missing)
         return self._assemble(payload, workflow, manifest, report_steps, missing, limitations)

@@ -26,11 +26,14 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e '.[test]'
 .\.venv\Scripts\python.exe -m demo.phytoforge_demo      # 三分钟完整闭环
 .\.venv\Scripts\python.exe -m demo.run_demo             # 四 Skill fixture 组合
+.\.venv\Scripts\python.exe -m demo.v1_server --port 8741  # 交互 Demo V1（浏览器操作）
 .\.venv\Scripts\python.exe -m evals.run_contracts
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
 `demo.phytoforge_demo` 依次展示：自然语言需求 → Compiler 生成受约束 Skill 包 → AgentShield 六项编译门禁 → 通过门禁才进 Registry → 真实 Tool Calling Trace → Claim-Evidence 可信结果 → 模糊图负向拒绝 → 再次调用 Registry 中的同一 Skill 证明闭环。
+
+**交互 Demo V1**（`python -m demo.v1_server`，浏览器打开 http://127.0.0.1:8741 ）把同一条链路变成可操作的：选案例、选模式、看每一步的徽章。三个徽章把「你在看的东西是什么」说清楚——**回放**（fixture 封存合成案例，或 replay 后端返回的 DGX 已记录真实观测）、**确定性**（真实语料索引上的确定性检索，无模型调用）、**真实推理**（模型实际运行，端点具名）。三个案例分别展示：完整证据链（SUPPORTED）、真实记录回放后质量门拒绝（INSUFFICIENT）、模糊图 + 要求下定论被审计拒绝。请求真实推理而未配置后端时明确报错并列出缺失的环境变量——**不回退 fixture**。演示工作区（含生成的演示密钥对）落在 `artifacts/demo-workspace/`，已 gitignore，可随时重新生成。
 
 ## 三层职责
 
@@ -213,7 +216,7 @@ phytoagent-skills/
 ├── skills/
 │   ├── plant_vision/  growth_risk/  herbal_knowledge/  evidence_fusion/
 │   └── agentshield_audit/
-├── demo/                  phytoforge_demo（三分钟闭环）、四Skill组合、SDK示例
+├── demo/                  phytoforge_demo（三分钟闭环）、v1_server（交互 Demo）、四Skill组合、SDK示例
 ├── evals/                 包内fixture契约评测器
 ├── scripts/seal_skills.py 发布者显式封包
 ├── dgx/                   SSH 传输实现 + 叶片/药材视觉提示词与解析器（可选后端之一）

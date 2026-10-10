@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PhytoForge Demo V1 · 可信 Skill 运行时</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2430; --muted: #5b6675;
+    --line: #dde3ea; --accent: #0b6e4f;
+    --replay: #8a5a00; --replay-bg: #fdf3e0;
+    --deterministic: #0b5e8a; --deterministic-bg: #e8f3fa;
+    --real: #a3122b; --real-bg: #fdeaec;
+    --ok: #0b6e4f; --ok-bg: #e7f4ee;
+    --bad: #a3122b; --bad-bg: #fdeaec;
+    --warn: #8a5a00; --warn-bg: #fdf3e0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.65 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; }
+  header { background: var(--panel); border-bottom: 1px solid var(--line);
+           padding: 18px 28px; }
+  header h1 { margin: 0; font-size: 19px; }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  main { max-width: 1080px; margin: 0 auto; padding: 22px 20px 60px; }
+  .panel { background: var(--panel); border: 1px solid var(--line);
+           border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; }
+  .cases { display: grid; gap: 10px; }
+  .case { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+          cursor: pointer; background: #fbfcfd; }
+  .case:hover { border-color: var(--accent); }
+  .case.selected { border-color: var(--accent); background: #f0f7f3;
+                   box-shadow: inset 0 0 0 1px var(--accent); }
+  .case h3 { margin: 0 0 4px; font-size: 15px; }
+  .case p { margin: 0; color: var(--muted); font-size: 13px; }
+  .row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  label { font-size: 13px; color: var(--muted); }
+  select, button { font: inherit; padding: 7px 12px; border-radius: 7px;
+                   border: 1px solid var(--line); background: #fff; }
+  button { background: var(--accent); color: #fff; border-color: var(--accent);
+           cursor: pointer; font-weight: 600; }
+  button:disabled { opacity: .55; cursor: wait; }
+  .badge { display: inline-block; padding: 1px 9px; border-radius: 20px;
+           font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+  .badge.replay { color: var(--replay); background: var(--replay-bg); }
+  .badge.deterministic { color: var(--deterministic); background: var(--deterministic-bg); }
+  .badge.real { color: var(--real); background: var(--real-bg); }
+  .badge.ok { color: var(--ok); background: var(--ok-bg); }
+  .badge.bad { color: var(--bad); background: var(--bad-bg); }
+  .badge.warn { color: var(--warn); background: var(--warn-bg); }
+  .banner { padding: 10px 14px; border-radius: 8px; font-size: 14px;
+            margin-bottom: 14px; }
+  .banner.real { background: var(--real-bg); color: var(--real); }
+  .banner.replay { background: var(--replay-bg); color: var(--replay); }
+  .steps { display: grid; gap: 10px; }
+  .step { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+          background: #fbfcfd; }
+  .step .head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .step .name { font-weight: 700; }
+  .step .reason { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .step .meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .claims li { margin-bottom: 6px; }
+  .report { white-space: pre-wrap; font-size: 14px; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .hidden { display: none; }
+  .kv { display: grid; grid-template-columns: 130px 1fr; gap: 4px 12px; font-size: 13px; }
+  .kv dt { color: var(--muted); }
+  code { background: #eef1f5; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>PhytoForge Demo V1 · 可信 Skill 运行时</h1>
+  <p>一次运行 = Compiler 生成 → AgentShield 门禁 → Registry 签名发现 → Shield 权限拦截 →
+     四条提供方腿 → Claim-Evidence 审计。每一步都标注它是什么：回放、确定性计算，还是真实推理。</p>
+</header>
+<main>
+  <div class="panel">
+    <div class="cases" id="cases"></div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <div>
+        <label for="mode">运行模式</label><br>
+        <select id="mode">
+          <option value="fixture">fixture · 封存合成案例（离线，无模型）</option>
+          <option value="live">live · 真实推理（需要已配置后端）</option>
+        </select>
+      </div>
+      <div style="align-self:flex-end">
+        <button id="run">运行</button>
+      </div>
+      <div class="muted" id="backend-note"></div>
+    </div>
+  </div>
+
+  <div id="result" class="hidden">
+    <div class="panel">
+      <div id="banner" class="banner"></div>
+      <div class="steps" id="steps"></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin:0 0 10px">审计结论</h3>
+      <dl class="kv" id="audit"></dl>
+      <ul class="claims" id="claims"></ul>
+    </div>
+    <div class="panel">
+      <h3 style="margin:0 0 10px">报告</h3>
+      <div class="report" id="report"></div>
+      <p class="muted" id="trace"></p>
+    </div>
+  </div>
+</main>
+
+<script>
+const state = { cases: [], selected: null, backend: null };
+
+const BADGE_TEXT = { replay: "回放", deterministic: "确定性", real: "真实推理" };
+const STATUS_TEXT = { success: "成功", failed: "失败", skipped: "跳过",
+                      refused: "拒绝", no_conclusion: "无结论" };
+
+async function loadCases() {
+  const payload = await (await fetch("/api/cases")).json();
+  state.cases = payload.cases;
+  state.backend = payload.backend;
+  const host = document.getElementById("cases");
+  host.innerHTML = "";
+  for (const item of state.cases) {
+    const div = document.createElement("div");
+    div.className = "case";
+    div.dataset.demoId = item.demo_id;
+    div.innerHTML = `<h3>${item.title}</h3><p>${item.blurb}</p>`;
+    div.onclick = () => {
+      document.querySelectorAll(".case").forEach(el => el.classList.remove("selected"));
+      div.classList.add("selected");
+      state.selected = item.demo_id;
+    };
+    host.appendChild(div);
+  }
+  const note = document.getElementById("backend-note");
+  if (state.backend.configured) {
+    note.textContent = `已配置后端：${state.backend.spec}（${state.backend.kind}）`;
+  } else {
+    note.textContent = `未配置推理后端：${state.backend.reason}`;
+  }
+  document.querySelector(".case").click();
+}
+
+function badge(kind, text) {
+  return `<span class="badge ${kind}">${text}</span>`;
+}
+
+function render(result) {
+  const box = document.getElementById("result");
+  box.classList.remove("hidden");
+
+  const banner = document.getElementById("banner");
+  if (result.error) {
+    banner.className = "banner replay";
+    banner.textContent = `运行未执行：${result.error.code} — ${result.error.message}`;
+  } else if (result.any_real_inference) {
+    banner.className = "banner real";
+    banner.textContent = "本次运行包含真实推理：至少一条腿由模型实际生成。";
+  } else {
+    banner.className = "banner replay";
+    banner.textContent = "本次运行不含真实推理：全部为回放（封存案例或已记录的真实观测）与确定性计算。";
+  }
+
+  const steps = document.getElementById("steps");
+  steps.innerHTML = "";
+  for (const step of result.steps || []) {
+    const div = document.createElement("div");
+    div.className = "step";
+    const statusKind = step.status === "success" ? "ok" : (step.status === "skipped" ? "warn" : "bad");
+    div.innerHTML = `
+      <div class="head">
+        <span class="name">${step.provider}</span>
+        ${badge(step.badge, BADGE_TEXT[step.badge] || step.badge)}
+        ${badge(statusKind, STATUS_TEXT[step.status] || step.status)}
+        <span class="muted">mode: ${step.mode}</span>
+      </div>
+      <div class="reason">${step.badge_reason}</div>
+      ${step.detail ? `<div class="meta">失败分类：${step.detail}</div>` : ""}
+      ${step.evidence_ids && step.evidence_ids.length
+        ? `<div class="meta">证据 ID：${step.evidence_ids.join(", ")}</div>` : ""}`;
+    steps.appendChild(div);
+  }
+
+  const audit = document.getElementById("audit");
+  audit.innerHTML = "";
+  const a = result.audit || {};
+  const rows = [
+    ["结论状态", STATUS_TEXT[a.status] || a.status || "—"],
+    ["信任级别", a.trust_level || "—"],
+    ["有证据支持的声明", (a.claims || []).length],
+    ["被拒绝的声明", (a.refused_claims || []).length],
+    ["未能关联的知识证据", (a.unlinked_evidence_ids || []).join(", ") || "无"],
+    ["缺失来源", (a.missing_inputs || []).join(", ") || "无"],
+  ];
+  for (const [key, value] of rows) {
+    audit.innerHTML += `<dt>${key}</dt><dd>${value}</dd>`;
+  }
+
+  const claims = document.getElementById("claims");
+  claims.innerHTML = "";
+  for (const claim of (a.claims || [])) {
+    claims.innerHTML += `<li>${badge("ok", "支持")} ${claim.text}
+      <span class="muted">（证据：${(claim.evidence_ids || []).join(", ")}）</span></li>`;
+  }
+  for (const refusal of (a.refused_claims || [])) {
+    claims.innerHTML += `<li>${badge("bad", "拒绝")} ${refusal}</li>`;
+  }
+
+  document.getElementById("report").textContent =
+    result.report ? result.report.text : "本次运行没有产出报告。";
+  document.getElementById("trace").textContent =
+    `trace_id: ${result.trace_id || "—"} · 总耗时 ${result.duration_ms ?? "—"} ms`;
+}
+
+document.getElementById("run").onclick = async () => {
+  if (!state.selected) return;
+  const button = document.getElementById("run");
+  button.disabled = true;
+  button.textContent = "运行中…";
+  try {
+    const response = await fetch("/api/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ demo_id: state.selected,
+                             mode: document.getElementById("mode").value }),
+    });
+    render(await response.json());
+  } catch (error) {
+    render({ error: { code: "NetworkError", message: String(error) }, steps: [] });
+  } finally {
+    button.disabled = false;
+    button.textContent = "运行";
+  }
+};
+
+loadCases();
+</script>
+</body>
+</html>

@@ -153,7 +153,7 @@ def test_the_report_states_that_no_model_or_gpu_was_used(workspace):
         workspace["package"] / "evals" / "evals.json")["cases"][0]["input"],
         mode="fixture", tool_call_id="call-positive")
     assert report["provenance"]["agent_model_called"] is False
-    assert report["provenance"]["dgx_hardware_used"] is False
+    assert report["provenance"]["gpu_observed"] is False
     assert report["provenance"]["compiler"].startswith("phyto-skill-compiler")
     assert report["trace_id"] == "trace-e2e-001"
 
@@ -248,3 +248,32 @@ def test_the_workflows_own_declarations_are_the_task_authorization(workspace):
     assert [call["status"] for call in calls[:3]] == ["success"] * 3
     assert calls[-1]["status"] == "blocked"
     assert "task does not authorize" in calls[-1]["detail"]
+
+
+def test_a_provider_mode_override_changes_only_that_leg(workspace):
+    """Per-leg modes: the vision leg runs against a backend while the
+    deterministic legs keep their own modes. Without an override every step
+    uses the run's mode, which is what a fixture run wants."""
+    runner = workspace["runner"]
+    report = runner.run(read_json(workspace["package"] / "evals" / "evals.json")["cases"][0]["input"],
+                        mode="fixture", tool_call_id="call-override",
+                        provider_modes={"plant_vision": "fixture"})
+    modes = {step["provider_skill"]: step["mode"] for step in report["steps"]}
+    assert modes == {"plant_vision": "fixture", "growth_risk": "fixture",
+                     "herbal_knowledge": "fixture", "evidence_fusion": "fixture"}
+    assert report["status"] == "success"
+
+
+def test_a_mode_override_to_an_unsupported_mode_fails_that_leg_only(workspace):
+    """growth_risk supports no real mode; overriding it is refused for that leg
+    and recorded, while the other legs still run."""
+    runner = workspace["runner"]
+    report = runner.run(read_json(workspace["package"] / "evals" / "evals.json")["cases"][0]["input"],
+                        mode="fixture", tool_call_id="call-bad-override",
+                        provider_modes={"growth_risk": "live"})
+    growth = next(step for step in report["steps"]
+                  if step["provider_skill"] == "growth_risk")
+    assert growth["status"] == "failed"
+    assert growth["mode"] == "live"
+    assert growth["detail"] == "UnsupportedModeError"
+    assert "growth_risk" in report["missing_inputs"]
