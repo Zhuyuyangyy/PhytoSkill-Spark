@@ -90,10 +90,22 @@ def sign_package(package_dir: str | Path, private_key_path: str | Path) -> dict:
 
 
 def verify_signature(package_dir: str | Path, trusted_public_key: str | Path) -> dict:
-    package_dir, trusted_public_key = Path(package_dir), Path(trusted_public_key)
-    _external_key(package_dir, trusted_public_key)
+    """Verify a package's signature against the trusted key.
+
+    ``trusted_public_key`` is either a path to a public key or an
+    already-loaded ``Ed25519PublicKey``. Callers that hold a pinned trust
+    state — the Registry — pass the loaded object, so the key is read once,
+    when that state is constructed, and a key file swapped afterwards cannot
+    change what an existing registry trusts.
+    """
+    package_dir = Path(package_dir)
+    if isinstance(trusted_public_key, Ed25519PublicKey):
+        key = trusted_public_key
+    else:
+        trusted_public_key = Path(trusted_public_key)
+        _external_key(package_dir, trusted_public_key)
+        key = _load_key(trusted_public_key, private=False)
     manifest = verify_manifest(package_dir)
-    key = _load_key(trusted_public_key, private=False)
     try:
         envelope = read_json(package_file(package_dir, "manifest.sig"))
     except ContractError as exc:

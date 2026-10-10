@@ -245,7 +245,9 @@ phytoagent-skills/
 
 `manifest.sig` 是项目格式，与 OpenSSF Model Signing 的 `skill.oms.sig` 不能互换。临时 Demo 密钥只验证本次流程，不认证第三方发布者。
 
-信任锚与发布者身份是两件事：锚点文件（`registry.json` 的 `trusted_public_key`，默认 `trust/publisher.public.pem`）由运营者持有、不入库；`trusted_key_id` 把发布者的钥匙身份钉在**入库可审**的配置里——锚点文件被换成另一把有效 Ed25519 钥匙时，发现阶段直接失败，不会静默换掉信任对象。门禁的 `project_signature` 与每条发现记录都报告验签所用的 `key_id`，运营者用它和带外掌握的发布者指纹核对。签名有效但发布者不对的包（例如用 Demo 钥匙签的）一律拒绝进入 Registry；钥匙在包外、签名清单不含 `manifest.sig`、包不能自带信任根，这三点由测试锁定。
+信任锚与发布者身份是两件事：锚点文件（`registry.json` 的 `trusted_public_key`，默认 `trust/publisher.public.pem`）由运营者持有、不入库；`trusted_key_id` 把发布者的钥匙身份钉在**入库可审**的配置里。公钥在 Registry 构造时加载一次，之后作为**不可变信任状态**持有——构造成功后即便锚点文件被换成另一把有效钥匙，后续 discover / register / verify_entry 仍用它构造时信任的那把，钉扎值在整个生命周期内保持约束（有专项回归测试锁定这条时序）。门禁的 `project_signature` 与每条发现记录都报告验签所用的 `key_id`，运营者用它和带外掌握的发布者指纹核对。签名有效但发布者不对的包（例如用 Demo 钥匙签的）一律拒绝进入 Registry；钥匙在包外、签名清单不含 `manifest.sig`、包不能自带信任根，这三点由测试锁定。
+
+当前状态的准确描述：**发布者钉扎机制及其攻击测试已完成；正式发布身份、带外指纹分发和可下载签名包尚未交付**——仓库不提交私钥，`registry.json` 的 `trusted_key_id` 留待正式发布时由运营者填写，`skills/*/manifest.sig` 也不入库。外部用户拿到签名发布包、用独立提供的受信任公钥和发布者指纹完成验证，是正式版本才有的能力。
 
 ## 执行边界
 
@@ -254,6 +256,8 @@ SDK 使用 Draft 2020-12，只允许本地 JSON Pointer 引用；拒绝非有限
 执行边界按模式区分：`fixture` 模式返回封存合成数据，仍在本进程运行；`live` / `herb` / `corpus` 模式在**独立进程**中运行，内存、子进程数与 wall-clock 上限由操作系统强制（Windows Job Object / POSIX `setrlimit`），失控适配器耗尽的是它自己的进程，挂死的适配器不会挂住整个运行。
 
 必须明确：这是**资源边界，不是安全沙箱**——它不限制文件系统与网络访问（那需要 AppContainer、容器或内核驱动，本项目都没有）。文件与网络治理仍由权限模型（包声明 ∩ 宿主策略 ∩ 任务授权）与编译门禁负责；要 OS 级限制文件与网络，必须把整个 Runtime 装进容器。签名证明来源和完整性，不证明行为安全。编译门禁与 Runtime 中间件是策略层，不是隔离层。
+
+进程与超时的分平台语义：Windows 的 Job Object `ActiveProcessLimit` 是**按进程树的硬配额**（默认 2 = 解释器自身启动占用一槽 + Skill 最多一个助手，孙辈被 OS 拒绝）；POSIX 的 `RLIMIT_NPROC` 按真实用户计数、不是每任务配额，特权环境下可能不生效——因此超时在两个平台上都终止**整棵进程树**（Windows 终止整个 Job，POSIX 终止整个进程组），而严格的每任务进程数上限在 Linux 上需要 cgroup v2 `pids.max`，本项目未实现。
 
 未实现的模式明确失败，不回退 fixture。会发起网络请求的只有两处：`harness/`（模型端点）与后端层（ollama HTTP 或 SSH），两者都必须显式配置端点与密钥（`.env`、`.dgx.env` 已被 gitignore），缺失直接报错而不是退回 fixture。密钥不入库。离线回放后端不发任何请求。
 

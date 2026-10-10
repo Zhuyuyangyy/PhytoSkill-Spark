@@ -17,10 +17,15 @@ OS-level filesystem or network confinement must run the whole runtime inside a
 container; this boundary raises the cost of the attacks it does cover without
 pretending to cover the rest.
 
-What the process cap means in practice: the default of two allows the
-interpreter's own startup (a Windows venv redirector plus the real
-interpreter) and at most one helper spawned by the Skill. Grandchildren are
-refused by the operating system.
+What the process cap means in practice: on Windows the Job Object's
+``ActiveProcessLimit`` is a hard per-tree quota — the default of two allows
+the interpreter's own startup (a venv redirector plus the real interpreter)
+and at most one helper, and grandchildren are refused by the operating
+system. On POSIX ``RLIMIT_NPROC`` counts processes per real user id, not per
+task tree, and may not be enforced at all in privileged environments; the
+wall-clock timeout still terminates the whole process group there, but a
+strict per-task process quota on Linux needs cgroup v2 ``pids.max``, which
+this project does not implement.
 
 One window is documented rather than closed: on Windows the child is assigned
 to the job immediately after spawn, so a few milliseconds of execution happen
@@ -183,19 +188,37 @@ def _posix_preexec(limits: ResourceLimits):
     return apply
 
 
+def _terminate_process_group(process: subprocess.Popen) -> None:
+    """Kill the whole process group, not just the direct child.
+
+    ``start_new_session=True`` put the child in its own process group, so the
+    group id is the child's pid and everything it spawned shares that group.
+    Killing only the child would leave helpers running past the timeout — a
+    timed-out Skill's children would outlive the boundary.
+    """
+    import signal
+    try:
+        os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+    except (ProcessLookupError, PermissionError, OSError):
+        # The group is already gone, or this platform refuses the call; the
+        # direct child at least must not survive.
+        process.kill()
+
+
 def _run_posix(argv: list[str], limits: ResourceLimits, cwd, env,
                input_bytes: bytes | None) -> BoundedResult:
     process = subprocess.Popen(argv, cwd=cwd, env=env,
                                stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                               preexec_fn=_posix_preexec(limits))
+                               preexec_fn=_posix_preexec(limits),
+                               start_new_session=True)
     try:
         out, err = process.communicate(input=input_bytes,
                                        timeout=limits.timeout_seconds)
         return BoundedResult(process.returncode, out.decode("utf-8", "replace"),
                              err.decode("utf-8", "replace"), False)
     except subprocess.TimeoutExpired:
-        process.kill()
+        _terminate_process_group(process)
         process.wait(timeout=30)
         return BoundedResult(None, "", "", True)
 

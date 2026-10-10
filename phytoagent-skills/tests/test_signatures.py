@@ -1,12 +1,15 @@
 import base64
 import json
+import shutil
 
 import pytest
 
 from registry import SkillRegistry
-from registry.signer import generate_keypair, sign_package, verify_signature
+from registry.signer import (generate_keypair, key_id, load_public_key,
+                            sign_package, verify_signature)
 from sdk.exceptions import ManifestError, RegistryError, SignatureError
 from sdk.manifest import seal_manifest, verify_manifest
+from sdk.schema import read_json
 
 
 def test_signature_verifies_with_external_pinned_key(package, keys):
@@ -162,3 +165,51 @@ def test_a_demo_key_cannot_publish(package, keys, tmp_path):
     assert verification["status"] == "passed"  # valid — and still not publishable
     with pytest.raises(RegistryError):
         SkillRegistry(package.parent, trusted_public_key=keys[1]).discover()
+
+
+
+def test_a_key_swapped_after_initialisation_cannot_change_what_the_registry_trusts(
+        package, keys, tmp_path):
+    """The publisher pin must bind for the registry's lifetime, not just at
+    construction.
+
+    Sequence: construct with the real publisher key (the pin passes), swap the
+    anchor file for another valid Ed25519 key, then discover. A package signed
+    by the swapped key is refused, and the original package still verifies —
+    the registry trusts the key it was constructed with, not the file's later
+    contents.
+    """
+    sign_package(package, keys[0])
+    config = _write_config(tmp_path, key_id=key_id(load_public_key(keys[1])))
+    registry = SkillRegistry.from_config(config)
+    assert registry.discover()[0]["manifest"]["name"] == package.name
+
+    # Swap the anchor file underneath the live registry.
+    intruder_private = tmp_path / "late.private.pem"
+    intruder_public = tmp_path / "late.public.pem"
+    generate_keypair(intruder_private, intruder_public)
+    (tmp_path / "trust" / "publisher.public.pem").write_bytes(intruder_public.read_bytes())
+
+    # A package signed by the swapped key is refused by the live registry.
+    intruder_package = tmp_path / "skills" / "intruder_skill"
+    shutil.copytree(package, intruder_package,
+                    ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "manifest.sig"))
+    # The package dir holds the sealed manifest; seal_manifest regenerates it
+    # from the metadata fields, so the inventory and hash are dropped first.
+    metadata = read_json(intruder_package / "manifest.json")
+    metadata.pop("files", None)
+    metadata.pop("manifest_sha256", None)
+    metadata["name"] = "intruder_skill"
+    instructions = intruder_package / "SKILL.md"
+    instructions.write_text(instructions.read_text(encoding="utf-8").replace(
+        "name: contract-probe", "name: intruder-skill"), encoding="utf-8")
+    seal_manifest(intruder_package, metadata)
+    sign_package(intruder_package, intruder_private)
+    with pytest.raises(RegistryError):
+        registry.discover()
+
+    # The publisher's own package still verifies through the same registry:
+    # verify_entry re-checks against the key held since construction.
+    record = registry.verify_entry(package.name)
+    assert record["verification"]["signature"]["status"] == "passed"
+    assert record["verification"]["signature"]["key_id"] == registry.trusted_key_id

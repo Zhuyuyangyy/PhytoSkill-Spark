@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import json
 import shutil
+import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -22,7 +24,7 @@ from registry import SkillRegistry
 from registry.signer import generate_keypair, sign_package
 from runtime.executor import BOUNDARY_MODES, SkillExecutor
 from runtime.sandbox import (DEFAULT_MAX_PROCESSES, ExecutionBoundaryError,
-                             ResourceLimits, child_environment)
+                             ResourceLimits, child_environment, run_bounded)
 from sdk.exceptions import ContractError
 from sdk.manifest import seal_manifest
 from sdk.schema import read_json
@@ -223,3 +225,28 @@ def test_the_boundary_does_not_confine_the_filesystem(bounded_registry, tmp_path
     # which would be welcome, but the module docstring must be rewritten first.
     assert response["status"] == "success"
     assert response["data"]["bytes_read"] == 32
+
+
+
+@pytest.mark.skipif(sys.platform == "win32",
+                    reason="process groups are POSIX; the Windows path is the Job Object, "
+                           "covered by the tests above")
+def test_a_posix_timeout_terminates_the_whole_process_tree(tmp_path):
+    """The wall-clock timeout must kill the tree, not just the direct child.
+
+    The timed-out process spawns a helper that writes a marker once the
+    timeout has fired; if the process-group kill works, that marker never
+    appears. Runs on Linux — which is what the DGX Spark node is.
+    """
+    marker = tmp_path / "grandchild-survived.txt"
+    tree = tmp_path / "tree.py"
+    tree.write_text(
+        "import subprocess, sys, time\n"
+        f"subprocess.Popen([sys.executable, '-c',\n"
+        f"               'import time; time.sleep(10); open({str(marker)!r}, \"w\").write(\"x\")'])\n"
+        "time.sleep(120)\n", encoding="utf-8")
+    result = run_bounded([sys.executable, str(tree)],
+                         limits=ResourceLimits(timeout_seconds=3))
+    assert result.timed_out
+    time.sleep(13)  # long enough for the helper's own sleep to have elapsed
+    assert not marker.exists(), "the timed-out process tree outlived the boundary"

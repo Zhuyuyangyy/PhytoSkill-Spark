@@ -3,6 +3,7 @@
 from copy import deepcopy
 from pathlib import Path
 
+from registry.signer import key_id, load_public_key
 from registry.validator import read_instructions, validate_package
 from sdk.exceptions import RegistryError, SkillError
 from sdk.schema import read_json, validate_payload
@@ -31,6 +32,17 @@ class SkillRegistry:
         self.trusted_public_key = Path(trusted_public_key).absolute() if trusted_public_key is not None else None
         self.require_signature = require_signature
         self._records: dict[str, dict] = {}
+        # The trust state is loaded once and is then immutable for this
+        # registry's lifetime: every later verification uses the key object
+        # held here, never a re-read of the file. A key file swapped after
+        # construction therefore cannot change what an existing registry
+        # trusts, and the publisher pin checked at construction stays binding
+        # for every discover(), register() and verify_entry() that follows.
+        self.trusted_key = None
+        self.trusted_key_id = None
+        if self.trusted_public_key is not None:
+            self.trusted_key = load_public_key(self.trusted_public_key)
+            self.trusted_key_id = key_id(self.trusted_key)
 
     @classmethod
     def from_config(cls, config_path: str | Path) -> "SkillRegistry":
@@ -55,19 +67,13 @@ class SkillRegistry:
         that is valid Ed25519 but belongs to somebody else — is refused here
         instead of quietly becoming the new trust root.
         """
-        from registry.signer import key_id, load_public_key
-
-        if self.trusted_public_key is None:
+        if self.trusted_key is None:
             raise RegistryError("A pinned publisher id requires a trusted public key")
-        try:
-            actual = key_id(load_public_key(self.trusted_public_key))
-        except SkillError as exc:
-            raise RegistryError(f"Cannot read the trust anchor: {exc}") from exc
-        if actual != expected_key_id:
+        if self.trusted_key_id != expected_key_id:
             raise RegistryError(
                 "Trust anchor does not match the pinned publisher id: expected "
-                f"{expected_key_id[:16]}, anchor holds {actual[:16]}")
-        return actual
+                f"{expected_key_id[:16]}, anchor holds {self.trusted_key_id[:16]}")
+        return self.trusted_key_id
 
     def discover(self) -> list[dict]:
         root = self.skills_dir
@@ -86,7 +92,7 @@ class SkillRegistry:
                     continue
                 if not package_dir.is_dir() and not package_dir.is_symlink():
                     continue
-                record = validate_package(package_dir, trusted_public_key=self.trusted_public_key,
+                record = validate_package(package_dir, trusted_public_key=self.trusted_key,
                                           require_signature=self.require_signature)
                 name = record["manifest"]["name"]
                 if name in pending:
@@ -105,7 +111,7 @@ class SkillRegistry:
             raise RegistryError("Skill must be a direct child of the configured skills directory")
         if self.trusted_public_key is not None and self.trusted_public_key.resolve().is_relative_to(self.skills_dir.resolve()):
             raise RegistryError("Trusted public key must be outside the scanned skills directory")
-        record = validate_package(package_dir, trusted_public_key=self.trusted_public_key,
+        record = validate_package(package_dir, trusted_public_key=self.trusted_key,
                                   require_signature=self.require_signature)
         name = record["manifest"]["name"]
         if name in self._records:
@@ -156,7 +162,7 @@ class SkillRegistry:
     def verify_entry(self, name: str) -> dict:
         """Call immediately before consuming package content or loading its code."""
         previous = self.get(name)
-        current = validate_package(previous["package_dir"], trusted_public_key=self.trusted_public_key,
+        current = validate_package(previous["package_dir"], trusted_public_key=self.trusted_key,
                                    require_signature=self.require_signature)
         if current["manifest"]["manifest_sha256"] != previous["manifest"]["manifest_sha256"]:
             raise RegistryError(f"Skill {name} changed since discovery; rediscover explicitly")
