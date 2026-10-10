@@ -201,6 +201,8 @@ phytoagent-skills/
 ├── runtime/
 │   ├── executor.py        校验后执行源码、保留调用ID、结构化错误
 │   ├── shield.py          AgentShield Runtime：权限拦截、trace、Claim-Evidence审计
+│   ├── sandbox.py         执行边界：OS 级内存/进程/时限（Job Object / setrlimit）
+│   ├── worker.py          边界内子进程入口：载入已校验 Skill 并回报结果
 │   └── workflow.py        工作流 Skill 执行：解析 $.field、经 Shield 调用提供方
 ├── compiler/              SkillSpec、能力目录、意图解析、模板化 Compiler、CLI
 │   └── templates/         固定薄执行器模板
@@ -247,7 +249,9 @@ phytoagent-skills/
 
 SDK 使用 Draft 2020-12，只允许本地 JSON Pointer 引用；拒绝非有限数字、重复 JSON 键、越界路径和链接资源。执行器载入源码前检查模式和输入，并校验源码哈希，不执行未覆盖的缓存字节码。
 
-必须明确：Python 仍运行在本进程，**尚无安全沙箱**、并发文件修改隔离或强制超时。签名证明来源和完整性，不证明行为安全。编译门禁与 Runtime 中间件是策略层，不是隔离层。
+执行边界按模式区分：`fixture` 模式返回封存合成数据，仍在本进程运行；`live` / `herb` / `corpus` 模式在**独立进程**中运行，内存、子进程数与 wall-clock 上限由操作系统强制（Windows Job Object / POSIX `setrlimit`），失控适配器耗尽的是它自己的进程，挂死的适配器不会挂住整个运行。
+
+必须明确：这是**资源边界，不是安全沙箱**——它不限制文件系统与网络访问（那需要 AppContainer、容器或内核驱动，本项目都没有）。文件与网络治理仍由权限模型（包声明 ∩ 宿主策略 ∩ 任务授权）与编译门禁负责；要 OS 级限制文件与网络，必须把整个 Runtime 装进容器。签名证明来源和完整性，不证明行为安全。编译门禁与 Runtime 中间件是策略层，不是隔离层。
 
 未实现的模式明确失败，不回退 fixture。会发起网络请求的只有两处：`harness/`（模型端点）与后端层（ollama HTTP 或 SSH），两者都必须显式配置端点与密钥（`.env`、`.dgx.env` 已被 gitignore），缺失直接报错而不是退回 fixture。密钥不入库。离线回放后端不发任何请求。
 

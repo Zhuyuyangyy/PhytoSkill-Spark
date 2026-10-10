@@ -151,4 +151,6 @@ Compiler 不把这种用例伪装成通过的用例。`evals.json` 里它们是 
 - **未接入 SkillSpector / OMS**：Registry 的 `scanned` / `evaluated` 仍为 `not_checked`，
   无 NVIDIA 官方 Verified 声明。
 - **无农学准确率、无 GPU 性能指标**：工具返回内容仍是 fixture，无法支撑真实诊断结论。不提供推算值。
-- **策略层不是隔离层**：Python 仍运行在本进程，尚无安全沙箱、并发文件修改隔离或强制超时。
+- **策略层不是隔离层，资源边界不是沙箱**：`live` / `herb` / `corpus` 模式在独立进程中运行，
+  内存、进程数与 wall-clock 由操作系统强制（Job Object / `setrlimit`）；但文件系统与网络访问
+  不受 OS 级限制，仍由权限模型与编译门禁治理。`fixture` 模式是封存合成数据，仍在本进程。

@@ -5,6 +5,15 @@ class SkillError(Exception):
     """Base error for the Skill SDK."""
 
 
+class SkillExecutionError(SkillError):
+    """An adapter raised something the SDK does not classify.
+
+    The message never carries the original exception's text to a caller: an
+    adapter error may contain credentials or source data. The class exists so
+    the in-process and bounded execution paths report the same code.
+    """
+
+
 class ContractError(SkillError):
     """A schema, input or output violates its declared contract."""
 
