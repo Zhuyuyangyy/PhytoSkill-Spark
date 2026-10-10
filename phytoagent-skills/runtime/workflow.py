@@ -63,6 +63,10 @@ class WorkflowRunner:
             "本包是编译器生成的工作流Skill；专业能力由已审核的提供方Skill实现。",
             "共同出现不等于因果关系；本包不合成疾病概率或药效下降比例。",
         ]
+        # The task authorization for this run: what the workflow package itself
+        # declares. A provider whose manifest claims more than the workflow was
+        # compiled with does not get it — the task term narrows the call.
+        task_grants = list((manifest.get("permissions") or {}).get("filesystem") or [])
         for index, step in enumerate(steps, start=1):
             provider = step["provider_skill"]
             # A capability id is not automatically a provider. Only the audited
@@ -90,7 +94,8 @@ class WorkflowRunner:
                 call = self.runtime.call(provider, self._map_input(payload, step["input_map"]),
                                          mode="fixture",
                                          tool_call_id=f"{tool_call_id}:step{index}",
-                                         requested_permissions=list(PROVIDER_PERMISSIONS[provider]))
+                                         requested_permissions=list(PROVIDER_PERMISSIONS[provider]),
+                                         task_grants=task_grants)
                 if call["status"] != "success":
                     missing.append(provider)
                     report_steps.append({"id": step["id"], "provider_skill": provider,
@@ -118,7 +123,8 @@ class WorkflowRunner:
                 raise ShieldError(f"Provider {provider} is not registered; refusing to fabricate it")
             call = self.runtime.call(provider, provider_input, mode=mode,
                                      tool_call_id=f"{tool_call_id}:step{index}",
-                                     requested_permissions=list(PROVIDER_PERMISSIONS[provider]))
+                                     requested_permissions=list(PROVIDER_PERMISSIONS[provider]),
+                                     task_grants=task_grants)
             if call["status"] != "success":
                 missing.append(provider)
                 report_steps.append({"id": step["id"], "provider_skill": provider,

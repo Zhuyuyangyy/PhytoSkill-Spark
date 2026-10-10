@@ -30,6 +30,9 @@ from sdk.schema import read_json
 from shield.gate import gate_package
 
 MODEL = "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest"
+# The task authorization for this chain: live vision through the broker, then
+# deterministic fusion. A call for anything else is refused by the task term.
+TASK_GRANTS = [BROKER_INFERENCE, "package:read"]
 
 
 def main() -> int:
@@ -74,7 +77,8 @@ def main() -> int:
     # 1. Real vision on the node's GPU.
     vision = call_or_failure(runtime, "plant_vision", {
         "case_id": case_id, "species": species, "image_path": str(image.resolve()),
-    }, mode="live", tool_call_id="dgx-call-1", requested_permissions=[BROKER_INFERENCE])
+    }, mode="live", tool_call_id="dgx-call-1", requested_permissions=[BROKER_INFERENCE],
+        task_grants=TASK_GRANTS)
     print(f"[1/3] plant_vision (live) -> {vision['status']} in {vision['duration_ms']:.0f} ms")
     if vision["status"] != "success":
         print(json.dumps(vision["error"], ensure_ascii=False))
@@ -92,7 +96,7 @@ def main() -> int:
         "case_id": case_id, "species": species,
         "vision": data, "environment": None, "knowledge": None,
     }, mode="fixture", tool_call_id="dgx-call-2",
-        requested_permissions=["package:read"])
+        requested_permissions=["package:read"], task_grants=TASK_GRANTS)
     print(f"\n[2/3] evidence_fusion -> {fusion['status']}")
     if fusion["status"] == "success":
         fused = fusion["data"]

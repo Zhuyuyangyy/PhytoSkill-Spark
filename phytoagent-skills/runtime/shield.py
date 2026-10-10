@@ -38,6 +38,34 @@ TRUST_INSUFFICIENT = "INSUFFICIENT"
 # matching ``permissions.backend_broker.inference`` block.
 BROKER_INFERENCE = "backend_broker:inference"
 
+# What the host permits any Skill to hold, whatever a package declares about
+# itself. A manifest is the package's own claim; it is evidence, not authority.
+# Without a host ceiling a package could enlarge its own reach simply by
+# declaring more, and the "least privilege" check would happily agree. The
+# default is the union of what the audited packages declare — deliberately not
+# a wildcard: a package asking for anything outside it is refused by the host
+# before its own manifest is even consulted.
+DEFAULT_HOST_PERMISSIONS = frozenset({
+    "case_workspace:read", "corpus:read", "package:read", BROKER_INFERENCE,
+})
+
+
+@dataclass(frozen=True)
+class HostPolicy:
+    """The host-side ceiling on Skill permissions.
+
+    Authorization is a three-term intersection: what the package's sealed
+    manifest declares, what this policy permits, and what the current task
+    authorizes. A permission the host does not list is refused even when the
+    package declares it — that is what stops an untrusted package from
+    enlarging its own permissions.
+    """
+
+    allowed_permissions: frozenset[str] = DEFAULT_HOST_PERMISSIONS
+
+    def permits(self, permission: str) -> bool:
+        return permission in self.allowed_permissions
+
 
 @dataclass
 class CallRecord:
@@ -64,7 +92,8 @@ class ShieldRuntime:
     """Permission-checking, tracing wrapper around the local Skill executor."""
 
     def __init__(self, registry: SkillRegistry, *, max_calls: int = 32,
-                 trace_id: str | None = None, cache=None):
+                 trace_id: str | None = None, cache=None,
+                 host_policy: HostPolicy | None = None):
         self.registry = registry
         # The cache is accepted so a long live run can reuse observations
         # instead of paying a 12-167 s inference per repeated image. It changes
@@ -74,13 +103,25 @@ class ShieldRuntime:
         self.trace_id = trace_id or f"trace-{time.strftime('%Y%m%d')}-{uuid.uuid4().hex[:6]}"
         self._calls = 0
         self.audit_log: list[CallRecord] = []
+        # The host-side permission ceiling. A package's manifest is its own
+        # claim; this policy is the independent authority that decides whether
+        # the claim may be acted on.
+        self.host_policy = host_policy or HostPolicy()
 
     # ── call interception ─────────────────────────────────────────────────
 
     def call(self, name: str, payload: dict, *, mode: str = "fixture",
              tool_call_id: str, requested_permissions: list[str] | None = None,
-             case_workspace: Path | None = None) -> dict:
+             case_workspace: Path | None = None,
+             task_grants: list[str] | None = None) -> dict:
         """Authorise, trace, execute, and record one tool call.
+
+        ``task_grants`` is the caller's statement of what the current task
+        authorizes — the third term of the permission decision. It must be
+        supplied by the Agent-facing paths (Harness, WorkflowRunner); a batch
+        driver running a fixed chain may pass its chain's grants. ``None``
+        means the caller asserts no additional task scoping: the manifest and
+        host terms still apply, but the task term does not narrow anything.
 
         Every attempt is recorded, including the ones refused at the door: a
         call rejected for a missing ``tool_call_id`` or an exhausted budget is
@@ -122,7 +163,8 @@ class ShieldRuntime:
         manifest = record["manifest"]
         start = perf_counter()
         try:
-            self._authorise(name, manifest, requested_permissions or [], case_workspace)
+            self._authorise(name, manifest, requested_permissions or [], case_workspace,
+                            task_grants)
         except ShieldError as exc:
             self.audit_log.append(CallRecord(
                 trace_id=self.trace_id, tool_call_id=tool_call_id, skill=name,
@@ -141,11 +183,20 @@ class ShieldRuntime:
         return result
 
     def _authorise(self, name: str, manifest: dict, requested: list[str],
-                   case_workspace: Path | None) -> None:
-        """Least-privilege check against the manifest the package was sealed with."""
+                   case_workspace: Path | None,
+                   task_grants: list[str] | None) -> None:
+        """Three-term permission check: manifest ∩ host policy ∩ task grants.
+
+        The manifest is what the package claims about itself; the host policy
+        is the independent ceiling; the task grants are what the caller says
+        the current task needs. All three must agree, so a package cannot
+        enlarge its own reach by declaring more, and a task cannot use a
+        permission it was not authorized for.
+        """
         declared = manifest.get("permissions", {})
         allowed_filesystem = set(declared.get("filesystem", []))
         broker = declared.get("backend_broker") or {}
+        granted = set(task_grants) if task_grants is not None else None
         for permission in requested:
             if permission == "network":
                 # The Skill itself never gets network access, whatever it asks
@@ -157,11 +208,25 @@ class ShieldRuntime:
                     raise PermissionViolation(
                         f"{name} requested broker inference; the package declares no "
                         "permissions.backend_broker")
+                if not self.host_policy.permits(BROKER_INFERENCE):
+                    raise PermissionViolation(
+                        f"{name} requested broker inference; the host policy does not permit it")
+                if granted is not None and permission not in granted:
+                    raise PermissionViolation(
+                        f"{name} requested broker inference; the task does not authorize it")
                 continue
             # "tool"/"tools" is the capability axis, checked separately below.
             if permission not in allowed_filesystem and permission not in ("tool", "tools"):
                 raise PermissionViolation(
                     f"{name} requested undeclared filesystem permission {permission!r}")
+            if permission in ("tool", "tools"):
+                continue
+            if not self.host_policy.permits(permission):
+                raise PermissionViolation(
+                    f"{name} requested {permission!r}; the host policy does not permit it")
+            if granted is not None and permission not in granted:
+                raise PermissionViolation(
+                    f"{name} requested {permission!r}; the task does not authorize it")
         if case_workspace is not None:
             if case_workspace.is_symlink() or not case_workspace.is_dir():
                 raise PermissionViolation("case_workspace must be an existing directory, not a link")
@@ -185,7 +250,8 @@ class ShieldRuntime:
 
 
 def call_or_failure(runtime: ShieldRuntime, name: str, payload: dict, *, mode: str,
-                    tool_call_id: str, requested_permissions: list[str] | None = None) -> dict:
+                    tool_call_id: str, requested_permissions: list[str] | None = None,
+                    task_grants: list[str] | None = None) -> dict:
     """Run one governed call, reporting a middleware rejection as a failed call.
 
     A batch driver must survive a single blocked call: the record for that item
@@ -195,7 +261,8 @@ def call_or_failure(runtime: ShieldRuntime, name: str, payload: dict, *, mode: s
     """
     try:
         return runtime.call(name, payload, mode=mode, tool_call_id=tool_call_id,
-                            requested_permissions=requested_permissions)
+                            requested_permissions=requested_permissions,
+                            task_grants=task_grants)
     except ShieldError as exc:
         return {"tool_call_id": tool_call_id, "name": name, "mode": mode,
                 "status": "failed", "data": None, "duration_ms": 0.0,

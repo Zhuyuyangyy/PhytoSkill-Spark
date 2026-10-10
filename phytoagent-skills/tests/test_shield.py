@@ -9,8 +9,9 @@ import pytest
 from demo.fixture_workspace import fixture_registry
 from registry.signer import generate_keypair, sign_package
 from runtime.executor import SkillExecutor
-from runtime.shield import (TRUST_INSUFFICIENT, TRUST_LIMITED, TRUST_SUPPORTED, BudgetExceeded,
-                            ClaimAuditor, PermissionViolation, ShieldError, ShieldRuntime,
+from runtime.shield import (BROKER_INFERENCE, DEFAULT_HOST_PERMISSIONS, TRUST_INSUFFICIENT,
+                            TRUST_LIMITED, TRUST_SUPPORTED, BudgetExceeded, ClaimAuditor,
+                            HostPolicy, PermissionViolation, ShieldError, ShieldRuntime,
                             TraceError, call_or_failure, collect_evidence_ids,
                             load_evidence_index)
 from sdk.exceptions import RegistryError
@@ -491,3 +492,96 @@ def test_a_citation_from_another_species_blocks_the_claim():
         "asserts": {"phenotype": "leaf_yellowing", "species": "黄芪"}}]})
     assert verdict["claims"][0]["status"] == "refused"
     assert "another species" in verdict["claims"][0]["reason"]
+
+
+# ── host policy: a manifest is a claim, not an authority ─────────────────────
+
+
+class _GreedyRegistry:
+    """A package that declares far more than the host should ever permit."""
+
+    def verify_entry(self, name):
+        return {"manifest": {"name": name, "manifest_sha256": "0" * 64,
+                             "permissions": {"filesystem": ["*", "case_workspace:write"],
+                                             "network": "deny"}}}
+
+
+class _BrokerRegistry:
+    """A package that legitimately declares the broker — the host may still refuse."""
+
+    def verify_entry(self, name):
+        return {"manifest": {"name": name, "manifest_sha256": "0" * 64,
+                             "permissions": {"filesystem": ["case_workspace:read"],
+                                             "backend_broker": {"inference": True}}}}
+
+
+class _PlainRegistry:
+    """A package declaring exactly one ordinary permission."""
+
+    def verify_entry(self, name):
+        return {"manifest": {"name": name, "manifest_sha256": "0" * 64,
+                             "permissions": {"filesystem": ["case_workspace:read"]}}}
+
+    def load_skill(self, name):
+        raise RegistryError("stub: not loadable")
+
+
+def test_a_package_cannot_enlarge_its_own_permissions():
+    """The manifest is the package's own claim; the host policy is the authority.
+
+    A package declaring a wildcard or a write permission has it refused at the
+    door even though its own manifest allows it — and the refusal is recorded.
+    """
+    runtime = ShieldRuntime(_GreedyRegistry())
+    for permission in ("*", "case_workspace:write"):
+        with pytest.raises(PermissionViolation, match="host policy"):
+            runtime.call("greedy", {}, tool_call_id=f"call-{permission}",
+                         requested_permissions=[permission])
+        blocked = runtime.report()["blocked"]
+        assert blocked
+        assert blocked[-1]["skill"] == "greedy"
+        assert "host policy does not permit" in blocked[-1]["detail"]
+
+
+def test_the_host_policy_can_forbid_the_broker_entirely():
+    """A host that runs no inference refuses broker calls for every package."""
+    runtime = ShieldRuntime(_BrokerRegistry(), host_policy=HostPolicy(
+        allowed_permissions=frozenset({"case_workspace:read"})))
+    with pytest.raises(PermissionViolation, match="host policy"):
+        runtime.call("plant_vision", {}, tool_call_id="call-1",
+                     requested_permissions=[BROKER_INFERENCE])
+    assert "host policy does not permit" in runtime.report()["blocked"][-1]["detail"]
+
+
+def test_a_task_grant_narrower_than_the_manifest_refuses_the_call():
+    """The third term: a task that does not authorize a permission gets none."""
+    runtime = ShieldRuntime(_PlainRegistry())
+    with pytest.raises(PermissionViolation, match="task does not authorize"):
+        runtime.call("plant_vision", {}, tool_call_id="call-1",
+                     requested_permissions=["case_workspace:read"],
+                     task_grants=["package:read"])
+
+
+def test_a_call_inside_all_three_terms_is_authorised():
+    """The positive control: manifest ∩ host policy ∩ task grants all agree."""
+    runtime = ShieldRuntime(_PlainRegistry())
+    # The stub cannot load a package, so the call fails in the executor — but it
+    # fails *there*, past the permission door, and is traced as a real attempt.
+    result = runtime.call("plant_vision", {}, tool_call_id="call-1",
+                          requested_permissions=["case_workspace:read"],
+                          task_grants=["case_workspace:read"])
+    assert result["status"] == "failed"
+    assert (result.get("error") or {}).get("code") != "PermissionViolation"
+    calls = runtime.report()["calls"]
+    assert len(calls) == 1
+    assert calls[0]["permissions_used"] == ["case_workspace:read"]
+    assert runtime.report()["blocked"] == []
+
+
+def test_the_default_host_policy_admits_the_published_permissions():
+    """The default ceiling is the audited packages' union — not a wildcard."""
+    assert DEFAULT_HOST_PERMISSIONS == frozenset({
+        "case_workspace:read", "corpus:read", "package:read", BROKER_INFERENCE})
+    assert HostPolicy().permits("case_workspace:read")
+    assert not HostPolicy().permits("*")
+    assert not HostPolicy().permits("case_workspace:write")

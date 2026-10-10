@@ -20,7 +20,7 @@ from harness.errors import AuthError, ConfigError, TransportError
 from harness.scoring import score_task
 from harness.tasks import Task, build_tasks
 from harness.transport import Transport
-from runtime.shield import BROKER_INFERENCE, ShieldRuntime
+from runtime.shield import BROKER_INFERENCE, HostPolicy, ShieldRuntime
 from sdk.exceptions import RegistryError
 from sdk.schema import package_file, read_json
 
@@ -579,6 +579,81 @@ class TestGovernedToolCalls:
         # report, and the blocked subset is called out separately.
         assert harness.governance_report()["tool_calls_traced"] == 1
         assert harness.governance_report()["blocked_tool_calls"]
+
+
+    def test_the_task_grants_are_the_exposed_tool_sets_needs(self):
+        """The task term is the exposed tool set's needs — and nothing beyond.
+
+        The A/B task deliberately exposes the full Skill set, so the task
+        authorizes the union of what those packages declare. A permission
+        outside that union is refused even if a package's manifest claims it.
+        """
+
+        class ToolSetRegistry:
+            catalog = [{"name": "plant_vision"}, {"name": "evidence_fusion"}]
+            available_tools: list[dict] = []
+
+            def get(self, name):
+                manifests = {
+                    "plant_vision": {"permissions": {
+                        "filesystem": ["case_workspace:read"],
+                        "backend_broker": {"inference": True}}},
+                    "evidence_fusion": {"permissions": {"filesystem": ["package:read"]}},
+                }
+                return {"manifest": manifests[name]}
+
+        harness, _ = build_harness(ToolSetRegistry(), ScriptedPoster([]))
+        assert harness._task_grants() == ["case_workspace:read", "package:read"]
+        # A live/herb run adds the broker token — but only because an exposed
+        # package declares a broker, and only in that mode.
+        harness.tool_mode = "live"
+        assert harness._task_grants() == [BROKER_INFERENCE, "case_workspace:read",
+                                          "package:read"]
+
+    def test_a_host_policy_refusal_survives_the_harness_loop(self):
+        """The host term binds on the harness path, and the task still finishes.
+
+        The host policy forbids the only permission plant_vision declares, so
+        the call is refused at the door — recorded by the Shield, reported to
+        the model, and the loop continues to its final answer.
+        """
+
+        class Registry:
+            catalog = [{"name": "plant_vision"}]
+            available_tools: list[dict] = []
+
+            def load_skill(self, name):
+                return {"manifest_sha256": "0" * 64}
+
+            def verify_entry(self, name):
+                return {"manifest": {"name": name, "manifest_sha256": "0" * 64,
+                                     "permissions": {
+                                         "filesystem": ["case_workspace:read"]}}}
+
+            def get(self, name):
+                return {"manifest": {"permissions": {
+                    "filesystem": ["case_workspace:read"]}}}
+
+        arguments = {"case_id": "demo-huangqi-001", "species": "黄芪",
+                     "image_path": "fixture://huangqi-leaf-01"}
+        poster = ScriptedPoster([
+            (200, completion(tool_calls=tool_call("plant_vision", arguments))),
+            (200, completion(content="该调用被宿主策略拒绝，未执行。")),
+        ])
+        transport, config = make_transport(poster)
+        shield = ShieldRuntime(Registry(), host_policy=HostPolicy(
+            allowed_permissions=frozenset({"package:read"})))
+        harness = AgentHarness(Registry(), shield, transport, config)
+        run = harness.run_task(Task(task_id="t", prompt="看看这张黄芪叶片",
+                                    kind="positive_trigger", source="test"),
+                               arm="without_skill")
+        assert run["executed_skills"] == []
+        assert run["rejected_calls"] == [{"name": "plant_vision",
+                                          "code": "PermissionViolation"}]
+        assert run["stop_reason"] == "final_answer"
+        blocked = shield.report()["blocked"]
+        assert len(blocked) == 1
+        assert "host policy does not permit" in blocked[0]["detail"]
 
 
 class TestScoring:

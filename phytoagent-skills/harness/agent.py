@@ -77,6 +77,7 @@ class AgentHarness:
         self.config = config
         self.tool_mode = tool_mode
         self._instructions_cache: dict[str, dict] | None = None
+        self._task_grants_cache: dict[str, list[str]] = {}
 
     @property
     def skill_instructions(self) -> dict[str, dict]:
@@ -185,7 +186,8 @@ class AgentHarness:
         try:
             result = self.shield.call(name, arguments, mode=self.tool_mode,
                                       tool_call_id=call_id,
-                                      requested_permissions=self._requested_permissions(name))
+                                      requested_permissions=self._requested_permissions(name),
+                                      task_grants=self._task_grants())
         except ShieldError as exc:
             # A middleware rejection is recorded, not raised: one blocked call
             # must not abort the task, and the model is told the call did not
@@ -222,6 +224,31 @@ class AgentHarness:
         if self.tool_mode in ("live", "herb") and broker.get("inference"):
             permissions.append(BROKER_INFERENCE)
         return permissions
+
+    def _task_grants(self) -> list[str]:
+        """What the current task authorizes: the exposed tool set's needs.
+
+        The A/B task deliberately exposes the full Skill set, so the task
+        authorizes the union of what those packages declare — and nothing
+        beyond it. A call for a permission outside that union is refused even
+        if some package's manifest claims it: the task term narrows what the
+        manifest term would otherwise allow. Cached per tool mode, because a
+        task may switch the mode (fixture for the set, live for real images).
+        """
+        cached = self._task_grants_cache.get(self.tool_mode)
+        if cached is not None:
+            return cached
+        grants: set[str] = set()
+        for entry in self.registry.catalog:
+            permissions = (self.registry.get(entry["name"])["manifest"]
+                           .get("permissions") or {})
+            grants.update(permissions.get("filesystem") or [])
+            broker = permissions.get("backend_broker") or {}
+            if self.tool_mode in ("live", "herb") and broker.get("inference"):
+                grants.add(BROKER_INFERENCE)
+        authorized = sorted(grants)
+        self._task_grants_cache[self.tool_mode] = authorized
+        return authorized
 
     def use_shield(self, shield: ShieldRuntime) -> None:
         """Point the harness at a different Shield instance.

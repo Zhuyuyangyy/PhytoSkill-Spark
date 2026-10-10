@@ -16,6 +16,10 @@ from registry import SkillRegistry
 from registry.signer import generate_keypair, sign_package
 from dgx.cache import ObservationCache
 from runtime.shield import BROKER_INFERENCE, ShieldRuntime, call_or_failure
+
+# The task authorization for this batch: real vision through the broker, nothing
+# else. A call for any other permission is refused by the task term.
+TASK_GRANTS = [BROKER_INFERENCE]
 from sdk.manifest import seal_manifest
 from sdk.schema import read_json
 
@@ -66,7 +70,7 @@ def main() -> int:
         response = call_or_failure(runtime, "plant_vision", {
             "case_id": case_id, "species": species, "image_path": str(image.resolve()),
         }, mode=mode, tool_call_id=f"{mode}-call-{index}",
-            requested_permissions=[BROKER_INFERENCE])
+            requested_permissions=[BROKER_INFERENCE], task_grants=TASK_GRANTS)
         if response["status"] != "success":
             print(f"[{index:2}] {image.name:18} FAILED {response['error']['message'][:90]}")
             records.append({"image": image.name, "case_id": case_id,

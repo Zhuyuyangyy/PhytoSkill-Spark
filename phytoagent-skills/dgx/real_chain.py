@@ -29,6 +29,11 @@ from sdk.schema import read_json
 
 # The vendored corpus is TCM syndrome knowledge. It is asked for the species and
 # the phenotype the vision leg reported, and it is allowed to come back empty.
+# The task authorization for this chain: live vision through the broker, corpus
+# retrieval, then deterministic fusion — nothing else. A call for any other
+# permission is refused by the task term.
+TASK_GRANTS = [BROKER_INFERENCE, "corpus:read", "package:read"]
+
 KNOWLEDGE_QUERIES = {
     # The corpus is TCM syndrome knowledge. It is asked for the species and the
     # subject actually photographed, and it is allowed to come back empty.
@@ -73,7 +78,8 @@ def main() -> int:
         vision = call_or_failure(runtime, "plant_vision", {
             "case_id": case_id, "species": species, "image_path": str(image.resolve()),
         }, mode=mode, tool_call_id=f"{case_id}-vision",
-            requested_permissions=[BROKER_INFERENCE])
+            requested_permissions=[BROKER_INFERENCE],
+            task_grants=TASK_GRANTS)
         if vision["status"] != "success":
             print(f"  vision FAILED: {vision['error']['code']}")
             cases.append({"image": image.name, "case_id": case_id,
@@ -88,7 +94,8 @@ def main() -> int:
             "case_id": case_id, "species": species,
             "query": KNOWLEDGE_QUERIES.get(mode, KNOWLEDGE_QUERIES["herb"]),
         }, mode="corpus", tool_call_id=f"{case_id}-knowledge",
-            requested_permissions=["corpus:read"])
+            requested_permissions=["corpus:read"],
+            task_grants=TASK_GRANTS)
         if knowledge["status"] != "success":
             print(f"  knowledge FAILED: {knowledge['error']['code']}")
             knowledge_data = None
@@ -103,7 +110,8 @@ def main() -> int:
             "environment": None,
             "knowledge": knowledge_data,
         }, mode="fixture", tool_call_id=f"{case_id}-fusion",
-            requested_permissions=["package:read"])
+            requested_permissions=["package:read"],
+            task_grants=TASK_GRANTS)
         if fusion["status"] != "success":
             print(f"  fusion FAILED: {fusion['error']['code']}: {fusion['error']['message']}")
             cases.append({"image": image.name, "case_id": case_id, "vision": "success",

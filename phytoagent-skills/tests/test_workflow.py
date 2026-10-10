@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 from pathlib import Path
 
@@ -211,3 +212,39 @@ def test_the_generated_package_is_reproducible_for_the_same_request(tmp_path):
     assert first.spec == second.spec
     for relative in first.files:
         assert (first.package_dir / relative).read_bytes() == (second.package_dir / relative).read_bytes()
+
+
+def test_the_workflows_own_declarations_are_the_task_authorization(workspace):
+    """The task term binds on the runner path: the workflow package's own
+    permissions are what this run authorizes.
+
+    A workflow compiled without ``package:read`` cannot call the fusion Skill,
+    even though the fusion package's manifest declares it — the task narrows
+    the manifest. A governance refusal aborts the run (the same semantics as a
+    cross-case payload) and is recorded, with the earlier providers' calls
+    already in the audit trail.
+    """
+    package = workspace["package"]
+    # The manifest is regenerated from the metadata on every seal, so the
+    # workflow's own declaration is changed there and re-sealed — exactly how a
+    # differently-scoped workflow would have been compiled in the first place.
+    metadata = read_json(package / "metadata.json")
+    metadata["permissions"]["filesystem"] = [
+        permission for permission in metadata["permissions"]["filesystem"]
+        if permission != "package:read"]
+    seal_manifest(package, metadata)
+    sign_package(package, workspace["private"])
+    workspace["registry"].discover()
+    runner = WorkflowRunner(workspace["runtime"], package)
+
+    with pytest.raises(ShieldError, match="task does not authorize"):
+        runner.run(read_json(package / "evals" / "evals.json")["cases"][0]["input"],
+                   mode="fixture", tool_call_id="call-task-term")
+
+    calls = workspace["runtime"].report()["calls"]
+    # The three providers ran; the fusion call was refused at the door.
+    assert [call["skill"] for call in calls] == [
+        "plant_vision", "growth_risk", "herbal_knowledge", "evidence_fusion"]
+    assert [call["status"] for call in calls[:3]] == ["success"] * 3
+    assert calls[-1]["status"] == "blocked"
+    assert "task does not authorize" in calls[-1]["detail"]
