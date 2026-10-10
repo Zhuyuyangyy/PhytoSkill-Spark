@@ -333,10 +333,126 @@ def test_cli_report_writes_a_report_with_the_selective_metrics(tmp_path):
 
 def test_cli_holdout_refuses_a_second_run_of_the_same_freeze(tmp_path):
     from evaluation.__main__ import main
+    from evaluation.frozen import write_manifest
 
     ledger, output = tmp_path / "ledger.json", tmp_path / "holdout.json"
+    # The holdout command asserts the tree against the manifest it is given, so
+    # this test freezes its own ("m", "q4") configuration rather than borrowing
+    # the committed one — its subject is the ledger rule, not the freeze.
+    manifest = tmp_path / "frozen.json"
+    write_manifest(manifest, model="m", quantization="q4")
     argv = ["holdout", str(ANNOTATION), "--model", "m", "--quantization", "q4",
-            "--ledger", str(ledger), "--output", str(output)]
+            "--ledger", str(ledger), "--output", str(output),
+            "--manifest", str(manifest)]
     assert main(argv) == 0
     # Same freeze, same holdout: the protocol forbids looking twice.
     assert main(argv) == 2
+
+
+# ── the frozen manifest: recorded outside the run, enforced by drift checks ──
+
+
+MODEL = "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest"
+QUANTIZATION = "Q4_K_M"
+
+
+def test_the_committed_manifest_verifies_against_the_current_tree():
+    from evaluation.frozen import DEFAULT_MANIFEST, verify_manifest
+
+    report = verify_manifest(DEFAULT_MANIFEST)
+    assert report.ok, report.to_dict()
+    assert report.freeze_matches
+    assert report.drifted == () and report.missing == () and report.unexpected == ()
+
+
+def test_the_manifest_round_trips_through_the_file(tmp_path):
+    from evaluation.frozen import build_manifest, load_manifest, write_manifest
+    from evaluation.split import freeze as make_freeze
+
+    frozen = make_freeze(model=MODEL, quantization=QUANTIZATION)
+    manifest = build_manifest(frozen, at="2026-10-10T00:00:00+00:00")
+    path = tmp_path / "frozen.json"
+    write_manifest(path, model=MODEL, quantization=QUANTIZATION,
+                   at="2026-10-10T00:00:00+00:00")
+    loaded = load_manifest(path)
+    assert loaded["freeze_id"] == manifest["freeze_id"] == frozen.freeze_id
+    assert [item["path"] for item in loaded["inputs"]] == [
+        item["path"] for item in manifest["inputs"]]
+
+
+def test_a_drifted_input_is_named_by_the_verification(tmp_path):
+    """The whole point: after the blind test, a prompt or threshold edit cannot
+    be passed off as the same experiment — the check names the file that moved."""
+    from evaluation.frozen import DEFAULT_MANIFEST, load_manifest, verify_manifest
+
+    manifest = load_manifest(DEFAULT_MANIFEST)
+    victim = manifest["inputs"][0]["path"]
+    manifest["inputs"][0]["sha256"] = "0" * 64
+    path = tmp_path / "drifted.json"
+    path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    report = verify_manifest(path)
+    assert not report.ok
+    assert report.drifted == (victim,)
+    assert report.freeze_matches  # the aggregates still match; only the file moved
+
+
+def test_a_changed_aggregate_fingerprint_fails_the_freeze(tmp_path):
+    from evaluation.frozen import DEFAULT_MANIFEST, load_manifest, verify_manifest
+
+    manifest = load_manifest(DEFAULT_MANIFEST)
+    manifest["freeze"]["parser_hash"] = "1" * 64
+    path = tmp_path / "tampered.json"
+    path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    report = verify_manifest(path)
+    assert not report.ok
+    assert not report.freeze_matches
+
+
+def test_an_input_missing_from_the_manifest_is_reported(tmp_path):
+    """A frozen input that the manifest forgot to pin is not frozen at all."""
+    from evaluation.frozen import DEFAULT_MANIFEST, load_manifest, verify_manifest
+
+    manifest = load_manifest(DEFAULT_MANIFEST)
+    forgotten = manifest["inputs"].pop()["path"]
+    path = tmp_path / "incomplete.json"
+    path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    report = verify_manifest(path)
+    assert not report.ok
+    assert forgotten in report.unexpected
+
+
+def test_the_aggregates_and_the_file_inventory_describe_the_same_bytes():
+    """The per-file pins and the aggregate fingerprints must not drift apart."""
+    from evaluation.frozen import aggregates_match_inputs
+
+    matches = aggregates_match_inputs()
+    assert matches, "no file-backed aggregate found"
+    assert all(matches.values()), matches
+
+
+def test_the_manifest_covers_the_protocol_and_every_contract():
+    """The reviewer's R3-1 list: model, prompt, schema, thresholds, protocol."""
+    from evaluation.frozen import FREEZE_INPUTS
+
+    paths = {relative for relative, _ in FREEZE_INPUTS}
+    assert "docs/evaluation.md" in paths, "the protocol itself must be frozen"
+    for skill in ("plant_vision", "growth_risk", "herbal_knowledge",
+                  "evidence_fusion", "agentshield_audit"):
+        assert f"skills/{skill}/schema.json" in paths, f"{skill} contract not frozen"
+    # The decision thresholds: the parser, the auditor's trust rules, the
+    # retrieval gate and the ranking constants.
+    for threshold_source in ("vision/parser.py", "runtime/shield.py",
+                             "corpus/retriever.py", "corpus/ranking.py"):
+        assert threshold_source in paths, f"{threshold_source} not frozen"
+
+
+def test_assert_manifest_raises_on_drift(tmp_path):
+    from evaluation.frozen import DEFAULT_MANIFEST, assert_manifest, load_manifest
+    from evaluation.split import FreezeError
+
+    manifest = load_manifest(DEFAULT_MANIFEST)
+    manifest["freeze"]["scorer_hash"] = "2" * 64
+    path = tmp_path / "broken.json"
+    path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    with pytest.raises(FreezeError, match="fingerprints"):
+        assert_manifest(path)

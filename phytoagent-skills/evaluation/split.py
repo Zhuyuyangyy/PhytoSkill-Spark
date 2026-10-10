@@ -107,9 +107,72 @@ def scorer_fingerprint() -> str:
     return _module_source_hash(evaluation.metrics)
 
 
+def schema_fingerprint() -> str:
+    """The sealed output contracts of every audited Skill.
+
+    The schemas carry the phenotype vocabularies, the score semantics and the
+    field-level thresholds a reported number is computed from; a contract edit
+    is an experiment change even when no code moved.
+    """
+    from demo.fixture_workspace import PROJECT_ROOT
+
+    contracts = {}
+    for path in sorted((PROJECT_ROOT / "skills").glob("*/schema.json")):
+        contracts[path.parent.name] = json.loads(path.read_text(encoding="utf-8"))
+    if not contracts:
+        raise FreezeError("no Skill schemas found to fingerprint")
+    return _sha256(_canonical(contracts))
+
+
+def auditor_fingerprint() -> str:
+    """The Claim-Evidence auditor: the trust-level decision rules.
+
+    SUPPORTED / LIMITED / INSUFFICIENT is a judgement threshold, and it lives
+    in this module's source; what counts as evidence-supported is part of what
+    a holdout run measures.
+    """
+    import runtime.shield
+    return _module_source_hash(runtime.shield)
+
+
+def retriever_fingerprint() -> str:
+    """The deterministic retriever: its gate, weights and ranking constants.
+
+    Which evidence a knowledge leg can return — and in what order — is decided
+    here, so it belongs in the freeze next to the prompt.
+    """
+    import corpus.ranking
+    import corpus.retriever
+    return _sha256(_canonical({
+        "retriever": _module_source_hash(corpus.retriever),
+        "ranking": _module_source_hash(corpus.ranking),
+    }))
+
+
+def protocol_fingerprint() -> str:
+    """The evaluation protocol document itself.
+
+    The rules the run is held to — roles, the one-shot rule, the annotation
+    protocol — are text; freezing their hash pins which rules were in force.
+    """
+    from demo.fixture_workspace import PROJECT_ROOT
+
+    protocol = PROJECT_ROOT / "docs" / "evaluation.md"
+    if not protocol.is_file():
+        raise FreezeError("the evaluation protocol document is missing")
+    return _sha256(protocol.read_bytes())
+
+
 @dataclass(frozen=True)
 class Freeze:
-    """Everything that must be held constant for a holdout run to mean anything."""
+    """Everything that must be held constant for a holdout run to mean anything.
+
+    Four families of input, and each one changes an answer on its own: what the
+    model is told (model, quantisation, prompt, vocabulary), how its reply is
+    read (parser), what the contracts and judgement thresholds are (schemas,
+    the auditor's trust rules, the retriever's ranking), and how the result is
+    scored and governed (scorer, protocol).
+    """
 
     model: str
     quantization: str
@@ -117,6 +180,10 @@ class Freeze:
     parser_hash: str
     ontology_hash: str
     scorer_hash: str
+    schema_hash: str
+    auditor_hash: str
+    retriever_hash: str
+    protocol_hash: str
 
     @property
     def freeze_id(self) -> str:
@@ -130,6 +197,10 @@ class Freeze:
             "parser_hash": self.parser_hash,
             "ontology_hash": self.ontology_hash,
             "scorer_hash": self.scorer_hash,
+            "schema_hash": self.schema_hash,
+            "auditor_hash": self.auditor_hash,
+            "retriever_hash": self.retriever_hash,
+            "protocol_hash": self.protocol_hash,
         }
 
     def summary(self) -> dict:
@@ -152,7 +223,11 @@ def freeze(*, model: str, quantization: str) -> Freeze:
                   prompt_hash=prompt_fingerprint(),
                   parser_hash=parser_fingerprint(),
                   ontology_hash=ontology_fingerprint(),
-                  scorer_hash=scorer_fingerprint())
+                  scorer_hash=scorer_fingerprint(),
+                  schema_hash=schema_fingerprint(),
+                  auditor_hash=auditor_fingerprint(),
+                  retriever_hash=retriever_fingerprint(),
+                  protocol_hash=protocol_fingerprint())
 
 
 # ── dataset roles ────────────────────────────────────────────────────────────
@@ -295,6 +370,7 @@ class HoldoutLedger:
 
 __all__ = ["DEFAULT_LEDGER", "DatasetSplit", "Freeze", "FreezeError",
            "HoldoutAlreadyRun", "HoldoutLedger", "ROLES", "ROLE_CALIBRATION",
-           "ROLE_DEVELOPMENT", "ROLE_HOLDOUT", "freeze", "ontology_fingerprint",
-           "parser_fingerprint", "prompt_fingerprint", "scorer_fingerprint",
-           "split_entries"]
+           "ROLE_DEVELOPMENT", "ROLE_HOLDOUT", "auditor_fingerprint", "freeze",
+           "ontology_fingerprint", "parser_fingerprint", "prompt_fingerprint",
+           "protocol_fingerprint", "retriever_fingerprint", "schema_fingerprint",
+           "scorer_fingerprint", "split_entries"]

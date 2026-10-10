@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "note": "The frozen evaluation configuration for the holdout blind test. Every listed input is pinned by SHA-256; verify-freeze recomputes them and the aggregate fingerprints and fails on any drift. Re-freezing is an explicit, reviewed act — never a side effect of a tuning edit.",
+  "frozen_at": "2026-10-10T06:49:20+00:00",
+  "freeze": {
+    "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
+    "quantization": "Q4_K_M",
+    "prompt_hash": "41064c38cb8209de8a3de4c99a53699c9072db6ee05bbe4e38338b3553f7fe8e",
+    "parser_hash": "efc57e0a068bd4af1389bb4595d6cbbc6a56851c16aca156bd05fa3ac1c31fa2",
+    "ontology_hash": "d9bf13f25de67b99ab8c7c607c6dd009fbe50fd87897d6bc4b706736a36cda8f",
+    "scorer_hash": "32c1fa6b120893ebd7ee1ec1b622f550700b26411c8f19f10e2d151e762aa6d1",
+    "schema_hash": "4d0e785140b9e421dd1a83ae2ed3d7f39ce513172988b3938ead80e87f021d56",
+    "auditor_hash": "269ebefe3359a46d655888e7275d88cb3a94b3ba4e557286f01f1bb27d1de405",
+    "retriever_hash": "a41d558fbbcbff73e0c1f2faac7e0e07dcebf8ed11073c3bec84114589589b86",
+    "protocol_hash": "7badc1e942d4a99bb4cbb8dbf4b0a6f185bb878a393d256594e38d46b0279296"
+  },
+  "freeze_id": "573cd6dd02d385ea9c917a125e1fe860a77ba3464898878b87af428d6b6240cc",
+  "inputs": [
+    {
+      "path": "vision/prompts.py",
+      "sha256": "bf9c6ce1ba13a310bc06d5a2f856d4d1a436f88912d9d0c4509ede8672890ab9",
+      "role": "the exact text the model is shown, per mode"
+    },
+    {
+      "path": "vision/ontology.py",
+      "sha256": "aa16f978d8bdeaf43704ab7e0a2d737a68e8e0aafdda348f1531930fb72267d5",
+      "role": "the phenotype vocabulary and guard markers, in order"
+    },
+    {
+      "path": "vision/parser.py",
+      "sha256": "efc57e0a068bd4af1389bb4595d6cbbc6a56851c16aca156bd05fa3ac1c31fa2",
+      "role": "how a reply is read: extraction rules and thresholds"
+    },
+    {
+      "path": "skills/plant_vision/schema.json",
+      "sha256": "89b71492263196d7e9bae1b529d24ddb6f050de8543db5ea3446b286b8541dbf",
+      "role": "the observation contract: phenotype enum, area basis, model-score semantics"
+    },
+    {
+      "path": "skills/growth_risk/schema.json",
+      "sha256": "4fe927eeb020adee5568d25d93d2ef4f33ea340623d22f4fb36834924fa4c3ae",
+      "role": "the environment contract and risk levels"
+    },
+    {
+      "path": "skills/herbal_knowledge/schema.json",
+      "sha256": "664e923b4f390ba379d56df77b3c303ead9dbf3836ffc87c641bea2878befdf0",
+      "role": "the evidence contract: retrieval_score semantics and provenance fields"
+    },
+    {
+      "path": "skills/evidence_fusion/schema.json",
+      "sha256": "d0dd6bfabdc76485300ed55119bcdd8dd31c6b11c75736b075bf04a77683ee20",
+      "role": "the fusion contract: how legs are combined"
+    },
+    {
+      "path": "skills/agentshield_audit/schema.json",
+      "sha256": "8bc62d829074f9375dcd074d2c072e88d4c821e6727b330d13f20cfc9642e2e1",
+      "role": "the audit contract: claim-evidence linkage rules"
+    },
+    {
+      "path": "runtime/shield.py",
+      "sha256": "269ebefe3359a46d655888e7275d88cb3a94b3ba4e557286f01f1bb27d1de405",
+      "role": "the auditor's trust-level rules (SUPPORTED / LIMITED / INSUFFICIENT)"
+    },
+    {
+      "path": "corpus/retriever.py",
+      "sha256": "53b6f25beeb2352be99dc63e45959662574c7f60207746fbab5463659c51b438",
+      "role": "the retrieval gate: what counts as a literal match"
+    },
+    {
+      "path": "corpus/ranking.py",
+      "sha256": "9d4fa46e40dca08e85f9d268210d18c860851534a0fd809bb8140be51fc3591e",
+      "role": "the ranking constants and field weights"
+    },
+    {
+      "path": "evaluation/metrics.py",
+      "sha256": "32c1fa6b120893ebd7ee1ec1b622f550700b26411c8f19f10e2d151e762aa6d1",
+      "role": "the metric definitions the report is computed from"
+    },
+    {
+      "path": "docs/evaluation.md",
+      "sha256": "7badc1e942d4a99bb4cbb8dbf4b0a6f185bb878a393d256594e38d46b0279296",
+      "role": "the protocol the run is held to"
+    }
+  ]
+}

@@ -101,6 +101,10 @@
 | `ontology_hash` | 词表与守卫标记，**含顺序** | 药材 prompt 按 tuple 顺序列出表型，重排就是真实变更 |
 | `parser_hash` | `vision/parser.py` **源码** | 行为即代码，没有更便宜且忠实的代理 |
 | `scorer_hash` | `evaluation/metrics.py` **源码** | 同上 |
+| `schema_hash` | 五个 Skill 的**输出契约** | 表型枚举、分数语义、字段级阈值都在契约里；契约变更同样是实验变更 |
+| `auditor_hash` | `runtime/shield.py` **源码** | SUPPORTED/LIMITED/INSUFFICIENT 是判定阈值，它决定什么算有证据支持 |
+| `retriever_hash` | `corpus/retriever.py` + `corpus/ranking.py` **源码** | 知识腿能取回什么、以什么顺序，由门限与排序常数决定 |
+| `protocol_hash` | 本文档**字节** | 运行所遵循的规则本身也在冻结范围内 |
 | `model` / `quantization` | 调用方传入 | 运行时配置；同代码换量化就是另一个实验 |
 
 源码哈希的代价：改一行注释也会改指纹。**这是安全的方向**——过度失效只是浪费一次运行，
@@ -109,6 +113,26 @@
 ```bash
 python -m evaluation freeze --model modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest --quantization Q4_K_M
 ```
+
+### 冻结清单：记录在运行之外，由漂移检查强制
+
+只在运行时算一次指纹是不够的——打进日志的指纹可以事后修改，那时就无法区分
+「调过参数重跑」和「原来的实验」。所以冻结写出一份**入库的清单**
+（`evaluation/frozen.json`）：13 个冻结输入，每个带 SHA-256 和「它为什么
+决定答案」的一句话理由，外加聚合指纹与 `freeze_id`。
+
+```bash
+python -m evaluation verify-freeze     # 重算并比对；有任何漂移则非零退出
+```
+
+两道相互独立的检查：逐文件哈希指出**哪个**输入动了；聚合指纹覆盖聚合指纹
+涉及的一切，即使文件列表有遗漏也能发现。`holdout` 命令在运行前强制校验这份
+清单——**在已经漂移的配置上跑盲测，不是那个盲测**。重新冻结是显式的、需评审的
+动作，绝不是调参的副作用。
+
+当前正式冻结：模型 `modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest`，量化
+`Q4_K_M`（取自 `artifacts/dgx/vision-leaf-01.json` 等实跑记录），
+`freeze_id` 见 `evaluation/frozen.json`。
 
 ---
 
@@ -210,7 +234,8 @@ live  coverage 0.2000  precision 1.0000  recall 0.1765  macro_f1 0.1818
 ```bash
 python -m evaluation report [annotations.json]        # 指标，整体 + 分模式
 python -m evaluation split  [annotations.json] --holdout ... --development ...
-python -m evaluation freeze --model M --quantization Q
+python -m evaluation freeze --model M --quantization Q            # 写入库清单
+python -m evaluation verify-freeze                               # 比对当前树
 python -m evaluation holdout annotations.json --model M --quantization Q --holdout ...
 python -m evaluation agree  annotator_a.json annotator_b.json
 ```

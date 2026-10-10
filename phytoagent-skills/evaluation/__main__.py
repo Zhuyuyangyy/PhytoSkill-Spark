@@ -2,12 +2,17 @@
 
     report   <annotations.json>   full metric set, overall and per mode
     split    <annotations.json>   validate and show the dataset roles
-    freeze   --model --quantization
+    freeze   --model --quantization [--manifest PATH]
+                                  write the committed freeze manifest
+    verify-freeze [--manifest PATH]
+                                  recompute and compare; non-zero on any drift
     holdout  <annotations.json> --model --quantization   guarded one-shot run
     agree    <first.json> <second.json>                  inter-annotator agreement
 
 ``report`` and ``holdout`` write JSON under ``artifacts/evaluations/``. Nothing
-here reaches a network or a model.
+here reaches a network or a model. ``holdout`` refuses to run when the tree no
+longer matches the committed freeze manifest — a blind test on a drifted
+configuration is not that test.
 """
 
 from __future__ import annotations
@@ -18,6 +23,8 @@ import sys
 from pathlib import Path
 
 from evaluation.agreement import multilabel_agreement, resolution_queue
+from evaluation.frozen import (DEFAULT_MANIFEST, assert_manifest, verify_manifest,
+                               write_manifest)
 from evaluation.metrics import risk_coverage_curve, stratify
 from evaluation.split import (DEFAULT_LEDGER, HoldoutLedger, freeze as make_freeze,
                               split_entries)
@@ -98,12 +105,33 @@ def _split(args: argparse.Namespace) -> int:
 
 
 def _freeze(args: argparse.Namespace) -> int:
-    frozen = make_freeze(model=args.model, quantization=args.quantization)
-    print(json.dumps(frozen.summary(), ensure_ascii=False, indent=2))
+    """Write the committed freeze manifest: the record the holdout is held to."""
+    manifest = write_manifest(Path(args.manifest), model=args.model,
+                              quantization=args.quantization)
+    print(json.dumps({"written": str(args.manifest),
+                      "freeze_id": manifest["freeze_id"],
+                      "inputs": len(manifest["inputs"])}, ensure_ascii=False, indent=2))
+    return 0
+
+
+def _verify_freeze(args: argparse.Namespace) -> int:
+    report = verify_manifest(Path(args.manifest))
+    print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+    if not report.ok:
+        print(json.dumps({"error": "FreezeDrift",
+                          "message": "the tree no longer matches the frozen manifest"},
+                         ensure_ascii=False), file=sys.stderr)
+        return 2
     return 0
 
 
 def _holdout(args: argparse.Namespace) -> int:
+    # A holdout run on a drifted configuration is not the frozen experiment.
+    # The ledger guards re-runs of the *same* freeze; this guards the freeze
+    # itself against silent edits between freezing and running.
+    if Path(args.manifest).is_file():
+        assert_manifest(Path(args.manifest), model=args.model,
+                        quantization=args.quantization)
     entries = _entries(Path(args.annotations))
     split = split_entries(entries, holdout=tuple(args.holdout or ()))
     if args.holdout:
@@ -152,10 +180,15 @@ def main(argv: list[str] | None = None) -> int:
     split.add_argument("--development", nargs="*", default=[])
     split.set_defaults(handler=_split)
 
-    frozen = commands.add_parser("freeze", help="fingerprint the current code and model")
+    frozen = commands.add_parser("freeze", help="write the committed freeze manifest")
     frozen.add_argument("--model", required=True)
     frozen.add_argument("--quantization", required=True)
+    frozen.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     frozen.set_defaults(handler=_freeze)
+
+    verify = commands.add_parser("verify-freeze", help="recompute and compare the freeze")
+    verify.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
+    verify.set_defaults(handler=_verify_freeze)
 
     holdout = commands.add_parser("holdout", help="one-shot guarded holdout evaluation")
     holdout.add_argument("annotations", nargs="?", default=str(DEFAULT_ANNOTATION))
@@ -166,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     holdout.add_argument("--ledger", default=str(DEFAULT_LEDGER))
     holdout.add_argument("--output", default=str(HOLDOUT_PATH))
     holdout.add_argument("--supersede", action="store_true")
+    holdout.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     holdout.set_defaults(handler=_holdout)
 
     agree = commands.add_parser("agree", help="inter-annotator agreement")
