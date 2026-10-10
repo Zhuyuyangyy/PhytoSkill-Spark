@@ -11,7 +11,7 @@
     "provenance": {
       "data_origin": "synthetic_fixture",
       "skill": "herbal_knowledge",
-      "version": "0.3.0",
+      "version": "0.2.0",
       "model_called": false
     },
     "evidence": [
