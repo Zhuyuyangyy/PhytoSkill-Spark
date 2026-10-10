@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import os
 import shutil
+from contextlib import contextmanager
 from pathlib import Path
 from time import perf_counter
 
@@ -117,25 +118,88 @@ def backend_status() -> dict:
                 "replay_available": REPLAY_SOURCE.is_file()}
 
 
-# The three badges a visitor must be able to tell apart.
-BADGE_REPLAY = "replay"              # sealed synthetic, or a recorded observation
-BADGE_DETERMINISTIC = "deterministic"  # real computation, no model call
-BADGE_REAL = "real"                  # a model actually ran
+# The badges a visitor must be able to tell apart. Each one is derived from
+# what the step's output actually says about its own origin — never from what
+# was requested. A live run whose vision leg refused a fixture:// path never
+# ran a model, and marking it "real" because live was asked for would be a lie
+# the visitor has no way to detect.
+BADGE_REPLAY = "replay"                  # sealed synthetic, or a recorded observation
+BADGE_DETERMINISTIC = "deterministic"    # real computation, no model call
+BADGE_REAL = "real"                      # a model actually ran for this call
+BADGE_CACHE = "cache"                    # a cached observation: real, but not this run's
+BADGE_NOT_EXECUTED = "not_executed"      # refused or failed at the door
+
+BADGE_LABELS = {
+    BADGE_REPLAY: "回放",
+    BADGE_DETERMINISTIC: "确定性",
+    BADGE_REAL: "真实推理",
+    BADGE_CACHE: "缓存命中",
+    BADGE_NOT_EXECUTED: "未执行",
+}
+
+# Providers whose output is deterministic computation by construction: no
+# model is involved in any mode, and the provenance block says so.
+_DETERMINISTIC_PROVIDERS = ("growth_risk", "evidence_fusion", "herbal_knowledge")
 
 
-def _step_marking(step_mode: str, backend: dict) -> tuple[str, str]:
-    """(badge, reason) for one step, from the mode it ran in and the backend."""
-    if step_mode == "fixture":
+def _step_marking(step: dict) -> tuple[str, str]:
+    """(badge, reason) for one step, from the execution provenance it returned.
+
+    The provenance travels with the provider's own output (see
+    ``WorkflowRunner._step_provenance``), so this is a statement about what
+    happened, not about what was asked for. Every branch names its evidence.
+    """
+    if step.get("status") != "success":
+        return BADGE_NOT_EXECUTED, (
+            f"本步未执行（{step.get('detail') or step.get('status', 'failed')}）；"
+            "没有模型被调用，也没有产生任何数据")
+
+    provenance = step.get("provenance") or {}
+    provider = step.get("provider_skill", "")
+    cache_state = provenance.get("observation_cache")
+
+    if cache_state == "replay":
+        source = provenance.get("backend_endpoint") or "已记录的观测"
+        return BADGE_REPLAY, (f"回放已记录的真实观测（{source}）；本次运行没有发起推理，"
+                              "内容为当时真实推理所得")
+    if cache_state == "hit":
+        return BADGE_CACHE, ("观察缓存命中：内容与首次真实推理一致，但本次没有调用模型；"
+                             "耗时同样不代表推理耗时")
+    if provenance.get("data_origin") == "synthetic_fixture":
         return BADGE_REPLAY, "fixture 模式返回封存的合成案例；未调用任何模型"
-    if step_mode == "corpus":
-        return BADGE_DETERMINISTIC, "corpus 模式：真实语料索引上的确定性检索；未调用任何模型"
-    if backend.get("kind") == "replay":
-        return BADGE_REPLAY, (f"replay 后端返回已记录的真实观测"
-                              f"（{backend.get('endpoint')}）；本次运行没有发起推理")
-    if backend.get("configured"):
-        return BADGE_REAL, (f"真实推理：{backend.get('kind')} 后端"
-                            f"（{backend.get('endpoint') or backend.get('spec')}）")
-    return BADGE_REAL, "请求了真实推理，但没有可用的后端配置"
+    if provider in _DETERMINISTIC_PROVIDERS:
+        return BADGE_DETERMINISTIC, ("确定性计算：真实语料索引检索或规则融合，"
+                                     "无模型调用")
+    if cache_state == "miss" or provenance.get("model_called"):
+        endpoint = provenance.get("backend_endpoint") or provenance.get("backend_kind") or "已配置后端"
+        model = provenance.get("model")
+        suffix = f"（模型 {model}）" if model else ""
+        return BADGE_REAL, f"真实推理：本次调用由后端 {endpoint} 执行{suffix}"
+    return BADGE_NOT_EXECUTED, "输出未声明执行来源；按未执行处理，不猜测"
+
+
+@contextmanager
+def _declared_backend(spec: str | None):
+    """Run with a case-declared backend, restoring the environment afterwards.
+
+    The declaration is the case's own statement of where its observations come
+    from; the environment still wins for every other case, and is restored the
+    moment the run ends.
+    """
+    if not spec:
+        yield
+        return
+    from backends.registry import ENV_BACKEND
+
+    previous = os.environ.get(ENV_BACKEND)
+    os.environ[ENV_BACKEND] = spec
+    try:
+        yield
+    finally:
+        if previous is None:
+            os.environ.pop(ENV_BACKEND, None)
+        else:
+            os.environ[ENV_BACKEND] = previous
 
 
 def run_case(demo_id: str, *, mode: str = "fixture",
@@ -143,6 +207,15 @@ def run_case(demo_id: str, *, mode: str = "fixture",
     """Run one demo case through the governed pipeline and mark every step."""
     case = case_by_id(demo_id)
     workspace = (workspace or DemoWorkspace()).materialise()
+    # A case may carry its own backend declaration — the replay case points at
+    # the recorded-observations file, so a real-record replay needs no
+    # environment setup at all. Without one, the environment decides.
+    declared = case.get("backend")
+    with _declared_backend(declared):
+        return _run_case(case, demo_id, mode, workspace)
+
+
+def _run_case(case: dict, demo_id: str, mode: str, workspace: "DemoWorkspace") -> dict:
     backend = backend_status()
 
     if mode != "fixture" and not backend["configured"]:
@@ -175,11 +248,13 @@ def run_case(demo_id: str, *, mode: str = "fixture",
 
     steps = []
     for step in report["steps"]:
-        badge, reason = _step_marking(step.get("mode", mode), backend)
+        badge, reason = _step_marking(step)
         steps.append({
             "id": step.get("id"), "provider": step["provider_skill"],
             "status": step["status"], "mode": step.get("mode", mode),
-            "badge": badge, "badge_reason": reason,
+            "badge": badge, "badge_label": BADGE_LABELS[badge],
+            "badge_reason": reason,
+            "provenance": step.get("provenance") or {},
             "detail": step.get("detail", ""),
             "evidence_ids": step.get("evidence_ids", []),
         })
@@ -194,6 +269,9 @@ def run_case(demo_id: str, *, mode: str = "fixture",
             "unlinked_evidence_ids": report["unlinked_evidence_ids"],
             "missing_inputs": report["missing_inputs"],
             "limitations": report["limitations"],
+            # How the image-usability verdict was reached — the visitor sees
+            # whether a refusal came from the model's own flag or a file name.
+            "image_usability_basis": report.get("image_usability_basis", ""),
         },
         "report": {"text": _report_text(report),
                    "provenance": report.get("provenance", {})},
@@ -222,5 +300,8 @@ def _report_text(report: dict) -> str:
 
 def cases_payload() -> dict:
     return {"cases": [{"demo_id": case["demo_id"], "title": case["title"],
-                       "blurb": case["blurb"]} for case in DEMO_CASES],
+                       "blurb": case["blurb"],
+                       "suggested_mode": case.get("suggested_mode", "fixture"),
+                       "declares_backend": bool(case.get("backend"))}
+                      for case in DEMO_CASES],
             "backend": backend_status()}

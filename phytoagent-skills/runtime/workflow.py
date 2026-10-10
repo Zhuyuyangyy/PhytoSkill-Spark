@@ -115,6 +115,7 @@ class WorkflowRunner:
                 payload = {**payload, "fusion": call["data"]}
                 report_steps.append({"id": step["id"], "provider_skill": provider,
                                      "status": "success", "mode": "fixture",
+                                     "provenance": self._step_provenance(call["data"]),
                                      "evidence_ids": collect_evidence_ids(call["data"])})
                 continue
             request_field, provider_key, result_key = _SOURCE_FIELD[provider]
@@ -152,11 +153,39 @@ class WorkflowRunner:
             payload = {**payload, result_key: produced}
             report_steps.append({"id": step["id"], "provider_skill": provider,
                                  "status": "success", "mode": step_mode,
+                                 "provenance": self._step_provenance(produced),
                                  "evidence_ids": collect_evidence_ids(call["data"])})
         self._guard_fusion_inputs(payload, missing)
         return self._assemble(payload, workflow, manifest, report_steps, missing, limitations)
 
     # ── helpers ───────────────────────────────────────────────────────────
+
+    @staticmethod
+    def _step_provenance(data: dict) -> dict:
+        """Where this step's output actually came from, from the output itself.
+
+        A badge derived from the request ("live mode was asked for") is a
+        statement about intent; this is a statement about execution. The
+        provider's own provenance block is the only honest source: it names the
+        data origin, the backend that produced the record, whether the
+        observation was replayed or served from cache, and — for the vision
+        leg — the model's own usability verdict. Absent fields stay absent
+        rather than being guessed.
+        """
+        provenance = data.get("provenance") if isinstance(data, dict) else None
+        if not isinstance(provenance, dict):
+            return {}
+        record = {}
+        for key in ("data_origin", "observation_cache", "model_called", "model"):
+            if key in provenance:
+                record[key] = provenance[key]
+        backend = provenance.get("backend")
+        if isinstance(backend, dict):
+            record["backend_kind"] = backend.get("kind")
+            record["backend_endpoint"] = backend.get("endpoint")
+        if "image_usable" in data:
+            record["image_usable"] = data["image_usable"]
+        return record
 
     def _check_input_map(self, step: dict) -> None:
         input_map = step.get("input_map")
@@ -195,8 +224,7 @@ class WorkflowRunner:
                   missing: list[str], limitations: list[str]) -> dict:
         image = payload.get("image")
         question = payload.get("question")
-        image_usable = (isinstance(image, str) and image.strip()
-                        and not any(marker in image.lower() for marker in _UNUSABLE_IMAGE_MARKERS))
+        image_usable, usability_basis = self._image_usable(payload, image)
         evidence_index = load_evidence_index(payload.get("vision"), payload.get("environment"),
                                              payload.get("knowledge"))
         evidence_ids = sorted(evidence_index)
@@ -222,6 +250,10 @@ class WorkflowRunner:
             # assumption of zero.
             "unlinked_evidence_ids": unlinked,
             "limitations": list(dict.fromkeys(limitations)),
+            # How the image-usability verdict was reached, stated explicitly:
+            # the provider's own flag, the fixture record, or the file name.
+            # A refusal must be attributable to one of these, never to a guess.
+            "image_usability_basis": usability_basis,
         }
         if not image_usable:
             report["candidate_claims"].append(
@@ -261,9 +293,40 @@ class WorkflowRunner:
             "workflow_version": manifest["version"],
             "compiler": workflow.get("provenance", {}).get("compiler", "phyto-skill-compiler"),
             "agent_model_called": False,
-            "dgx_hardware_used": False,
+            "gpu_observed": False,
         }
         return report
+
+    @staticmethod
+    def _image_usable(payload: dict, image) -> tuple[bool, str]:
+        """Resolve image usability, preferring the vision provider's own verdict.
+
+        Order of authority:
+        1. The vision leg's output — ``image_usable`` is the model's (or the
+           recorded observation's) judgement, and a live/herb/replay run always
+           carries it. This is the only evidence that a real quality gate ran.
+        2. The sealed fixture record, which carries observations: usable by
+           construction, and labelled as such.
+        3. The file name, only when no vision output exists at all — the
+           weakest signal, and reported as such.
+
+        Guessing from the name while a real verdict is available would let a
+        mislabelled file override what the model actually said.
+        """
+        vision = payload.get("vision")
+        if isinstance(vision, dict) and "image_usable" in vision:
+            if vision["image_usable"]:
+                return True, "vision provider reported the image usable"
+            return False, "vision provider reported image_usable=false; no phenotype conclusion drawn"
+        if isinstance(vision, dict) and vision.get("observations"):
+            return True, "sealed fixture observation record (no model verdict in this mode)"
+        if isinstance(vision, dict):
+            return False, "vision output carried no usable observations"
+        if isinstance(image, str) and image.strip():
+            if any(marker in image.lower() for marker in _UNUSABLE_IMAGE_MARKERS):
+                return False, "no vision output; image name carries an unusable marker"
+            return True, "no vision output; image name carries no unusable marker"
+        return False, "no vision output and no image path"
 
     def _trust_level(self, audit: dict, image_usable: bool, evidence_ids: list[str],
                      missing: list[str], unlinked: list[str]) -> str:

@@ -45,6 +45,8 @@
   .badge.replay { color: var(--replay); background: var(--replay-bg); }
   .badge.deterministic { color: var(--deterministic); background: var(--deterministic-bg); }
   .badge.real { color: var(--real); background: var(--real-bg); }
+  .badge.cache { color: var(--deterministic); background: var(--deterministic-bg); }
+  .badge.not_executed { color: var(--muted); background: #eef1f5; }
   .badge.ok { color: var(--ok); background: var(--ok-bg); }
   .badge.bad { color: var(--bad); background: var(--bad-bg); }
   .badge.warn { color: var(--warn); background: var(--warn-bg); }
@@ -116,25 +118,43 @@
 <script>
 const state = { cases: [], selected: null, backend: null };
 
-const BADGE_TEXT = { replay: "回放", deterministic: "确定性", real: "真实推理" };
+const BADGE_TEXT = { replay: "回放", deterministic: "确定性", real: "真实推理",
+                     cache: "缓存命中", not_executed: "未执行" };
 const STATUS_TEXT = { success: "成功", failed: "失败", skipped: "跳过",
                       refused: "拒绝", no_conclusion: "无结论" };
+
+// Every string rendered below can originate from a model reply or the corpus,
+// so nothing is ever inserted as HTML: elements are created and filled with
+// textContent, and the browser treats the content as text — never as markup.
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined && text !== null) node.textContent = String(text);
+  return node;
+}
+
+function badge(kind, text) {
+  return el("span", `badge ${kind}`, text);
+}
 
 async function loadCases() {
   const payload = await (await fetch("/api/cases")).json();
   state.cases = payload.cases;
   state.backend = payload.backend;
   const host = document.getElementById("cases");
-  host.innerHTML = "";
+  host.replaceChildren();
   for (const item of state.cases) {
-    const div = document.createElement("div");
-    div.className = "case";
+    const div = el("div", "case");
+    div.appendChild(el("h3", null, item.title));
+    div.appendChild(el("p", null, item.blurb));
     div.dataset.demoId = item.demo_id;
-    div.innerHTML = `<h3>${item.title}</h3><p>${item.blurb}</p>`;
     div.onclick = () => {
-      document.querySelectorAll(".case").forEach(el => el.classList.remove("selected"));
+      document.querySelectorAll(".case").forEach(node => node.classList.remove("selected"));
       div.classList.add("selected");
       state.selected = item.demo_id;
+      // A case that declares its own backend and mode is meant to be run that
+      // way; the selector follows so the visitor sees what the case needs.
+      if (item.suggested_mode) document.getElementById("mode").value = item.suggested_mode;
     };
     host.appendChild(div);
   }
@@ -147,15 +167,12 @@ async function loadCases() {
   document.querySelector(".case").click();
 }
 
-function badge(kind, text) {
-  return `<span class="badge ${kind}">${text}</span>`;
-}
-
 function render(result) {
   const box = document.getElementById("result");
   box.classList.remove("hidden");
 
   const banner = document.getElementById("banner");
+  banner.replaceChildren();
   if (result.error) {
     banner.className = "banner replay";
     banner.textContent = `运行未执行：${result.error.code} — ${result.error.message}`;
@@ -168,48 +185,56 @@ function render(result) {
   }
 
   const steps = document.getElementById("steps");
-  steps.innerHTML = "";
+  steps.replaceChildren();
   for (const step of result.steps || []) {
-    const div = document.createElement("div");
-    div.className = "step";
+    const div = el("div", "step");
+    const head = el("div", "head");
+    head.appendChild(el("span", "name", step.provider));
+    head.appendChild(badge(step.badge, BADGE_TEXT[step.badge] || step.badge));
     const statusKind = step.status === "success" ? "ok" : (step.status === "skipped" ? "warn" : "bad");
-    div.innerHTML = `
-      <div class="head">
-        <span class="name">${step.provider}</span>
-        ${badge(step.badge, BADGE_TEXT[step.badge] || step.badge)}
-        ${badge(statusKind, STATUS_TEXT[step.status] || step.status)}
-        <span class="muted">mode: ${step.mode}</span>
-      </div>
-      <div class="reason">${step.badge_reason}</div>
-      ${step.detail ? `<div class="meta">失败分类：${step.detail}</div>` : ""}
-      ${step.evidence_ids && step.evidence_ids.length
-        ? `<div class="meta">证据 ID：${step.evidence_ids.join(", ")}</div>` : ""}`;
+    head.appendChild(badge(statusKind, STATUS_TEXT[step.status] || step.status));
+    head.appendChild(el("span", "muted", `mode: ${step.mode}`));
+    div.appendChild(head);
+    div.appendChild(el("div", "reason", step.badge_reason || ""));
+    if (step.detail) div.appendChild(el("div", "meta", `失败分类：${step.detail}`));
+    if (step.evidence_ids && step.evidence_ids.length) {
+      div.appendChild(el("div", "meta", `证据 ID：${step.evidence_ids.join(", ")}`));
+    }
     steps.appendChild(div);
   }
 
   const audit = document.getElementById("audit");
-  audit.innerHTML = "";
+  audit.replaceChildren();
   const a = result.audit || {};
   const rows = [
     ["结论状态", STATUS_TEXT[a.status] || a.status || "—"],
     ["信任级别", a.trust_level || "—"],
+    ["可用性判定依据", a.image_usability_basis || "—"],
     ["有证据支持的声明", (a.claims || []).length],
     ["被拒绝的声明", (a.refused_claims || []).length],
     ["未能关联的知识证据", (a.unlinked_evidence_ids || []).join(", ") || "无"],
     ["缺失来源", (a.missing_inputs || []).join(", ") || "无"],
   ];
   for (const [key, value] of rows) {
-    audit.innerHTML += `<dt>${key}</dt><dd>${value}</dd>`;
+    audit.appendChild(el("dt", null, key));
+    audit.appendChild(el("dd", null, value));
   }
 
   const claims = document.getElementById("claims");
-  claims.innerHTML = "";
+  claims.replaceChildren();
   for (const claim of (a.claims || [])) {
-    claims.innerHTML += `<li>${badge("ok", "支持")} ${claim.text}
-      <span class="muted">（证据：${(claim.evidence_ids || []).join(", ")}）</span></li>`;
+    const item = el("li");
+    item.appendChild(badge("ok", "支持"));
+    item.appendChild(document.createTextNode(` ${claim.text} `));
+    item.appendChild(el("span", "muted",
+      `（证据：${(claim.evidence_ids || []).join(", ")}）`));
+    claims.appendChild(item);
   }
   for (const refusal of (a.refused_claims || [])) {
-    claims.innerHTML += `<li>${badge("bad", "拒绝")} ${refusal}</li>`;
+    const item = el("li");
+    item.appendChild(badge("bad", "拒绝"));
+    item.appendChild(document.createTextNode(` ${refusal}`));
+    claims.appendChild(item);
   }
 
   document.getElementById("report").textContent =

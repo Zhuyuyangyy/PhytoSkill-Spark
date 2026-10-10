@@ -11,6 +11,11 @@ apart after using the demo:
 
 Every payload is a real input the pipeline accepts; nothing here is a mock-up
 of a Skill's output.
+
+A case may also declare its own backend (and a suggested mode). That is how the
+replay case stays zero-configuration: the recorded-observations file ships with
+the repository, so the visitor selects the case and runs it — no environment
+variable, no GPU, no manual setup.
 """
 
 from __future__ import annotations
@@ -34,9 +39,16 @@ REPLAY_REAL = {
     "demo_id": "replay-real-quality-gate",
     "title": "真实推理回放 · 质量门拒绝",
     "blurb": ("live 模式 + replay 后端：返回 DGX Spark 上真实推理的已记录观测"
-              "（artifacts/dgx/vision-runs.json）。该记录里模型判定图像不可用、"
-              "没有区域——于是质量门拒绝，不产生任何表型结论。这是诚实机制在"
+              "（artifacts/dgx/vision-runs.json，随仓库分发，无需任何环境配置）。"
+              "该记录里模型判定图像不可用、没有区域——于是质量门依据模型自己的"
+              "image_usable=false 拒绝，不产生任何表型结论。这是诚实机制在"
               "真实数据上的样子，不是合成的成功路径。"),
+    # The case declares where its observations come from, so a real-record
+    # replay needs no environment setup: the engine applies this backend for
+    # this run and restores the environment afterwards. Every other case is
+    # decided by the environment.
+    "backend": "replay@artifacts/dgx/vision-runs.json",
+    "suggested_mode": "live",
     "payload": {
         # The workflow maps the vision leg's image_path from $.image. The
         # case_id stays the demo subject's: the deterministic fixture legs are
