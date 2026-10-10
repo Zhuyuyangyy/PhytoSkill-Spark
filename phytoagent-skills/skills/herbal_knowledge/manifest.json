@@ -1,6 +1,6 @@
 {
   "name": "herbal_knowledge",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "检索与药用植物问题有关的可核实资料并返回证据ID。适用于本草及栽培证据查询；图像定位、无来源断言或面向患者的处方不使用。",
   "author": "PhytoSkill-Spark contributors",
   "runtime": "local_python",
@@ -25,13 +25,13 @@
     "SKILL.md": "718347a0a9d366d08c681f486b00d9af0acb3d94606138589a48497408c8869b",
     "evals/evals.json": "e1771f708bb8dbf293aed4df9434bba89f28094d5e7f704e87dc4934e78b8396",
     "examples/request.json": "a8879ce18be7aacc87b4906e8e8d1a05618f60afdad40d624831e6191a43e752",
-    "fixture.json": "7114c61a7bb484ebf6f79e84e33eb41a743c03bfacb172b21f931d102aead32b",
-    "metadata.json": "6a167bfb7e3653e44b2afaef638a71e94fa1d4ed37bf28f45ae3a25d9d1b0083",
+    "fixture.json": "104010fe934e773734d44070ed3f3fe06dbf8202f6b2f7bc7e0fae108193142d",
+    "metadata.json": "8c5cf1e806cf2907c5dd35ee0bcaf1a2a26a16a296f97f26c245a5e4d9a0d9a1",
     "references/contract.md": "51494f111e2f590196f9e1cff87fe19f78bba06137298a8e0b6f832433bbacd6",
-    "schema.json": "7b53ef33607704d94ec076f1a0b5a7b47aacf6bd46955675410d2568c9570557",
+    "schema.json": "2c6d000be1ae51cd9ac32a5e9a22da4c9dba078a18fc3acacb597dbcec151a9f",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "47ed2d7530fdeb4e5e1ddd0d5689ac8367d8f3089ce36ad59423b3eaeb00468b",
     "skill.py": "fc4b0cec064eee87bb749e35368cd726b47233e422abae74a1ea725c684870b4"
   },
-  "manifest_sha256": "e16d028f0ddde6237ce9ff0efbf1ebed1f7e8605aa26ccf4d89355a07438a933"
+  "manifest_sha256": "da2c45f86488083bd71032ec4f2f9ba92c607d8415757bcb74650e938a1912b8"
 }

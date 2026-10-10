@@ -22,6 +22,8 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from corpus.ranking import BM25Index, DEFAULT_WEIGHTS, tokenise
+
 
 CORPUS_DIR = Path(__file__).resolve().parents[1] / "corpus"
 
@@ -42,7 +44,14 @@ class CorpusChunk:
     phenotype_tags: list[str]
     corpus_version: str
 
-    def to_evidence(self, score: float) -> dict:
+    def to_evidence(self, score: float, *, bm25_score: float = 0.0,
+                    corpus_digest: str | None = None) -> dict:
+        """Build the evidence record. ``score`` is overlap; ``bm25_score`` is rank.
+
+        ``corpus_digest`` pins the corpus build a citation came from. Without it
+        an evidence ID names a chunk but not which corpus snapshot produced it,
+        which is not enough to reproduce a citation later.
+        """
         return {
             "evidence_id": self.evidence_id,
             "source_kind": "local_corpus",
@@ -52,7 +61,9 @@ class CorpusChunk:
             "content": self.content,
             "supports_phenotypes": list(self.phenotype_tags),
             "retrieval_score": round(score, 4),
+            "bm25_score": round(bm25_score, 4),
             "corpus_version": self.corpus_version,
+            "corpus_digest": corpus_digest,
         }
 
 
@@ -84,6 +95,7 @@ class LocalCorpus:
         self.index_path = self.corpus_dir / "index.json"
         self._chunks: list[CorpusChunk] | None = None
         self._digest: str | None = None
+        self._bm25: BM25Index | None = None
 
     # ── loading ───────────────────────────────────────────────────────────
 
@@ -127,13 +139,43 @@ class LocalCorpus:
 
     # ── retrieval ─────────────────────────────────────────────────────────
 
+    # ── BM25 index ────────────────────────────────────────────────────────
+
+    @property
+    def bm25(self) -> BM25Index:
+        """BM25 over every chunk, built once and reused.
+
+        The index is built over **all** chunks, not just the ones a given query
+        matches, because inverse document frequency is a property of the whole
+        corpus. Filtering happens afterwards, at scoring time.
+        """
+        if self._bm25 is None:
+            documents = [{"title": tokenise(chunk.title),
+                          "content": tokenise(chunk.content),
+                          "tags": tokenise(" ".join(chunk.species_tags
+                                                    + chunk.phenotype_tags))}
+                         for chunk in self.chunks]
+            self._bm25 = BM25Index(documents, weights=dict(DEFAULT_WEIGHTS))
+
+        return self._bm25
+
     def search(self, query: str, *, species: str | None = None,
                phenotypes: list[str] | None = None, limit: int = 5,
                min_score: float = 0.05) -> list[dict]:
         """Return evidence records, best first. Empty is a valid, honest result.
 
-        ``min_score`` defaults to a non-zero threshold: a chunk with no lexical
-        overlap is not a match, and returning it would be a fabricated citation.
+        Two numbers are computed per candidate, and they do different jobs:
+
+        * ``retrieval_score`` — lexical overlap in [0, 1]. This is the **gate**.
+          ``min_score`` defaults to a non-zero threshold because a chunk with no
+          overlap is not a match, and returning it would be a fabricated
+          citation.
+        * ``bm25_score`` — the BM25 score, used for **ranking**. It applies
+          inverse document frequency and length normalisation, so a term that
+          occurs everywhere and a term that occurs once are not treated alike.
+
+        Keeping the gate and the ranker separate means the no-fabrication
+        property is unchanged while ordering improves.
         """
         if not isinstance(query, str) or not query.strip():
             raise ValueError("A non-empty query is required")
@@ -142,17 +184,23 @@ class LocalCorpus:
         if not 0.0 <= min_score <= 1.0:
             raise ValueError("min_score must be within [0, 1]")
         wanted = set(phenotypes or [])
-        scored: list[tuple[float, CorpusChunk]] = []
-        for chunk in self.chunks:
+        digest = self.digest()
+        candidates: list[tuple[float, int, CorpusChunk]] = []
+        for position, chunk in enumerate(self.chunks):
             if species and chunk.species_tags and species not in chunk.species_tags:
                 continue
             if wanted and not wanted.intersection(chunk.phenotype_tags):
                 continue
-            score = _overlap(query, f"{chunk.title} {chunk.content}")
-            if score >= min_score:
-                scored.append((score, chunk))
-        scored.sort(key=lambda item: (-item[0], item[1].evidence_id))
-        return [chunk.to_evidence(score) for score, chunk in scored[:limit]]
+            overlap = _overlap(query, f"{chunk.title} {chunk.content}")
+            if overlap >= min_score:
+                candidates.append((overlap, position, chunk))
+
+        query_tokens = tokenise(query)
+        ranked = [(overlap, self.bm25.score(query_tokens, position), chunk)
+                  for overlap, position, chunk in candidates]
+        ranked.sort(key=lambda item: (-item[1], item[0], item[2].evidence_id))
+        return [chunk.to_evidence(overlap, bm25_score=bm25, corpus_digest=digest)
+                for overlap, bm25, chunk in ranked[:limit]]
 
     def evidence_ids(self) -> list[str]:
         return sorted(chunk.evidence_id for chunk in self.chunks)
@@ -166,7 +214,12 @@ class LocalCorpus:
             "corpus_sha256": self.digest(),
             "chunks": len(self.chunks),
             "source_files": by_file,
-            "retriever": "deterministic_character_bigram_overlap",
+            # Ranking is BM25 (inverse document frequency + length normalisation)
+            # over character bigrams for CJK and whole words for Latin script.
+            "ranker": "bm25_character_bigram",
+            "ranker_constants": {"k1": self.bm25.k1, "b": self.bm25.b},
+            "field_weights": dict(DEFAULT_WEIGHTS),
+            "gate": "lexical_overlap",
             "embedding_model": "none",
             "vector_index": "none",
         }
@@ -174,4 +227,6 @@ class LocalCorpus:
 
 def load_evidence_index_from_corpus(corpus: LocalCorpus) -> dict[str, dict]:
     """Build the evidence_id -> record index a ClaimAuditor checks against."""
-    return {chunk.evidence_id: chunk.to_evidence(0.0) for chunk in corpus.chunks}
+    digest = corpus.digest()
+    return {chunk.evidence_id: chunk.to_evidence(0.0, corpus_digest=digest)
+            for chunk in corpus.chunks}

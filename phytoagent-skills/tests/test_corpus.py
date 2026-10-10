@@ -114,11 +114,70 @@ def test_an_invalid_limit_or_threshold_is_refused(corpus):
 
 def test_the_stats_report_the_retriever_honestly(corpus):
     stats = corpus.stats()
-    assert stats["retriever"] == "deterministic_character_bigram_overlap"
+    assert stats["ranker"] == "bm25_character_bigram"
+    assert stats["ranker_constants"] == {"k1": 1.2, "b": 0.75}
+    assert stats["gate"] == "lexical_overlap"
     assert stats["embedding_model"] == "none"
     assert stats["vector_index"] == "none"
     assert stats["chunks"] == len(corpus.chunks)
     assert set(stats["source_files"]) == {chunk.source_file for chunk in corpus.chunks}
+
+
+def test_every_result_carries_a_bm25_score_and_the_corpus_digest(corpus):
+    """A citation must name which corpus build it came from, not just a chunk."""
+    for record in corpus.search("黄芪 心脾两虚", species="黄芪", limit=5):
+        assert "bm25_score" in record
+        assert record["corpus_digest"] == corpus.digest()
+        # Overlap stays the gate and keeps its [0, 1] contract.
+        assert 0.0 <= record["retrieval_score"] <= 1.0
+
+
+def test_results_are_ordered_by_bm25_best_first(corpus):
+    results = corpus.search("甘草与甘遂配伍禁忌", limit=5)
+    scores = [record["bm25_score"] for record in results]
+    assert scores == sorted(scores, reverse=True)
+
+
+def test_a_rare_term_outranks_a_common_one(corpus):
+    """Inverse document frequency: the discriminating term decides the order.
+
+    甘草 appears across many chunks, so a query naming it plus a rare herb must
+    put the chunk carrying *both* first. Raw overlap scored every 甘草 chunk
+    alike, which is exactly the blind spot BM25 removes.
+    """
+    results = corpus.search("甘草 甘遂", limit=5)
+    assert results, "the corpus still contains the herb interaction record"
+    top = results[0]
+    assert "甘遂" in top["content"]
+    assert "甘草" in top["content"]
+    # And it must beat a chunk that has 甘草 but not 甘遂.
+    others = [record for record in results[1:] if "甘遂" not in record["content"]]
+    if others:
+        assert top["bm25_score"] > max(record["bm25_score"] for record in others)
+
+
+def test_bm25_discounts_a_verbose_document():
+    """Length normalisation: repeated padding must not inflate a score."""
+    from corpus.ranking import BM25Index
+
+    documents = [
+        {"title": ["人参"], "content": ["人参 补气"] * 1, "tags": []},
+        {"title": ["人参"], "content": (["人参 补气"] * 12), "tags": []},
+    ]
+    index = BM25Index(documents)
+    short = index.score(["人参", "补气"], 0)
+    long = index.score(["人参", "补气"], 1)
+    # Twelve copies of the same phrase is not twelve times the evidence.
+    assert long < short * 4
+
+
+def test_tokenise_keeps_latin_identifiers_intact_and_splits_cjk():
+    from corpus.ranking import tokenise
+
+    assert "herb_interactions" in tokenise("herb_interactions-1 甘草")
+    # CJK becomes overlapping bigrams; a single character still yields itself.
+    assert "甘草" in tokenise("甘草")
+    assert tokenise("甘") == ["甘"]
 
 
 def test_the_corpus_is_TCM_knowledge_not_plant_pathology(corpus):
