@@ -165,9 +165,9 @@ def main(argv: list[str] | None = None) -> int:
             if getattr(args, "kind", None):
                 tasks = [task for task in tasks if task.kind in args.kind]
             from demo.fixture_workspace import fixture_registry
-            from runtime.executor import SkillExecutor
+            from runtime.shield import ShieldRuntime
             with fixture_registry() as registry:
-                harness = AgentHarness(registry, SkillExecutor(registry),
+                harness = AgentHarness(registry, ShieldRuntime(registry),
                                        Transport(config, poster=_never_called), config)
                 _print({
                     "scope": "dry_run_no_network",

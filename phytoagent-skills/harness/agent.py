@@ -11,6 +11,14 @@ What is real here and what is not, stated plainly:
 * Not real: the content returned by the tools. Every Skill still runs in
   ``fixture`` mode over synthetic cases, so a tool result is a synthetic
   observation, not a plant diagnosis. ``dgx_hardware_used`` stays false.
+
+Governance: every tool call goes through the AgentShield Runtime
+(:class:`runtime.shield.ShieldRuntime`) — permission-checked against the
+manifest the package was sealed with, budgeted, traced and recorded in the
+audit log. An A/B run gives each arm its own independently initialised Shield,
+so governance is held constant while no arm's call count, trace id or audit
+log leaks into the other. A call that bypassed the Shield would be neither
+checked nor traced, and the claim that every call is governed would be false.
 """
 
 from __future__ import annotations
@@ -22,7 +30,8 @@ from typing import Any
 from harness.config import HarnessConfig
 from harness.errors import HarnessError
 from harness.transport import Transport
-from sdk.exceptions import SkillError
+from runtime.shield import BROKER_INFERENCE, ShieldRuntime
+from sdk.exceptions import ShieldError, SkillError
 
 BASE_SYSTEM_PROMPT = (
     "你是药用植物异常研判任务的调度者。"
@@ -50,8 +59,8 @@ def _clip(text: str | None, limit: int = MAX_TRACE_TEXT_CHARS) -> tuple[str | No
 
 
 class AgentHarness:
-    def __init__(self, registry, executor, transport: Transport, config: HarnessConfig,
-                 *, tool_mode: str = "fixture"):
+    def __init__(self, registry, shield: ShieldRuntime, transport: Transport,
+                 config: HarnessConfig, *, tool_mode: str = "fixture"):
         """``tool_mode`` selects how the Skills answer tool calls.
 
         ``fixture`` is the default: every Skill returns its published synthetic
@@ -59,9 +68,11 @@ class AgentHarness:
         ``herb`` reach the DGX Spark node and return real observations, which is
         what a claim about real behaviour needs — at the cost of a 12-167 s
         inference per image, mitigated by the observation cache.
+
+        ``shield`` is the governed call interface every tool call goes through.
         """
         self.registry = registry
-        self.executor = executor
+        self.shield = shield
         self.transport = transport
         self.config = config
         self.tool_mode = tool_mode
@@ -171,8 +182,19 @@ class AgentHarness:
         # A Skill that does not implement tool_mode fails loudly rather than
         # silently answering with its fixture, which would put synthetic data in
         # a run presented as real.
-        result = self.executor.call(name, arguments, mode=self.tool_mode,
-                                    tool_call_id=call_id)
+        try:
+            result = self.shield.call(name, arguments, mode=self.tool_mode,
+                                      tool_call_id=call_id,
+                                      requested_permissions=self._requested_permissions(name))
+        except ShieldError as exc:
+            # A middleware rejection is recorded, not raised: one blocked call
+            # must not abort the task, and the model is told the call did not
+            # run rather than being left without an answer.
+            record.update(status="rejected", error_code=type(exc).__name__)
+            return self._tool_message(call_id, {
+                "status": "failed",
+                "error": {"code": type(exc).__name__, "message": str(exc)},
+            }), record
         record.update(
             status=result["status"],
             duration_ms=result["duration_ms"],
@@ -185,6 +207,39 @@ class AgentHarness:
             if isinstance(data, dict) and "completeness" in data:
                 record["completeness"] = data["completeness"]
         return self._tool_message(call_id, result), record
+
+    def _requested_permissions(self, name: str) -> list[str]:
+        """The permissions this call needs, taken from the package's own manifest.
+
+        Least privilege in both directions: the call asks for exactly what the
+        sealed manifest declares, and a ``live``/``herb`` call additionally
+        carries the broker token — but only when the package declares a broker,
+        so a non-inference Skill can never borrow one.
+        """
+        manifest = self.registry.get(name)["manifest"]
+        permissions = list((manifest.get("permissions") or {}).get("filesystem") or [])
+        broker = (manifest.get("permissions") or {}).get("backend_broker") or {}
+        if self.tool_mode in ("live", "herb") and broker.get("inference"):
+            permissions.append(BROKER_INFERENCE)
+        return permissions
+
+    def use_shield(self, shield: ShieldRuntime) -> None:
+        """Point the harness at a different Shield instance.
+
+        An A/B run gives each arm its own Shield, initialised with identical
+        configuration. A shared instance would carry one arm's call count,
+        trace id and audit log into the other arm's measurement, and a budget
+        exhausted by one arm would truncate the other — an ordering effect
+        masquerading as a treatment effect.
+        """
+        self.shield = shield
+
+    def governance_report(self) -> dict:
+        """What the Shield saw: the audit trail behind every governed call."""
+        report = self.shield.report()
+        return {"trace_id": report["trace_id"],
+                "tool_calls_traced": len(report["calls"]),
+                "blocked_tool_calls": report["blocked"]}
 
     def _tool_message(self, call_id: str, payload: dict) -> dict:
         text = json.dumps(payload, ensure_ascii=False)

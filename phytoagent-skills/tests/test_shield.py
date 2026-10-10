@@ -11,7 +11,8 @@ from registry.signer import generate_keypair, sign_package
 from runtime.executor import SkillExecutor
 from runtime.shield import (TRUST_INSUFFICIENT, TRUST_LIMITED, TRUST_SUPPORTED, BudgetExceeded,
                             ClaimAuditor, PermissionViolation, ShieldError, ShieldRuntime,
-                            TraceError, collect_evidence_ids, load_evidence_index)
+                            TraceError, call_or_failure, collect_evidence_ids,
+                            load_evidence_index)
 from sdk.exceptions import RegistryError
 from sdk.schema import read_json
 
@@ -293,3 +294,13 @@ def test_the_plain_executor_is_still_available(domain_registry):
     executor = SkillExecutor(domain_registry)
     assert executor.call("plant_vision", FIXTURE_INPUT, mode="fixture",
                          tool_call_id="plain-1")["status"] == "success"
+
+
+def test_a_middleware_rejection_becomes_a_failed_call_not_a_crash(runtime):
+    """Batch drivers survive one blocked call; the rejection is still traced."""
+    result = call_or_failure(runtime, "plant_vision", FIXTURE_INPUT, mode="fixture",
+                             tool_call_id="blocked-1", requested_permissions=["network"])
+    assert result["status"] == "failed"
+    assert result["error"]["code"] == "PermissionViolation"
+    assert runtime.report()["blocked"]
+    assert runtime.report()["blocked"][0]["tool_call_id"] == "blocked-1"

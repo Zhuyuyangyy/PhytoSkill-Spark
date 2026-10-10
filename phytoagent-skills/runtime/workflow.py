@@ -3,7 +3,7 @@
 A compiled workflow Skill declares dependencies, order, input mapping and
 refusal policy. This module is the part that actually performs that plan: it
 resolves each ``$.field`` reference, calls the declared provider Skill through
-the Shield, and hands the assembled provider results to the fusion step.
+the Shield — the fusion step included — and audits the assembled result.
 
 The provider Skills are never reimplemented here. If a provider is missing from
 the registry, the step is recorded as skipped rather than fabricated.
@@ -37,16 +37,6 @@ PROVIDER_PERMISSIONS = {name: tuple(CAPABILITIES[name]["default_permissions"])
                         for name in PROVIDER_SKILLS}
 
 _UNUSABLE_IMAGE_MARKERS = ("blur", "模糊", "unusable", "low-quality", "low_quality")
-
-
-def _first_id(record: Any, collection: str, field_name: str) -> str | None:
-    """First evidence identifier a provider result exposes, if any."""
-    if not isinstance(record, dict):
-        return None
-    for item in record.get(collection) or []:
-        if isinstance(item, dict) and item.get(field_name):
-            return item[field_name]
-    return None
 
 
 class WorkflowRunner:
@@ -86,10 +76,30 @@ class WorkflowRunner:
                 raise ShieldError(f"Step {step['id']} calls {provider}, which the package does not declare")
             self._check_input_map(step)
             if provider == "evidence_fusion":
+                # The fusion step is a provider call like any other: registered,
+                # permission-checked, traced, and its failure recorded. Writing
+                # status="success" here without calling the Skill would claim
+                # linkage work that never happened.
                 self._guard_fusion_inputs(payload, missing)
-                report_steps.append({"id": step["id"], "provider_skill": provider,
-                                     "status": "success",
-                                     "evidence_ids": collect_evidence_ids(payload)})
+                record = self.runtime.registry.get(provider)
+                if not isinstance(record, dict) or not record.get("manifest"):
+                    raise ShieldError(f"Provider {provider} is not registered; refusing to fabricate it")
+                # Fusion is deterministic linkage with no model behind it, so it
+                # always runs in fixture mode — the same choice the DGX chain
+                # scripts make when the vision leg is live.
+                call = self.runtime.call(provider, self._map_input(payload, step["input_map"]),
+                                         mode="fixture",
+                                         tool_call_id=f"{tool_call_id}:step{index}",
+                                         requested_permissions=list(PROVIDER_PERMISSIONS[provider]))
+                if call["status"] != "success":
+                    missing.append(provider)
+                    report_steps.append({"id": step["id"], "provider_skill": provider,
+                                         "status": "failed",
+                                         "detail": call["error"]["code"]})
+                    continue
+                payload = {**payload, "fusion": call["data"]}
+                report_steps.append({"id": step["id"], "provider_skill": provider, "status": "success",
+                                     "evidence_ids": collect_evidence_ids(call["data"])})
                 continue
             request_field, provider_key, result_key = _SOURCE_FIELD[provider]
             if provider_key not in step["input_map"]:
@@ -172,9 +182,11 @@ class WorkflowRunner:
         evidence_index = load_evidence_index(payload.get("vision"), payload.get("environment"),
                                              payload.get("knowledge"))
         evidence_ids = sorted(evidence_index)
-        vision_id = _first_id(payload.get("vision"), "observations", "observation_id")
+        claims = self._observation_claims(payload, image_usable=image_usable)
         asks_for_certain_cause = isinstance(question, str) and (
             "即使证据不足" in question or "确定病因" in question or "确诊" in question)
+        fusion = payload.get("fusion")
+        unlinked = list(fusion.get("unlinked_evidence_ids") or []) if isinstance(fusion, dict) else []
 
         report = {
             "status": "success",
@@ -182,13 +194,15 @@ class WorkflowRunner:
             "species": payload.get("species", ""),
             "workflow": manifest["name"],
             "steps": steps,
-            "claims": ([{"text": "观察到叶缘黄化区域", "evidence_ids": [vision_id]}]
-                       if image_usable and vision_id else []),
+            "claims": claims,
             # Refusals are recorded as claims the auditor must reject, so the
             # reason is attributable to a specific policy instead of vanishing.
             "candidate_claims": [],
             "missing_inputs": list(dict.fromkeys(missing)),
-            "unlinked_evidence_ids": [],
+            # Knowledge evidence the fusion step could not link to an observed
+            # phenotype. Reported as the fusion Skill computed it, not as an
+            # assumption of zero.
+            "unlinked_evidence_ids": unlinked,
             "limitations": list(dict.fromkeys(limitations)),
         }
         if not image_usable:
@@ -214,7 +228,8 @@ class WorkflowRunner:
         report["refused_claims"] = audit["refused_claims"]
         report["violations"] = audit["violations"]
         report["evidence_ids"] = audit["evidence_ids"]
-        report["trust_level"] = self._trust_level(audit, image_usable, evidence_ids, missing)
+        report["trust_level"] = self._trust_level(audit, image_usable, evidence_ids, missing,
+                                                  unlinked)
         report["status"] = "refused" if report["trust_level"] == TRUST_INSUFFICIENT else "success"
         # A run that produced no evidence chain is not an assessment, however
         # clean the individual steps looked. Saying so keeps "no conclusion" from
@@ -233,9 +248,39 @@ class WorkflowRunner:
         return report
 
     def _trust_level(self, audit: dict, image_usable: bool, evidence_ids: list[str],
-                     missing: list[str]) -> str:
+                     missing: list[str], unlinked: list[str]) -> str:
         if audit["violations"] or not audit["supported_claims"]:
             return TRUST_INSUFFICIENT
-        if not image_usable or missing or len(evidence_ids) < 2:
+        if not image_usable or missing or unlinked or len(evidence_ids) < 2:
             return TRUST_LIMITED
         return TRUST_SUPPORTED
+
+    def _observation_claims(self, payload: dict, *, image_usable: bool) -> list[dict]:
+        """One claim per usable observation, derived from what was observed.
+
+        Both the wording and the structured assertion come from the observation
+        record itself, so a non-yellowing observation can no longer be worded as
+        leaf-margin yellowing while citing a perfectly valid evidence id. An
+        ``unknown`` phenotype is an observation without a name: it cannot
+        support any claim about what was seen, so it produces none.
+        """
+        vision = payload.get("vision")
+        if not image_usable or not isinstance(vision, dict):
+            return []
+        claims: list[dict] = []
+        for observation in vision.get("observations") or []:
+            if not isinstance(observation, dict):
+                continue
+            phenotype = observation.get("phenotype")
+            observation_id = observation.get("observation_id")
+            if not phenotype or phenotype == "unknown" or not observation_id:
+                continue
+            region = (observation.get("region") or {}).get("label") or "未标注区域"
+            assertion = {"phenotype": phenotype}
+            for key in ("case_id", "species"):
+                if vision.get(key):
+                    assertion[key] = vision[key]
+            claims.append({"text": f"在{region}区域观察到表型{phenotype}",
+                           "evidence_ids": [observation_id],
+                           "asserts": assertion})
+        return claims

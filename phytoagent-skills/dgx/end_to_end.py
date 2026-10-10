@@ -23,8 +23,8 @@ from demo.fixture_workspace import PROJECT_ROOT, SKILL_NAMES
 from registry import SkillRegistry
 from registry.signer import generate_keypair, sign_package
 from dgx.cache import ObservationCache
-from runtime.executor import SkillExecutor
-from runtime.shield import ClaimAuditor, ShieldRuntime, load_evidence_index
+from runtime.shield import (BROKER_INFERENCE, ClaimAuditor, ShieldRuntime, call_or_failure,
+                            load_evidence_index)
 from sdk.manifest import seal_manifest
 from sdk.schema import read_json
 from shield.gate import gate_package
@@ -64,17 +64,17 @@ def main() -> int:
 
     registry = SkillRegistry(skills, trusted_public_key=public)
     registry.discover()
-    runtime = ShieldRuntime(registry, trace_id="trace-dgx-e2e-001")
-    executor = SkillExecutor(registry, cache=ObservationCache())
+    runtime = ShieldRuntime(registry, trace_id="trace-dgx-e2e-001",
+                            cache=ObservationCache())
 
     print(f"image   : {image}")
     print(f"species : {species}")
     print(f"model   : {MODEL}\n")
 
     # 1. Real vision on the node's GPU.
-    vision = executor.call("plant_vision", {"case_id": case_id, "species": species,
-                                            "image_path": str(image.resolve())},
-                           mode="live", tool_call_id="dgx-call-1")
+    vision = call_or_failure(runtime, "plant_vision", {
+        "case_id": case_id, "species": species, "image_path": str(image.resolve()),
+    }, mode="live", tool_call_id="dgx-call-1", requested_permissions=[BROKER_INFERENCE])
     print(f"[1/3] plant_vision (live) -> {vision['status']} in {vision['duration_ms']:.0f} ms")
     if vision["status"] != "success":
         print(json.dumps(vision["error"], ensure_ascii=False))
@@ -88,10 +88,11 @@ def main() -> int:
               f"bbox={obs['region']['bbox_normalized']} score={obs['model_score']}")
 
     # 2. Deterministic fusion of what vision actually produced.
-    fusion = executor.call("evidence_fusion", {
+    fusion = call_or_failure(runtime, "evidence_fusion", {
         "case_id": case_id, "species": species,
         "vision": data, "environment": None, "knowledge": None,
-    }, mode="fixture", tool_call_id="dgx-call-2")
+    }, mode="fixture", tool_call_id="dgx-call-2",
+        requested_permissions=["package:read"])
     print(f"\n[2/3] evidence_fusion -> {fusion['status']}")
     if fusion["status"] == "success":
         fused = fusion["data"]

@@ -1,7 +1,7 @@
 {
   "request": "创建一个黄芪健康研判Skill，根据叶片图片、环境参数和知识库分析异常原因，并要求每个结论给出证据。",
   "agent_model_called": false,
-  "dgx_hardware_used": false,
+  "gpu_observed": false,
   "nvidia_verified": false,
   "demo_key_generated_this_run": true,
   "skill": "huangqi-health-assessment",
@@ -31,7 +31,7 @@
       {
         "name": "manifest_integrity",
         "status": "passed",
-        "detail": "manifest_sha256=5ba46e6eb66c6da5590128666b93ec0972e7286b519598c53e8b039867deccbc"
+        "detail": "manifest_sha256=93d5ff8bf1bc5f36229e144efa47f9e90e1c564ce14f1f38a071347f99e1594f"
       },
       {
         "name": "schema_conformance",
@@ -41,7 +41,7 @@
       {
         "name": "permission_least_privilege",
         "status": "passed",
-        "detail": "network denied; no wildcard or write scope"
+        "detail": "network denied; broker limited to declared endpoints; no wildcard or write scope"
       },
       {
         "name": "negative_eval_coverage",
@@ -101,11 +101,16 @@
     ],
     "claims": [
       {
-        "text": "观察到叶缘黄化区域",
+        "text": "在leaf edge区域观察到表型leaf_yellowing",
         "evidence_ids": [
           "obs-yellow-01"
         ],
-        "status": "supported"
+        "status": "supported",
+        "asserts": {
+          "phenotype": "leaf_yellowing",
+          "case_id": "demo-huangqi-001",
+          "species": "黄芪"
+        }
       }
     ],
     "missing_inputs": [],
@@ -126,7 +131,7 @@
       "workflow_version": "0.3.0",
       "compiler": "phyto-skill-compiler@0.3.0",
       "agent_model_called": false,
-      "dgx_hardware_used": false
+      "gpu_observed": false
     }
   },
   "negative_report": {
@@ -191,30 +196,30 @@
       "workflow_version": "0.3.0",
       "compiler": "phyto-skill-compiler@0.3.0",
       "agent_model_called": false,
-      "dgx_hardware_used": false
+      "gpu_observed": false
     }
   },
   "closed_loop": {
     "skill": "huangqi_health_assessment",
     "plan_matches": true,
     "repeat_claims_match": true,
-    "total_tool_calls": 8
+    "total_tool_calls": 11
   },
   "outcome": "pass",
   "trace": {
     "trace_id": "trace-demo-001",
     "scope": "agentshield_runtime_local",
     "agent_model_called": false,
-    "dgx_hardware_used": false,
+    "gpu_observed": false,
     "nvidia_verified": false,
     "calls": [
       {
         "trace_id": "trace-demo-001",
         "tool_call_id": "demo-call-1:step1",
         "skill": "plant_vision",
-        "manifest_sha256": "c35b84694338222de262d5bf661f27689a55155fc476429e03622923d156a01d",
+        "manifest_sha256": "a4eb1d1aea73eea0cbd3d6c0f4049a7ccf7f7dec98648be1b7a951adb69efcfc",
         "status": "success",
-        "duration_ms": 191.801,
+        "duration_ms": 352.704,
         "permissions_used": [
           "case_workspace:read"
         ],
@@ -227,9 +232,9 @@
         "trace_id": "trace-demo-001",
         "tool_call_id": "demo-call-1:step2",
         "skill": "growth_risk",
-        "manifest_sha256": "efeb510775b5c5778bc122b484b6557872305312d441138b69d53d8f449f89bf",
+        "manifest_sha256": "72c691ec2c520344670cbbc9b4d06233593c230b479bd6f6e451477bd7ce6d6e",
         "status": "success",
-        "duration_ms": 199.128,
+        "duration_ms": 329.817,
         "permissions_used": [
           "case_workspace:read"
         ],
@@ -243,9 +248,9 @@
         "trace_id": "trace-demo-001",
         "tool_call_id": "demo-call-1:step3",
         "skill": "herbal_knowledge",
-        "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc",
+        "manifest_sha256": "e16d028f0ddde6237ce9ff0efbf1ebed1f7e8605aa26ccf4d89355a07438a933",
         "status": "success",
-        "duration_ms": 198.076,
+        "duration_ms": 362.203,
         "permissions_used": [
           "corpus:read"
         ],
@@ -256,11 +261,24 @@
       },
       {
         "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-1:step4",
+        "skill": "evidence_fusion",
+        "manifest_sha256": "ea27b32c6a7f9ebff1fa6b94faef32181be89f077ffaeb68e06389416b76cda4",
+        "status": "success",
+        "duration_ms": 642.993,
+        "permissions_used": [
+          "package:read"
+        ],
+        "evidence_ids": [],
+        "detail": ""
+      },
+      {
+        "trace_id": "trace-demo-001",
         "tool_call_id": "demo-call-2:step1",
         "skill": "plant_vision",
-        "manifest_sha256": "c35b84694338222de262d5bf661f27689a55155fc476429e03622923d156a01d",
+        "manifest_sha256": "a4eb1d1aea73eea0cbd3d6c0f4049a7ccf7f7dec98648be1b7a951adb69efcfc",
         "status": "failed",
-        "duration_ms": 188.685,
+        "duration_ms": 350.081,
         "permissions_used": [
           "case_workspace:read"
         ],
@@ -271,9 +289,9 @@
         "trace_id": "trace-demo-001",
         "tool_call_id": "demo-call-2:step3",
         "skill": "herbal_knowledge",
-        "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc",
+        "manifest_sha256": "e16d028f0ddde6237ce9ff0efbf1ebed1f7e8605aa26ccf4d89355a07438a933",
         "status": "failed",
-        "duration_ms": 195.566,
+        "duration_ms": 347.341,
         "permissions_used": [
           "corpus:read"
         ],
@@ -282,11 +300,24 @@
       },
       {
         "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-2:step4",
+        "skill": "evidence_fusion",
+        "manifest_sha256": "ea27b32c6a7f9ebff1fa6b94faef32181be89f077ffaeb68e06389416b76cda4",
+        "status": "success",
+        "duration_ms": 630.265,
+        "permissions_used": [
+          "package:read"
+        ],
+        "evidence_ids": [],
+        "detail": ""
+      },
+      {
+        "trace_id": "trace-demo-001",
         "tool_call_id": "demo-call-3:step1",
         "skill": "plant_vision",
-        "manifest_sha256": "c35b84694338222de262d5bf661f27689a55155fc476429e03622923d156a01d",
+        "manifest_sha256": "a4eb1d1aea73eea0cbd3d6c0f4049a7ccf7f7dec98648be1b7a951adb69efcfc",
         "status": "success",
-        "duration_ms": 187.139,
+        "duration_ms": 336.011,
         "permissions_used": [
           "case_workspace:read"
         ],
@@ -299,9 +330,9 @@
         "trace_id": "trace-demo-001",
         "tool_call_id": "demo-call-3:step2",
         "skill": "growth_risk",
-        "manifest_sha256": "efeb510775b5c5778bc122b484b6557872305312d441138b69d53d8f449f89bf",
+        "manifest_sha256": "72c691ec2c520344670cbbc9b4d06233593c230b479bd6f6e451477bd7ce6d6e",
         "status": "success",
-        "duration_ms": 200.139,
+        "duration_ms": 364.229,
         "permissions_used": [
           "case_workspace:read"
         ],
@@ -315,15 +346,28 @@
         "trace_id": "trace-demo-001",
         "tool_call_id": "demo-call-3:step3",
         "skill": "herbal_knowledge",
-        "manifest_sha256": "db6635d69c6060476543f8dadf03b2d470065825ceb0ed3ae509b428a1d687dc",
+        "manifest_sha256": "e16d028f0ddde6237ce9ff0efbf1ebed1f7e8605aa26ccf4d89355a07438a933",
         "status": "success",
-        "duration_ms": 192.069,
+        "duration_ms": 303.287,
         "permissions_used": [
           "corpus:read"
         ],
         "evidence_ids": [
           "fixture-evidence-01"
         ],
+        "detail": ""
+      },
+      {
+        "trace_id": "trace-demo-001",
+        "tool_call_id": "demo-call-3:step4",
+        "skill": "evidence_fusion",
+        "manifest_sha256": "ea27b32c6a7f9ebff1fa6b94faef32181be89f077ffaeb68e06389416b76cda4",
+        "status": "success",
+        "duration_ms": 558.719,
+        "permissions_used": [
+          "package:read"
+        ],
+        "evidence_ids": [],
         "detail": ""
       }
     ],

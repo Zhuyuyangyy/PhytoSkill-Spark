@@ -8,6 +8,12 @@ system prompt. Arms are interleaved per task so that a provider-side change
 mid-run shows up as model-identity drift in the trace rather than as a fake
 treatment effect.
 
+Tool execution is governed, not private: each arm runs its tool calls through
+its own independently initialised :class:`runtime.shield.ShieldRuntime`, with
+identical configuration. Governance is therefore held constant across arms
+while no call count, trace id or audit log leaks from one arm into the other;
+the report carries a per-arm governance summary.
+
 Arm B deliberately pre-loads every instruction instead of expanding it on
 demand, because instructions can only influence tool *selection* if they are
 present before the model chooses. The extra prompt tokens are recorded, which
@@ -30,7 +36,7 @@ from harness.config import MODEL_PRICES_PER_MILLION, HarnessConfig
 from harness.scoring import score_task, summarise
 from harness.tasks import Task, build_tasks, count_by_kind
 from harness.transport import MIN_REQUEST_INTERVAL_SECONDS, Transport
-from runtime.executor import SkillExecutor
+from runtime.shield import ShieldRuntime
 
 NVIDIA_SMI_TIMEOUT_SECONDS = 10
 
@@ -127,6 +133,16 @@ class AbRunner:
             completion_tokens=self._baseline_completion_tokens,
             model=self.config.model)
 
+    def _governed_runtime(self, registry) -> ShieldRuntime:
+        """One Shield per arm, each independently initialised, identical config.
+
+        The budget must cover every task in one arm at the turn limit: the
+        default of 32 would stop a 17-task run mid-experiment, and a truncated
+        experiment looks like a treatment effect. Instances are deliberately
+        not shared between arms — see :meth:`harness.agent.AgentHarness.use_shield`.
+        """
+        return ShieldRuntime(registry, max_calls=max(256, 16 * len(self.tasks)))
+
     def run(self, *, repeat: int = 1) -> dict:
         config = self.config
         config.require_key()
@@ -135,8 +151,10 @@ class AbRunner:
         with self.registry_factory() as registry:
             transport = Transport(config, self.poster,
                                   min_request_interval=self.min_request_interval)
-            harness = AgentHarness(registry, SkillExecutor(registry), transport, config,
-                                   tool_mode=self.tool_mode)
+            # One Shield per arm: same configuration, separate state.
+            shields = {arm: self._governed_runtime(registry) for arm in ARMS}
+            harness = AgentHarness(registry, shields[ARMS[0]], transport,
+                                   config, tool_mode=self.tool_mode)
             packages = {name: {"manifest_sha256": detail["manifest_sha256"],
                                "instructions_sha256": detail["instructions_sha256"],
                                "instructions_chars": detail["instructions_chars"]}
@@ -149,6 +167,7 @@ class AbRunner:
                     harness.tool_mode = task.tool_mode or self.tool_mode
                     for arm in self._arm_order(round_index + task_index):
                         self.progress(f"[r{round_index + 1}] {task.task_id} / {arm}")
+                        harness.use_shield(shields[arm])
                         run = harness.run_task(task, arm=arm)
                         row = score_task(task, run)
                         runs.append(run)
@@ -170,7 +189,12 @@ class AbRunner:
                 "task_tool_modes": {task.task_id: (task.tool_mode or self.tool_mode)
                                     for task in self.tasks},
                 "held_constant": ["model", "endpoint", "sampling_parameters", "tool_definitions",
-                                  "task_set", "harness_code", "max_turns", "turn_loop"],
+                                  "task_set", "harness_code", "max_turns", "turn_loop",
+                                  "tool_call_governance"],
+                # One summary per arm, from that arm's own Shield instance: the
+                # two audit trails are never merged, so neither arm's call
+                # count, trace id or blocked list can appear in the other's.
+                "governance": {arm: _governance_summary(shields[arm]) for arm in ARMS},
                 "tool_definitions_sha256": _digest(json.dumps(harness.tool_definitions(),
                                                               ensure_ascii=False, sort_keys=True)),
                 "skill_packages": packages,
@@ -198,6 +222,14 @@ class AbRunner:
     def _arm_order(seed: int) -> tuple[str, str]:
         """Alternate which arm goes first so ordering cannot masquerade as an effect."""
         return ARMS if seed % 2 == 0 else (ARMS[1], ARMS[0])
+
+
+def _governance_summary(shield: ShieldRuntime) -> dict:
+    """What one arm's Shield saw: trace id, traced calls, blocked calls."""
+    report = shield.report()
+    return {"trace_id": report["trace_id"],
+            "tool_calls_traced": len(report["calls"]),
+            "blocked_tool_calls": report["blocked"]}
 
 
 def _compare(without: dict, with_skill: dict) -> dict:

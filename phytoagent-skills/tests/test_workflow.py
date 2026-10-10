@@ -70,8 +70,12 @@ def test_the_positive_case_executes_every_declared_step(workspace):
     assert [step["status"] for step in report["steps"]] == ["success"] * 4
     assert [step["provider_skill"] for step in report["steps"]] == [
         "plant_vision", "growth_risk", "herbal_knowledge", "evidence_fusion"]
-    # Every provider call went through the shield, so every one is traced.
-    assert len(workspace["runtime"].report()["calls"]) == 3
+    # Four steps means four governed calls: the fusion step is executed through
+    # the Shield like any other provider, not recorded as success untraced.
+    assert len(workspace["runtime"].report()["calls"]) == 4
+    fusion = workspace["runtime"].report()["calls"][-1]
+    assert fusion["skill"] == "evidence_fusion"
+    assert fusion["permissions_used"] == ["package:read"]
 
 
 def test_a_missing_source_is_recorded_and_downgrades_the_trust_level(workspace):
@@ -163,7 +167,8 @@ def test_the_same_skill_can_be_run_again_from_the_registry(workspace):
         mode="fixture", tool_call_id="call-2")
     assert first["workflow"] == second["workflow"]
     assert first["claims"] == second["claims"]
-    assert len(workspace["runtime"].report()["calls"]) == 6
+    # Two runs x four governed provider calls (fusion included).
+    assert len(workspace["runtime"].report()["calls"]) == 8
 
 
 def test_a_package_run_without_the_runtime_never_claims_a_provider_ran(tmp_path):

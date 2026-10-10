@@ -87,7 +87,7 @@ Compiler 不把这种用例伪装成通过的用例。`evals.json` 里它们是 
 
 **治理点不是可调用 Skill。** `skills/agentshield_audit` 是审计入口，但 Agent 选择不调用它时，中间件照样拦截。`tests/test_shield.py::test_skipping_the_audit_skill_does_not_remove_interception` 守住了这一点。
 
-`runtime/workflow.py` 的 `WorkflowRunner` 是工作流 Skill 的实际执行者：解析 `$.field` 引用、经 Shield 调用提供方、把结果按 `result_key` 汇回请求、再交给 Claim-Evidence 审计。提供方缺失时步骤记为 `skipped`，不伪造。
+`runtime/workflow.py` 的 `WorkflowRunner` 是工作流 Skill 的实际执行者：解析 `$.field` 引用、经 Shield 调用提供方——`evidence_fusion` 与其他提供方一样真实调用、做最小权限校验并记入 trace，融合失败记 `failed` 而不是写一个没有发生过的 `success`——把结果按 `result_key` 汇回请求，再交给 Claim-Evidence 审计。提供方缺失时步骤记为 `skipped`，不伪造。报告里的结论按观察记录逐条派生（文字与 `asserts` 都来自 observation 自身），`unlinked_evidence_ids` 取融合步骤的真实计算结果。
 
 ## 五、Claim-Evidence 审计
 
@@ -97,8 +97,11 @@ Compiler 不把这种用例伪装成通过的用例。`evals.json` 里它们是 
 2. **过度确定表述** —— `确诊` / `已确定` / `一定是` / `100%` 等确定性措辞。
 3. **无证据 ID** —— `every_claim_requires_evidence`。
 4. **不可验证来源** —— 证据 ID 不在本次运行的证据索引中。**空索引同样拒绝**：一个无法交代的 ID 不可验证，静默接受它会让编造引用拿到 `SUPPORTED`。
+5. **断言无证据支撑** —— Claim 的结构化断言（`asserts`：表型/物种/案例）在被引证据记录中不存在时拒绝。表型可由 observation 记录的 `phenotype` 或知识条目的 `supports_phenotypes` 承载；两者都没有的记录承载不了任何表型断言。ID 真实不等于证据支持结论。
 
 `agentshield-audit` Skill 的顶层裁决多一档：任一项检查是 `not_run` 时判 `INCOMPLETE`、`trust_level` 降到 `LIMITED`，并在 limitations 里列出未执行的检查。没做过的事不能记成通过——只降裁决而留着 `SUPPORTED` 会读成背书。
+
+**语义边界**：`SUPPORTED` 的含义是"结论受到本次运行内部证据链的支持"，不是"植物的真实病理状态已得到验证"。视觉模型若把正常叶片误判为黄化，断言与证据依然一致，审计仍会判 `SUPPORTED`——观察层面的正确性由独立盲测与人工标注回答（见 `evaluation/` 与 Dev-30 基线），不在 Claim-Evidence 的声明范围内。同理，`case_id`/`species` 自 envelope 继承只能保证*机内一致性*（提供方结果与请求的案例/物种不符时 Runner 直接 `ShieldError`）；envelope 本身来自可信任务上下文需要宿主侧的任务授权，属 R2-A 范围。
 
 可信等级由证据覆盖与硬违规推导，**不是** 0–100 分：
 

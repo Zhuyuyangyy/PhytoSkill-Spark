@@ -6,7 +6,9 @@ Two distinct concerns live here, deliberately separated:
   call. An Agent that simply declines to call the audit Skill is still
   intercepted, because the interception is not a Skill.
 * :class:`ClaimAuditor` turns a finished report into auditable claims. It runs
-  after execution and refuses unsupported claims.
+  after execution and refuses unsupported claims. A claim may carry structured
+  ``asserts``; the auditor then checks that the cited evidence records actually
+  establish them, so a valid evidence id alone never proves a conclusion.
 
 Nothing here calls a language model. Trust levels are derived from evidence
 coverage and hard violations, never from a fabricated 0-100 score.
@@ -28,6 +30,12 @@ from sdk.exceptions import (BudgetExceeded, PermissionViolation, ShieldError, Tr
 TRUST_SUPPORTED = "SUPPORTED"
 TRUST_LIMITED = "LIMITED"
 TRUST_INSUFFICIENT = "INSUFFICIENT"
+
+# The permission token a broker call requests. It is deliberately *not* the
+# string "network": the Skill never holds network access, the broker does. A
+# call carrying this token is allowed only when the manifest declared the
+# matching ``permissions.backend_broker.inference`` block.
+BROKER_INFERENCE = "backend_broker:inference"
 
 
 @dataclass
@@ -55,9 +63,12 @@ class ShieldRuntime:
     """Permission-checking, tracing wrapper around the local Skill executor."""
 
     def __init__(self, registry: SkillRegistry, *, max_calls: int = 32,
-                 trace_id: str | None = None):
+                 trace_id: str | None = None, cache=None):
         self.registry = registry
-        self.executor = SkillExecutor(registry)
+        # The cache is accepted so a long live run can reuse observations
+        # instead of paying a 12-167 s inference per repeated image. It changes
+        # nothing about authorisation or tracing.
+        self.executor = SkillExecutor(registry, cache=cache)
         self.max_calls = max_calls
         self.trace_id = trace_id or f"trace-{time.strftime('%Y%m%d')}-{uuid.uuid4().hex[:6]}"
         self._calls = 0
@@ -101,9 +112,19 @@ class ShieldRuntime:
         """Least-privilege check against the manifest the package was sealed with."""
         declared = manifest.get("permissions", {})
         allowed_filesystem = set(declared.get("filesystem", []))
+        broker = declared.get("backend_broker") or {}
         for permission in requested:
             if permission == "network":
+                # The Skill itself never gets network access, whatever it asks
+                # for. Inference reaches an endpoint only through the broker,
+                # which is a separate, declared, endpoint-scoped permission.
                 raise PermissionViolation(f"{name} requested network access; the package declares none")
+            if permission == BROKER_INFERENCE:
+                if not broker.get("inference"):
+                    raise PermissionViolation(
+                        f"{name} requested broker inference; the package declares no "
+                        "permissions.backend_broker")
+                continue
             # "tool"/"tools" is the capability axis, checked separately below.
             if permission not in allowed_filesystem and permission not in ("tool", "tools"):
                 raise PermissionViolation(
@@ -128,6 +149,24 @@ class ShieldRuntime:
             "calls": self.trace,
             "blocked": [r.to_dict() for r in self.audit_log if r.status == "blocked"],
         }
+
+
+def call_or_failure(runtime: ShieldRuntime, name: str, payload: dict, *, mode: str,
+                    tool_call_id: str, requested_permissions: list[str] | None = None) -> dict:
+    """Run one governed call, reporting a middleware rejection as a failed call.
+
+    A batch driver must survive a single blocked call: the record for that item
+    says the middleware stopped it, and the run continues. Raising here would
+    turn one rejection into the collapse of the whole batch — and a crashed
+    batch is easily mistaken for a broken backend.
+    """
+    try:
+        return runtime.call(name, payload, mode=mode, tool_call_id=tool_call_id,
+                            requested_permissions=requested_permissions)
+    except ShieldError as exc:
+        return {"tool_call_id": tool_call_id, "name": name, "mode": mode,
+                "status": "failed", "data": None, "duration_ms": 0.0,
+                "error": {"code": type(exc).__name__, "message": str(exc)}}
 
 
 def perf_counter() -> float:
@@ -185,17 +224,38 @@ def _is_pattern(marker: str) -> bool:
     return any(character in marker for character in ".*+?[](){}|\\^$")
 
 
+def _record_supports(record: dict, key: str, value: str) -> bool:
+    """Does this evidence record establish ``key == value``?
+
+    ``phenotype`` is special: an observation record carries it directly, and a
+    knowledge record carries the phenotypes it supports. Any other key must
+    equal the record's field of the same name. A record that carries neither
+    establishes nothing, which fails closed.
+    """
+    if not isinstance(record, dict):
+        return False
+    if key == "phenotype":
+        return (record.get("phenotype") == value
+                or value in (record.get("supports_phenotypes") or []))
+    return record.get(key) == value
+
+
 @dataclass
 class ClaimVerdict:
     text: str
     evidence_ids: list[str]
     status: str
     reason: str = ""
+    # The structured assertion the claim carried, echoed into the verdict so a
+    # reader can see what was checked, not only that something passed.
+    asserts: dict | None = None
 
     def to_dict(self) -> dict:
         payload = {"text": self.text, "evidence_ids": self.evidence_ids, "status": self.status}
         if self.reason:
             payload["reason"] = self.reason
+        if self.asserts is not None:
+            payload["asserts"] = self.asserts
         return payload
 
 
@@ -224,21 +284,29 @@ class ClaimAuditor:
             if not isinstance(evidence_ids, list):
                 evidence_ids = []
             evidence_ids = [item for item in evidence_ids if isinstance(item, str) and item]
+            # Echoed into the verdict so the report shows what was asserted and
+            # checked, not only the outcome. A non-dict assertion is malformed
+            # and is refused below rather than echoed as if it were data.
+            asserts = claim.get("asserts")
+            echoed = asserts if isinstance(asserts, dict) else None
             diagnosis = _matches_any(text, UNSUPPORTED_DIAGNOSIS_MARKERS)
             if diagnosis is not None:
                 verdicts.append(ClaimVerdict(text, evidence_ids, "refused",
-                                             f"names a specific cause ({diagnosis}); no evidence can support a diagnosis"))
+                                             f"names a specific cause ({diagnosis}); no evidence can support a diagnosis",
+                                             asserts=echoed))
                 violations.append(f"diagnosis claim refused: {text}")
                 continue
             over_certain = _matches_any(text, OVER_CERTAIN_MARKERS)
             if over_certain is not None:
                 verdicts.append(ClaimVerdict(text, evidence_ids, "refused",
-                                             f"over-certain wording ({over_certain}) without a qualifying source"))
+                                             f"over-certain wording ({over_certain}) without a qualifying source",
+                                             asserts=echoed))
                 violations.append(f"over-certain claim refused: {text}")
                 continue
             if not evidence_ids:
                 verdicts.append(ClaimVerdict(text, [], "refused",
-                                             "no evidence id; every_claim_requires_evidence"))
+                                             "no evidence id; every_claim_requires_evidence",
+                                             asserts=echoed))
                 violations.append(f"unsupported claim refused: {text}")
                 continue
             # Fail closed: an id the run cannot account for is unverifiable, even
@@ -247,10 +315,34 @@ class ClaimAuditor:
             unknown = [item for item in evidence_ids if item not in self.available_evidence]
             if unknown:
                 verdicts.append(ClaimVerdict(text, evidence_ids, "refused",
-                                             f"unverifiable evidence id: {', '.join(sorted(unknown))}"))
+                                             f"unverifiable evidence id: {', '.join(sorted(unknown))}",
+                                             asserts=echoed))
                 violations.append(f"unverifiable evidence id: {', '.join(sorted(unknown))}")
                 continue
-            verdicts.append(ClaimVerdict(text, evidence_ids, "supported"))
+            # A structured assertion is checked against the evidence it cites.
+            # The ids being real is necessary but not sufficient: a claim that
+            # asserts a phenotype must cite a record that actually carries it,
+            # otherwise any observation could be used to support any wording.
+            if asserts is not None:
+                if not isinstance(asserts, dict) or not all(
+                        isinstance(key, str) and bool(key) and isinstance(value, str) and bool(value)
+                        for key, value in asserts.items()):
+                    verdicts.append(ClaimVerdict(text, evidence_ids, "refused",
+                                                 "malformed structured assertion"))
+                    violations.append(f"malformed assertion refused: {text}")
+                    continue
+                records = [self.available_evidence[item] for item in evidence_ids]
+                unproven = sorted(key for key, value in asserts.items()
+                                  if not any(_record_supports(record, key, value)
+                                             for record in records))
+                if unproven:
+                    verdicts.append(ClaimVerdict(
+                        text, evidence_ids, "refused",
+                        f"evidence does not establish {', '.join(unproven)}",
+                        asserts=echoed))
+                    violations.append(f"unsupported assertion refused: {text}")
+                    continue
+            verdicts.append(ClaimVerdict(text, evidence_ids, "supported", asserts=echoed))
         trust = self._trust_level(verdicts, violations, report)
         return {
             "trust_level": trust,
@@ -275,15 +367,21 @@ class ClaimAuditor:
 
 
 def load_evidence_index(*payloads: Any) -> dict[str, dict]:
-    """Build the evidence_id -> record index a ClaimAuditor checks against."""
+    """Build the evidence_id -> record index a ClaimAuditor checks against.
+
+    Each indexed record inherits the case and species of the envelope it
+    arrived in, so a claim that asserts a case or species can be checked
+    against the evidence instead of being trusted from the text.
+    """
     index: dict[str, dict] = {}
     for payload in payloads:
         if not isinstance(payload, dict):
             continue
+        context = {key: payload[key] for key in ("case_id", "species") if key in payload}
         for key in ("evidence", "observations", "factors"):
             for item in payload.get(key) or []:
                 if isinstance(item, dict):
                     for field_name in ("evidence_id", "observation_id", "factor_id"):
                         if item.get(field_name):
-                            index[item[field_name]] = item
+                            index[item[field_name]] = {**context, **item}
     return index

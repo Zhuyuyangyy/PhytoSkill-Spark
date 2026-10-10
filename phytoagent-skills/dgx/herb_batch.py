@@ -15,8 +15,7 @@ from demo.fixture_workspace import PROJECT_ROOT, SKILL_NAMES
 from registry import SkillRegistry
 from registry.signer import generate_keypair, sign_package
 from dgx.cache import ObservationCache
-from runtime.executor import SkillExecutor
-from runtime.shield import ShieldRuntime
+from runtime.shield import BROKER_INFERENCE, ShieldRuntime, call_or_failure
 from sdk.manifest import seal_manifest
 from sdk.schema import read_json
 
@@ -49,8 +48,6 @@ def main() -> int:
 
     registry = SkillRegistry(skills, trusted_public_key=public)
     registry.discover()
-    runtime = ShieldRuntime(registry, trace_id="trace-herb-batch-001")
-    executor = SkillExecutor(registry, cache=ObservationCache())
 
     records = []
     images = sorted(directory.glob("*.jpg")) + sorted(directory.glob("*.png"))
@@ -60,11 +57,16 @@ def main() -> int:
         # A herb calibration must not spend node time re-reading leaf photographs
         # with the herb prompt.
         images = [path for path in images if not path.name.startswith(exclude_prefix)]
+    # One governed call per image; the budget covers the set with headroom.
+    runtime = ShieldRuntime(registry, trace_id="trace-herb-batch-001",
+                            cache=ObservationCache(), max_calls=len(images) + 8)
+
     for index, image in enumerate(images, start=1):
         case_id = f"herb-{index:03d}"
-        response = executor.call("plant_vision", {
+        response = call_or_failure(runtime, "plant_vision", {
             "case_id": case_id, "species": species, "image_path": str(image.resolve()),
-        }, mode=mode, tool_call_id=f"{mode}-call-{index}")
+        }, mode=mode, tool_call_id=f"{mode}-call-{index}",
+            requested_permissions=[BROKER_INFERENCE])
         if response["status"] != "success":
             print(f"[{index:2}] {image.name:18} FAILED {response['error']['message'][:90]}")
             records.append({"image": image.name, "case_id": case_id,

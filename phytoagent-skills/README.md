@@ -76,13 +76,15 @@ huangqi-health-assessment/
 两个关注点刻意分离：
 
 * **编译门禁** `shield/gate.py` —— 包在进入 Registry 前必须通过六项检查：`manifest_integrity`、`schema_conformance`、`permission_least_privilege`、`negative_eval_coverage`、`hidden_instruction_scan`、`project_signature`。门禁与 Compiler 独立：它从磁盘重读包并重新校验，Compiler 无法自证清白。未通过则隔离并给出可操作修复项。
-* **Runtime 中间件** `runtime/shield.py` —— 为每次调用生成 `trace_id` / `tool_call_id`，实时拦截路径、网络、工具白名单与调用预算，记录 Skill 版本、Manifest 哈希、参数摘要与耗时。
+* **Runtime 中间件** `runtime/shield.py` —— 为每次调用生成 `trace_id` / `tool_call_id`，实时拦截路径、网络、工具白名单与调用预算，记录 Skill 版本、Manifest 哈希、参数摘要与耗时。真实 A/B Harness 与 DGX 链路脚本的工具调用都经过这一层（统一走 `ShieldRuntime.call`），没有绕过治理的执行路径；A/B 两臂各用独立初始化的 Shield（配置一致），治理本身不是实验变量。
 
 `agentshield-audit` 是**可调用的审计 Skill**，但真正的权限拦截位于 Runtime 中间件。Agent 选择"不调用审计 Skill"不能绕过治理。
 
 ### Claim-Evidence 审计与可信等级
 
-执行后把报告拆成 Claim，要求每个事实性 Claim 关联 Evidence ID，并检查物种、案例、时间和单位一致性。不使用虚假的 0–100 分：
+执行后把报告拆成 Claim，要求每个事实性 Claim 关联 Evidence ID。Claim 可携带结构化断言（`asserts`：表型、物种、案例），审计器核对被引证据记录是否真正承载该断言——**有效的证据 ID 本身不构成结论的证据**，非黄化观察不能凭一个真实 ID 支持黄化结论。同时检查物种、案例、时间和单位一致性。不使用虚假的 0–100 分：
+
+**语义边界（重要）**：`SUPPORTED` 表示结论受到*本次运行内部证据链*的支持，不表示植物的真实病理状态已得到验证。若视觉模型把正常叶片误判为黄化，断言与证据依然一致，系统仍会判 `SUPPORTED`——观察本身的正确性超出本系统的声明范围，需要独立盲测与人工标注来回答（见"真实数据集"一节）。
 
 | 等级 | 含义 |
 | --- | --- |
@@ -94,10 +96,11 @@ huangqi-health-assessment/
 
 ```json
 {
-  "assessment": "观察到叶缘黄化区域，环境应激是待复核因素之一",
+  "assessment": "在leaf edge区域观察到表型leaf_yellowing",
   "trust_level": "SUPPORTED",
   "claims": [
-    {"text": "观察到叶缘黄化区域", "evidence_ids": ["obs-yellow-01"], "status": "supported"}
+    {"text": "在leaf edge区域观察到表型leaf_yellowing", "evidence_ids": ["obs-yellow-01"], "status": "supported",
+     "asserts": {"phenotype": "leaf_yellowing", "case_id": "demo-huangqi-001", "species": "黄芪"}}
   ],
   "refused_claims": [],
   "trace_id": "trace-demo-001"

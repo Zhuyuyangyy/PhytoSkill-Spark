@@ -73,6 +73,9 @@
       "provider_skill": "evidence_fusion",
       "input_map": {
         "case_id": "$.case_id",
+        "vision": "$.vision",
+        "environment": "$.environment",
+        "knowledge": "$.knowledge",
         "species": "$.species"
       },
       "optional": true,

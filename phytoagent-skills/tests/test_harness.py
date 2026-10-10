@@ -20,7 +20,7 @@ from harness.errors import AuthError, ConfigError, TransportError
 from harness.scoring import score_task
 from harness.tasks import Task, build_tasks
 from harness.transport import Transport
-from runtime.executor import SkillExecutor
+from runtime.shield import BROKER_INFERENCE, ShieldRuntime
 from sdk.schema import package_file, read_json
 
 # A deliberately non-secret value. Shaped unlike a real credential (hyphenated,
@@ -75,7 +75,10 @@ def fixture_input(registry, name):
 
 def build_harness(registry, poster, **overrides):
     transport, config = make_transport(poster, **overrides)
-    return AgentHarness(registry, SkillExecutor(registry), transport, config), transport
+    # The harness runs its tool calls through the Shield, exactly as a real
+    # A/B run does: a raw SkillExecutor here would test a path that no longer
+    # exists in production.
+    return AgentHarness(registry, ShieldRuntime(registry), transport, config), transport
 
 
 class TestConfig:
@@ -445,6 +448,93 @@ class TestAgentLoop:
                 harness.system_prompt("with_everything")
 
 
+class TestGovernedToolCalls:
+    """Every tool call goes through the AgentShield Runtime.
+
+    Governance is held constant across arms rather than being an experimental
+    variable; what these tests pin is that the governed path is the only path
+    the harness has, and that each arm keeps its own audit trail.
+    """
+
+    def test_every_tool_call_is_traced_with_permissions_and_manifest_hash(self):
+        with fixture_registry() as registry:
+            arguments = fixture_input(registry, "plant_vision")
+            poster = ScriptedPoster([
+                (200, completion(tool_calls=tool_call("plant_vision", arguments))),
+                (200, completion(content="已根据工具返回结果完成研判。")),
+            ])
+            transport, config = make_transport(poster)
+            shield = ShieldRuntime(registry)
+            harness = AgentHarness(registry, shield, transport, config)
+            run = harness.run_task(Task(task_id="t", prompt="看看这张黄芪叶片",
+                                        kind="positive_trigger", source="test"),
+                                   arm="without_skill")
+        assert run["executed_skills"] == ["plant_vision"]
+        audit = shield.report()
+        assert len(audit["calls"]) == 1
+        record = audit["calls"][0]
+        assert record["skill"] == "plant_vision"
+        assert record["tool_call_id"] == "call_1"
+        assert len(record["manifest_sha256"]) == 64
+        # The call asks for exactly what the sealed manifest declares.
+        assert record["permissions_used"] == ["case_workspace:read"]
+        assert record["status"] == "success"
+        assert harness.governance_report()["tool_calls_traced"] == 1
+
+    def test_a_blocked_call_is_reported_to_the_model_and_the_loop_survives(self):
+        """A middleware rejection must not abort the task or vanish silently."""
+        with fixture_registry() as registry:
+            arguments = fixture_input(registry, "plant_vision")
+            poster = ScriptedPoster([
+                (200, completion(tool_calls=tool_call("plant_vision", arguments))),
+                (200, completion(content="该调用被治理层拦截，未执行。")),
+            ])
+            transport, config = make_transport(poster)
+            shield = ShieldRuntime(registry, max_calls=0)
+            harness = AgentHarness(registry, shield, transport, config)
+            run = harness.run_task(Task(task_id="t", prompt="看看这张黄芪叶片",
+                                        kind="positive_trigger", source="test"),
+                                   arm="without_skill")
+        assert run["executed_skills"] == []
+        assert run["rejected_calls"] == [{"name": "plant_vision", "code": "BudgetExceeded"}]
+        assert run["stop_reason"] == "final_answer"
+        # The model is told the call did not run, not left without an answer.
+        tool_messages = [json.loads(message["content"]) for message in
+                         poster.requests[1]["body"]["messages"] if message["role"] == "tool"]
+        assert tool_messages[0]["status"] == "failed"
+        assert tool_messages[0]["error"]["code"] == "BudgetExceeded"
+
+    def test_requested_permissions_come_from_the_manifest(self):
+        with fixture_registry() as registry:
+            shield = ShieldRuntime(registry)
+            harness = AgentHarness(registry, shield,
+                                   Transport(HarnessConfig(api_key=SECRET),
+                                             poster=ScriptedPoster([]),
+                                             sleep=lambda _s: None,
+                                             min_request_interval=None),
+                                   HarnessConfig(api_key=SECRET))
+            # Least privilege: exactly what the package declares, nothing more.
+            assert harness._requested_permissions("plant_vision") == ["case_workspace:read"]
+            assert harness._requested_permissions("evidence_fusion") == ["package:read"]
+            # A live/herb call carries the broker token — but only for a package
+            # that declares a broker. growth_risk declares none and gets none.
+            harness.tool_mode = "live"
+            assert harness._requested_permissions("plant_vision") == [
+                "case_workspace:read", BROKER_INFERENCE]
+            assert harness._requested_permissions("growth_risk") == ["case_workspace:read"]
+
+    def test_use_shield_swaps_the_governed_instance(self):
+        """Each A/B arm gets its own Shield; the swap must be explicit."""
+        with fixture_registry() as registry:
+            first, second = ShieldRuntime(registry), ShieldRuntime(registry)
+            harness, _ = build_harness(registry, ScriptedPoster([]))
+            harness.use_shield(first)
+            assert harness.shield is first
+            harness.use_shield(second)
+            assert harness.shield is second
+            assert first is not second
+
+
 class TestScoring:
     def make_run(self, *, selected, text="", stop_reason="final_answer", trace=None):
         return {"arm": "without_skill", "selected_skills": selected, "executed_skills": selected,
@@ -565,6 +655,34 @@ class TestAbRunner:
     def test_arms_alternate_order_so_ordering_cannot_fake_an_effect(self):
         assert AbRunner._arm_order(0) == ("without_skill", "with_skill")
         assert AbRunner._arm_order(1) == ("with_skill", "without_skill")
+
+    def test_each_arm_is_governed_by_its_own_shield_instance(self):
+        """Per-arm Shields: identical configuration, no shared state.
+
+        A shared instance would carry one arm's call count, trace id and audit
+        log into the other arm — and a budget exhausted by one arm would
+        truncate the other, an ordering effect masquerading as a treatment
+        effect. The report must show two independent audit trails.
+        """
+        arguments = {"case_id": "demo-huangqi-001", "species": "黄芪",
+                     "image_path": "fixture://huangqi-leaf-01"}
+        poster = ScriptedPoster([
+            (200, completion(tool_calls=tool_call("plant_vision", arguments, f"call_{n}")))
+            for n in range(20)])
+        config = HarnessConfig(api_key=SECRET, max_turns=2)
+        runner = AbRunner(config, poster=poster, tasks=build_tasks()[:1],
+                          min_request_interval=None)
+        report = runner.run(repeat=1)
+
+        governance = report["governance"]
+        assert set(governance) == {"without_skill", "with_skill"}
+        # Separate instances: separate trace ids, separate call counts.
+        assert governance["without_skill"]["trace_id"] != governance["with_skill"]["trace_id"]
+        # Two turns per task-arm, each traced by that arm's own Shield only.
+        assert governance["without_skill"]["tool_calls_traced"] == 2
+        assert governance["with_skill"]["tool_calls_traced"] == 2
+        assert governance["without_skill"]["blocked_tool_calls"] == []
+        assert governance["with_skill"]["blocked_tool_calls"] == []
 
     def test_the_runner_refuses_to_start_without_a_credential(self):
         runner = AbRunner(HarnessConfig(), poster=ScriptedPoster([]), tasks=build_tasks())

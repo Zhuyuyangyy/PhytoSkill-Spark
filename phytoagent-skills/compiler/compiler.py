@@ -84,6 +84,13 @@ def build_spec(intent: Intent) -> dict:
         input_map = {}
         for provider_field, request_slot in entry["input_slots"].items():
             input_map[provider_field] = f"$.{request_slot}"
+            # Fusion consumes the provider results the earlier steps produced.
+            # Those arrive under result keys, so its mapping references the
+            # result slots — without them the runtime cannot call the Fusion
+            # Skill with the assembled sources, and the step would have to be
+            # recorded as failed.
+            for provider_field, result_slot in entry.get("result_slots", {}).items():
+                input_map[provider_field] = f"$.{result_slot}"
         # A producer whose request field is present must not be skippable: an
         # optional producer turns "input supplied" into "input ignored". Only a
         # step whose request field may legitimately be absent is optional.

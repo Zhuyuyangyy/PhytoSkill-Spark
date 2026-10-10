@@ -221,6 +221,22 @@ def test_every_species_alias_resolves_to_an_approved_slug():
         assert species
 
 
+def test_the_fusion_step_maps_the_provider_result_slots(tmp_path):
+    """Fusion consumes the assembled provider results, not request fields.
+
+    Without the result-slot mappings the runtime could not call the Fusion
+    Skill with the sources the earlier steps produced, and the step would have
+    to be recorded as failed.
+    """
+    result = compile_request(HUANGQI_REQUEST, tmp_path)
+    workflow = read_json(result.package_dir / "workflow.json")
+    fusion = workflow["steps"][-1]
+    assert fusion["provider_skill"] == "evidence_fusion"
+    assert fusion["input_map"] == {
+        "case_id": "$.case_id", "species": "$.species",
+        "vision": "$.vision", "environment": "$.environment", "knowledge": "$.knowledge"}
+
+
 def test_the_compiled_schema_matches_the_provider_contracts(tmp_path):
     """The generated request schema must accept exactly what providers accept."""
     result = compile_request(HUANGQI_REQUEST, tmp_path)

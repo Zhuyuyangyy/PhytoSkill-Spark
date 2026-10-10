@@ -24,7 +24,7 @@
 harness/
 ├── config.py       环境变量与 .env 读取；密钥永不进报告
 ├── transport.py    stdlib HTTP，429/5xx 指数退避，记录 model_returned
-├── agent.py        工具调用循环；两臂之间唯一的差别是 system prompt
+├── agent.py        工具调用循环（经 AgentShield 治理）；两臂之间唯一的差别是 system prompt
 ├── tasks.py        从五个包的 agent_cases 生成任务集
 ├── scoring.py      规则化判定（不用 LLM judge）
 ├── ab.py           交错 A/B 与报告生成
@@ -72,6 +72,17 @@ python -m harness ab --repeat 1 --output artifacts/agent-ab.json
 
 `reasoning_effort` 如果不设，就完全不发这个字段——两臂拿到同一个服务商默认值，
 所以它不是受控变量，报告里记 `reasoning_effort_pinned: false`。
+
+## 受治理的工具调用
+
+工具执行不是 Harness 的私有细节：每次调用都经过 AgentShield Runtime
+（`runtime/shield.py` 的 `ShieldRuntime.call`）——按包的签名 manifest 做最小权限校验、
+受调用预算约束、带 `trace_id` 并记入审计日志。请求的权限恰好是包自己声明的那一组；
+`live`/`herb` 调用附加 `backend_broker:inference`，且仅当包声明了 broker。
+中间件拒绝（`PermissionViolation` / `BudgetExceeded`）转成一次失败的调用报告给模型，
+任务循环不中断，拒绝本身记入 trace——一次拦截不应该看起来像整批实验崩掉。
+
+A/B 两臂各用**独立初始化、配置一致**的 Shield：治理是受控常量，不是实验变量，而任一臂的调用计数、trace_id 与审计日志都不会进入另一臂——否则一臂耗尽的预算会截断另一臂，把顺序效应伪装成处理效应。报告因此按臂各出一段 `governance`：各自的 trace_id、被治理调用数与被拦截列表。
 
 ## 在远程 DGX 上跑
 

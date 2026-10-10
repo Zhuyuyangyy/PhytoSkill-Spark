@@ -22,7 +22,8 @@ from dgx.cache import ObservationCache
 from demo.fixture_workspace import PROJECT_ROOT, SKILL_NAMES
 from registry import SkillRegistry
 from registry.signer import generate_keypair, sign_package
-from runtime.shield import ClaimAuditor, ShieldRuntime, load_evidence_index
+from runtime.shield import (BROKER_INFERENCE, ClaimAuditor, ShieldRuntime, call_or_failure,
+                            load_evidence_index)
 from sdk.exceptions import SkillError
 from sdk.schema import read_json
 
@@ -58,19 +59,21 @@ def main() -> int:
 
     registry = SkillRegistry(skills, trusted_public_key=public)
     registry.discover()
-    runtime = ShieldRuntime(registry, trace_id="trace-real-chain-001")
-    from runtime.executor import SkillExecutor
-    executor = SkillExecutor(registry, cache=ObservationCache())
-
     cases = []
     images = sorted(directory.glob("*.jpg"))
+    # Three governed calls per image (vision, knowledge, fusion). The budget is
+    # set from the actual image count so a full set never stops mid-run.
+    runtime = ShieldRuntime(registry, trace_id="trace-real-chain-001",
+                            cache=ObservationCache(), max_calls=3 * len(images) + 8)
+
     for index, image in enumerate(images, start=1):
         case_id = f"chain-{index:03d}"
         print(f"\n=== [{index}/{len(images)}] {image.name} ({case_id}) ===")
 
-        vision = executor.call("plant_vision", {
+        vision = call_or_failure(runtime, "plant_vision", {
             "case_id": case_id, "species": species, "image_path": str(image.resolve()),
-        }, mode=mode, tool_call_id=f"{case_id}-vision")
+        }, mode=mode, tool_call_id=f"{case_id}-vision",
+            requested_permissions=[BROKER_INFERENCE])
         if vision["status"] != "success":
             print(f"  vision FAILED: {vision['error']['code']}")
             cases.append({"image": image.name, "case_id": case_id,
@@ -81,10 +84,11 @@ def main() -> int:
         print(f"  vision   : usable={vision_data['image_usable']} "
               f"obs={len(vision_data['observations'])} phenotypes={phenotypes}")
 
-        knowledge = executor.call("herbal_knowledge", {
+        knowledge = call_or_failure(runtime, "herbal_knowledge", {
             "case_id": case_id, "species": species,
             "query": KNOWLEDGE_QUERIES.get(mode, KNOWLEDGE_QUERIES["herb"]),
-        }, mode="corpus", tool_call_id=f"{case_id}-knowledge")
+        }, mode="corpus", tool_call_id=f"{case_id}-knowledge",
+            requested_permissions=["corpus:read"])
         if knowledge["status"] != "success":
             print(f"  knowledge FAILED: {knowledge['error']['code']}")
             knowledge_data = None
@@ -93,12 +97,13 @@ def main() -> int:
             print(f"  knowledge: evidence={len(knowledge_data['evidence'])} "
                   f"origin={knowledge_data['provenance']['data_origin']}")
 
-        fusion = executor.call("evidence_fusion", {
+        fusion = call_or_failure(runtime, "evidence_fusion", {
             "case_id": case_id, "species": species,
             "vision": vision_data,
             "environment": None,
             "knowledge": knowledge_data,
-        }, mode="fixture", tool_call_id=f"{case_id}-fusion")
+        }, mode="fixture", tool_call_id=f"{case_id}-fusion",
+            requested_permissions=["package:read"])
         if fusion["status"] != "success":
             print(f"  fusion FAILED: {fusion['error']['code']}: {fusion['error']['message']}")
             cases.append({"image": image.name, "case_id": case_id, "vision": "success",
