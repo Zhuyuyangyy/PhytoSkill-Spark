@@ -304,3 +304,115 @@ def test_a_middleware_rejection_becomes_a_failed_call_not_a_crash(runtime):
     assert result["error"]["code"] == "PermissionViolation"
     assert runtime.report()["blocked"]
     assert runtime.report()["blocked"][0]["tool_call_id"] == "blocked-1"
+
+
+# ── audit completeness: door rejections are recorded too ─────────────────────
+
+
+def test_a_budget_rejection_is_recorded_in_the_audit_log_before_raising():
+    """A call refused at the door is still an attempt and must be traceable.
+
+    Without the record the Shield's audit log and the caller's trace cannot be
+    reconciled: the harness knows a call was blocked, the governance report
+    does not.
+    """
+    runtime = ShieldRuntime(registry=None, max_calls=0)
+    with pytest.raises(BudgetExceeded, match="budget"):
+        runtime.call("plant_vision", {}, tool_call_id="call-blocked")
+    blocked = runtime.report()["blocked"]
+    assert len(blocked) == 1
+    assert blocked[0]["tool_call_id"] == "call-blocked"
+    assert blocked[0]["skill"] == "plant_vision"
+    assert blocked[0]["status"] == "blocked"
+    assert blocked[0]["detail"] == "BudgetExceeded"
+
+
+def test_a_missing_tool_call_id_is_recorded_in_the_audit_log_before_raising():
+    runtime = ShieldRuntime(registry=None)
+    with pytest.raises(TraceError, match="tool_call_id"):
+        runtime.call("plant_vision", {}, tool_call_id="   ")
+    blocked = runtime.report()["blocked"]
+    assert len(blocked) == 1
+    assert blocked[0]["detail"] == "TraceError"
+    assert blocked[0]["skill"] == "plant_vision"
+
+
+# ── evidence index conflicts fail closed ─────────────────────────────────────
+
+
+def test_conflicting_records_for_one_evidence_id_are_refused():
+    """Two different records claiming one id: neither is trustworthy.
+
+    Resolving by arrival order would let whichever record was indexed last
+    decide what a citation means.
+    """
+    index = load_evidence_index(
+        {"observations": [{"observation_id": "o1", "phenotype": "leaf_yellowing"}]},
+        {"observations": [{"observation_id": "o1", "phenotype": "leaf_spot"}]})
+    assert index["o1"] == {"conflicted": True}
+    auditor = ClaimAuditor(available_evidence=index)
+    verdict = auditor.audit({"claims": [{"text": "叶缘黄化", "evidence_ids": ["o1"]}]})
+    assert verdict["claims"][0]["status"] == "refused"
+    assert "unverifiable" in verdict["claims"][0]["reason"]
+
+
+def test_identical_duplicate_records_do_not_conflict():
+    index = load_evidence_index(
+        {"case_id": "c1", "observations": [{"observation_id": "o1",
+                                            "phenotype": "leaf_yellowing"}]},
+        {"case_id": "c1", "observations": [{"observation_id": "o1",
+                                            "phenotype": "leaf_yellowing"}]})
+    assert index["o1"]["phenotype"] == "leaf_yellowing"
+    assert index["o1"]["case_id"] == "c1"
+
+
+def test_a_child_record_contradicting_its_envelope_poisons_the_id():
+    """A record whose own case contradicts its envelope has no provenance."""
+    index = load_evidence_index({
+        "case_id": "c1", "species": "黄芪",
+        "observations": [{"observation_id": "o1", "phenotype": "leaf_yellowing",
+                          "case_id": "other-case"}]})
+    assert index["o1"] == {"conflicted": True}
+    auditor = ClaimAuditor(available_evidence=index)
+    verdict = auditor.audit({"claims": [{"text": "观察结论", "evidence_ids": ["o1"],
+                                         "asserts": {"phenotype": "leaf_yellowing"}}]})
+    assert verdict["claims"][0]["status"] == "refused"
+    assert "unverifiable" in verdict["claims"][0]["reason"]
+
+
+def test_a_child_record_agreeing_with_its_envelope_is_kept():
+    index = load_evidence_index({
+        "case_id": "c1", "species": "黄芪",
+        "observations": [{"observation_id": "o1", "phenotype": "leaf_yellowing",
+                          "case_id": "c1", "species": "黄芪"}]})
+    assert index["o1"]["phenotype"] == "leaf_yellowing"
+    assert index["o1"]["case_id"] == "c1"
+
+
+def test_an_assertion_split_across_records_is_refused():
+    """A phenotype from one record and a case id from another is not a context.
+
+    The per-key check would let a claim assemble its assertion from records
+    that never shared a case; one record must establish every asserted key.
+    """
+    index = load_evidence_index(
+        {"observations": [{"observation_id": "o1", "phenotype": "leaf_yellowing"}]},
+        {"case_id": "case-b", "factors": [{"factor_id": "f1", "metric": "soil_ph"}]})
+    auditor = ClaimAuditor(available_evidence=index)
+    verdict = auditor.audit({"claims": [{
+        "text": "观察结论", "evidence_ids": ["o1", "f1"],
+        "asserts": {"phenotype": "leaf_yellowing", "case_id": "case-b"}}]})
+    assert verdict["claims"][0]["status"] == "refused"
+    assert "no single cited record" in verdict["claims"][0]["reason"]
+
+
+def test_one_record_establishing_every_asserted_key_is_supported():
+    index = load_evidence_index({
+        "case_id": "c1", "species": "黄芪",
+        "observations": [{"observation_id": "o1", "phenotype": "leaf_yellowing"}]})
+    auditor = ClaimAuditor(available_evidence=index)
+    verdict = auditor.audit({"claims": [{
+        "text": "观察结论", "evidence_ids": ["o1"],
+        "asserts": {"phenotype": "leaf_yellowing", "case_id": "c1", "species": "黄芪"}}]})
+    assert verdict["claims"][0]["status"] == "supported"
+    assert verdict["trust_level"] == TRUST_SUPPORTED

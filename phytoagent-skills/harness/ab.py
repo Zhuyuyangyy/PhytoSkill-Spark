@@ -133,15 +133,25 @@ class AbRunner:
             completion_tokens=self._baseline_completion_tokens,
             model=self.config.model)
 
-    def _governed_runtime(self, registry) -> ShieldRuntime:
+    def _shield_budget(self, repeat: int = 1) -> int:
+        """Per-arm call budget: every task in every round, at the turn limit.
+
+        The budget scales with ``repeat`` as well as task count: a multi-round
+        run makes ``repeat x len(tasks)`` task-arms per arm, and a budget sized
+        for a single round would truncate the later ones — a truncated
+        experiment looks like a treatment effect.
+        """
+        return max(256, 16 * len(self.tasks) * max(1, repeat))
+
+    def _governed_runtime(self, registry, *, repeat: int = 1) -> ShieldRuntime:
         """One Shield per arm, each independently initialised, identical config.
 
-        The budget must cover every task in one arm at the turn limit: the
-        default of 32 would stop a 17-task run mid-experiment, and a truncated
+        The budget must cover every task in every round of one arm: the default
+        of 32 would stop a 17-task run mid-experiment, and a truncated
         experiment looks like a treatment effect. Instances are deliberately
         not shared between arms — see :meth:`harness.agent.AgentHarness.use_shield`.
         """
-        return ShieldRuntime(registry, max_calls=max(256, 16 * len(self.tasks)))
+        return ShieldRuntime(registry, max_calls=self._shield_budget(repeat))
 
     def run(self, *, repeat: int = 1) -> dict:
         config = self.config
@@ -151,8 +161,10 @@ class AbRunner:
         with self.registry_factory() as registry:
             transport = Transport(config, self.poster,
                                   min_request_interval=self.min_request_interval)
-            # One Shield per arm: same configuration, separate state.
-            shields = {arm: self._governed_runtime(registry) for arm in ARMS}
+            # One Shield per arm: same configuration, separate state. The
+            # budget covers every round, not just the first.
+            shields = {arm: self._governed_runtime(registry, repeat=repeat)
+                       for arm in ARMS}
             harness = AgentHarness(registry, shields[ARMS[0]], transport,
                                    config, tool_mode=self.tool_mode)
             packages = {name: {"manifest_sha256": detail["manifest_sha256"],

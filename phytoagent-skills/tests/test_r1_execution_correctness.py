@@ -101,7 +101,7 @@ def test_a_phenotype_assertion_the_evidence_does_not_carry_is_refused():
         "text": "在叶缘区域观察到黄化", "evidence_ids": ["obs-1"],
         "asserts": {"phenotype": "leaf_yellowing"}}]})
     assert verdict["claims"][0]["status"] == "refused"
-    assert "does not establish" in verdict["claims"][0]["reason"]
+    assert "no single cited record" in verdict["claims"][0]["reason"]
     assert verdict["trust_level"] == TRUST_INSUFFICIENT
 
 
@@ -133,7 +133,7 @@ def test_a_record_that_carries_no_phenotype_establishes_none():
         "text": "土壤偏碱导致黄化", "evidence_ids": ["f1"],
         "asserts": {"phenotype": "leaf_yellowing"}}]})
     assert verdict["claims"][0]["status"] == "refused"
-    assert "does not establish" in verdict["claims"][0]["reason"]
+    assert "no single cited record" in verdict["claims"][0]["reason"]
 
 
 def test_a_species_or_case_assertion_must_match_the_cited_records():

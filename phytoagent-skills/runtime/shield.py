@@ -79,10 +79,26 @@ class ShieldRuntime:
     def call(self, name: str, payload: dict, *, mode: str = "fixture",
              tool_call_id: str, requested_permissions: list[str] | None = None,
              case_workspace: Path | None = None) -> dict:
-        """Authorise, trace, execute, and record one tool call."""
+        """Authorise, trace, execute, and record one tool call.
+
+        Every attempt is recorded, including the ones refused at the door: a
+        call rejected for a missing ``tool_call_id`` or an exhausted budget is
+        still an attempt, and an audit log that silently drops it cannot be
+        reconciled against the caller's own trace.
+        """
         if not isinstance(tool_call_id, str) or not tool_call_id.strip():
+            self.audit_log.append(CallRecord(
+                trace_id=self.trace_id, tool_call_id=str(tool_call_id), skill=name,
+                manifest_sha256="", status="blocked", duration_ms=0.0,
+                permissions_used=sorted(set(requested_permissions or [])),
+                detail="TraceError"))
             raise TraceError("Every tool call must carry a non-empty tool_call_id")
         if self._calls >= self.max_calls:
+            self.audit_log.append(CallRecord(
+                trace_id=self.trace_id, tool_call_id=tool_call_id, skill=name,
+                manifest_sha256="", status="blocked", duration_ms=0.0,
+                permissions_used=sorted(set(requested_permissions or [])),
+                detail="BudgetExceeded"))
             raise BudgetExceeded(f"Session exceeded the {self.max_calls}-call budget")
         self._calls += 1
         record = self.registry.verify_entry(name)
@@ -311,13 +327,19 @@ class ClaimAuditor:
                 continue
             # Fail closed: an id the run cannot account for is unverifiable, even
             # when no index was supplied. Silently accepting it would let a
-            # fabricated citation reach SUPPORTED.
+            # fabricated citation reach SUPPORTED. The same holds for an id
+            # whose records conflict: neither version can be trusted, so the
+            # citation is refused rather than resolved by arrival order.
             unknown = [item for item in evidence_ids if item not in self.available_evidence]
-            if unknown:
+            conflicted = [item for item in evidence_ids
+                          if isinstance(self.available_evidence.get(item), dict)
+                          and self.available_evidence[item].get("conflicted")]
+            if unknown or conflicted:
+                unverifiable = sorted(set(unknown) | set(conflicted))
                 verdicts.append(ClaimVerdict(text, evidence_ids, "refused",
-                                             f"unverifiable evidence id: {', '.join(sorted(unknown))}",
+                                             f"unverifiable evidence id: {', '.join(unverifiable)}",
                                              asserts=echoed))
-                violations.append(f"unverifiable evidence id: {', '.join(sorted(unknown))}")
+                violations.append(f"unverifiable evidence id: {', '.join(unverifiable)}")
                 continue
             # A structured assertion is checked against the evidence it cites.
             # The ids being real is necessary but not sufficient: a claim that
@@ -332,13 +354,16 @@ class ClaimAuditor:
                     violations.append(f"malformed assertion refused: {text}")
                     continue
                 records = [self.available_evidence[item] for item in evidence_ids]
-                unproven = sorted(key for key, value in asserts.items()
-                                  if not any(_record_supports(record, key, value)
-                                             for record in records))
-                if unproven:
+                # One record must establish every asserted key. Checking each
+                # key against any record would let a claim assemble its
+                # assertion from several records that never shared a context —
+                # a phenotype from one case and a case id from another.
+                if not any(all(_record_supports(record, key, value)
+                               for key, value in asserts.items())
+                           for record in records):
                     verdicts.append(ClaimVerdict(
                         text, evidence_ids, "refused",
-                        f"evidence does not establish {', '.join(unproven)}",
+                        f"no single cited record establishes {', '.join(sorted(asserts))}",
                         asserts=echoed))
                     violations.append(f"unsupported assertion refused: {text}")
                     continue
@@ -372,6 +397,13 @@ def load_evidence_index(*payloads: Any) -> dict[str, dict]:
     Each indexed record inherits the case and species of the envelope it
     arrived in, so a claim that asserts a case or species can be checked
     against the evidence instead of being trusted from the text.
+
+    Conflicts fail closed rather than resolving by arrival order: two different
+    records claiming one evidence id, or a child record whose own case/species
+    contradicts its envelope, poison that id — a claim citing it is refused
+    instead of being checked against whichever record happened to be indexed
+    last. A poisoned id maps to ``{"conflicted": True}``, which establishes
+    nothing.
     """
     index: dict[str, dict] = {}
     for payload in payloads:
@@ -382,6 +414,21 @@ def load_evidence_index(*payloads: Any) -> dict[str, dict]:
             for item in payload.get(key) or []:
                 if isinstance(item, dict):
                     for field_name in ("evidence_id", "observation_id", "factor_id"):
-                        if item.get(field_name):
-                            index[item[field_name]] = {**context, **item}
+                        identifier = item.get(field_name)
+                        if not identifier:
+                            continue
+                        # A child record that carries its own case or species
+                        # must agree with the envelope it arrived in; a
+                        # contradiction means its provenance cannot be
+                        # established, so the id is poisoned.
+                        if any(field in item and item[field] != context[field]
+                               for field in context):
+                            index[identifier] = {"conflicted": True}
+                            continue
+                        record = {**context, **item}
+                        existing = index.get(identifier)
+                        if existing is None or existing == record:
+                            index[identifier] = record
+                        else:
+                            index[identifier] = {"conflicted": True}
     return index

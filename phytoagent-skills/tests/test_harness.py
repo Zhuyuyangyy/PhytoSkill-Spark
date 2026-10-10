@@ -534,6 +534,51 @@ class TestGovernedToolCalls:
             assert harness.shield is second
             assert first is not second
 
+    def test_a_shield_rejection_appears_in_both_the_task_trace_and_the_audit_log(self):
+        """Both entry points must reconcile: the harness's rejection record and
+        the Shield's audit record name the same call.
+
+        A stub registry is enough because the Shield refuses the call at the
+        door (budget) before any package is verified — which is exactly the
+        path whose audit record used to go missing.
+        """
+
+        class StubRegistry:
+            catalog = [{"name": "plant_vision"}]
+            available_tools: list[dict] = []
+
+            def load_skill(self, name):
+                return {"manifest_sha256": "0" * 64}
+
+            def get(self, name):
+                return {"manifest": {"permissions": {"filesystem": ["case_workspace:read"]}}}
+
+        arguments = {"case_id": "demo-huangqi-001", "species": "黄芪",
+                     "image_path": "fixture://huangqi-leaf-01"}
+        poster = ScriptedPoster([
+            (200, completion(tool_calls=tool_call("plant_vision", arguments))),
+            (200, completion(content="该调用被治理层拦截，未执行。")),
+        ])
+        transport, config = make_transport(poster)
+        shield = ShieldRuntime(StubRegistry(), max_calls=0)
+        harness = AgentHarness(StubRegistry(), shield, transport, config)
+        run = harness.run_task(Task(task_id="t", prompt="看看这张黄芪叶片",
+                                    kind="positive_trigger", source="test"),
+                               arm="without_skill")
+        assert run["rejected_calls"] == [{"name": "plant_vision", "code": "BudgetExceeded"}]
+        traced = [item for item in run["trace"]
+                  if item.get("event") == "tool_call" and item.get("status") == "rejected"]
+        assert len(traced) == 1
+        blocked = shield.report()["blocked"]
+        assert len(blocked) == 1
+        assert blocked[0]["tool_call_id"] == traced[0]["tool_call_id"]
+        assert blocked[0]["detail"] == "BudgetExceeded"
+        # The blocked attempt is itself traced: that is the point of the
+        # audit-completeness fix. Every attempt appears in the governance
+        # report, and the blocked subset is called out separately.
+        assert harness.governance_report()["tool_calls_traced"] == 1
+        assert harness.governance_report()["blocked_tool_calls"]
+
 
 class TestScoring:
     def make_run(self, *, selected, text="", stop_reason="final_answer", trace=None):
@@ -683,6 +728,21 @@ class TestAbRunner:
         assert governance["with_skill"]["tool_calls_traced"] == 2
         assert governance["without_skill"]["blocked_tool_calls"] == []
         assert governance["with_skill"]["blocked_tool_calls"] == []
+
+    def test_the_per_arm_budget_scales_with_repeat(self):
+        """A multi-round run must not be truncated by a single-round budget.
+
+        repeat x tasks task-arms run per arm; a budget sized for one round
+        would stop the later ones mid-experiment, and a truncated experiment
+        looks like a treatment effect. The full task set clears the 256 floor,
+        so the scaling is visible rather than masked by it.
+        """
+        runner = AbRunner(HarnessConfig(api_key=SECRET), poster=ScriptedPoster([]),
+                          tasks=build_tasks(), min_request_interval=None)
+        single = runner._shield_budget(repeat=1)
+        assert single == 16 * len(build_tasks())
+        assert runner._shield_budget(repeat=2) == 2 * single
+        assert runner._shield_budget(repeat=5) == 5 * single
 
     def test_the_runner_refuses_to_start_without_a_credential(self):
         runner = AbRunner(HarnessConfig(), poster=ScriptedPoster([]), tasks=build_tasks())
