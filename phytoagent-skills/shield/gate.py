@@ -256,8 +256,13 @@ def _run_checks(package_dir: Path, result: GateResult, trusted_public_key, proje
     else:
         try:
             from registry.signer import verify_signature
-            verify_signature(package_dir, project_signature_key)
-            result.checks.append(GateCheck("project_signature", "passed", "Ed25519 signature verified"))
+            verification = verify_signature(package_dir, project_signature_key)
+            # The key id is reported so an operator can compare it against the
+            # publisher fingerprint they hold out of band; "verified" alone
+            # does not say *whose* signature it was.
+            result.checks.append(GateCheck(
+                "project_signature", "passed",
+                f"Ed25519 signature verified, key_id={verification['key_id']}"))
         except Exception as exc:
             result.checks.append(GateCheck("project_signature", "failed", str(exc)))
 

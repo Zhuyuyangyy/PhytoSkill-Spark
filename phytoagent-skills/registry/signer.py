@@ -33,6 +33,11 @@ def _load_key(path: Path, *, private: bool):
     return key
 
 
+def load_public_key(path: str | Path):
+    """Load a trust-anchor public key, refusing anything that is not Ed25519."""
+    return _load_key(Path(path), private=False)
+
+
 def key_id(public_key: Ed25519PublicKey) -> str:
     raw = public_key.public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
     return hashlib.sha256(raw).hexdigest()

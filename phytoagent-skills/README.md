@@ -245,6 +245,8 @@ phytoagent-skills/
 
 `manifest.sig` 是项目格式，与 OpenSSF Model Signing 的 `skill.oms.sig` 不能互换。临时 Demo 密钥只验证本次流程，不认证第三方发布者。
 
+信任锚与发布者身份是两件事：锚点文件（`registry.json` 的 `trusted_public_key`，默认 `trust/publisher.public.pem`）由运营者持有、不入库；`trusted_key_id` 把发布者的钥匙身份钉在**入库可审**的配置里——锚点文件被换成另一把有效 Ed25519 钥匙时，发现阶段直接失败，不会静默换掉信任对象。门禁的 `project_signature` 与每条发现记录都报告验签所用的 `key_id`，运营者用它和带外掌握的发布者指纹核对。签名有效但发布者不对的包（例如用 Demo 钥匙签的）一律拒绝进入 Registry；钥匙在包外、签名清单不含 `manifest.sig`、包不能自带信任根，这三点由测试锁定。
+
 ## 执行边界
 
 SDK 使用 Draft 2020-12，只允许本地 JSON Pointer 引用；拒绝非有限数字、重复 JSON 键、越界路径和链接资源。执行器载入源码前检查模式和输入，并校验源码哈希，不执行未覆盖的缓存字节码。

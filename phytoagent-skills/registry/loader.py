@@ -15,6 +15,11 @@ CONFIG_SCHEMA = {
         "skills_dir": {"type": "string", "minLength": 1},
         "require_signature": {"type": "boolean"},
         "trusted_public_key": {"type": ["string", "null"], "minLength": 1},
+        # The publisher's key identity, pinned next to the path that holds it.
+        # The anchor file itself is operator-held and untracked; this pin is
+        # tracked and reviewable, so swapping the file cannot silently change
+        # who is trusted — discovery fails loudly instead.
+        "trusted_key_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     },
 }
 
@@ -33,9 +38,36 @@ class SkillRegistry:
         config = read_json(config_path)
         validate_payload(config, CONFIG_SCHEMA, label="Registry configuration")
         key = config["trusted_public_key"]
-        return cls(config_path.parent / config["skills_dir"],
-                   trusted_public_key=config_path.parent / key if key is not None else None,
-                   require_signature=config["require_signature"])
+        anchor = config_path.parent / key if key is not None else None
+        registry = cls(config_path.parent / config["skills_dir"],
+                       trusted_public_key=anchor,
+                       require_signature=config["require_signature"])
+        pinned = config.get("trusted_key_id")
+        if pinned is not None:
+            registry.assert_publisher(pinned)
+        return registry
+
+    def assert_publisher(self, expected_key_id: str) -> str:
+        """Check the trust anchor's identity against the pinned publisher id.
+
+        The signature check already binds a package to whatever key verifies
+        it; this pins *which* key that must be. A swapped anchor file — one
+        that is valid Ed25519 but belongs to somebody else — is refused here
+        instead of quietly becoming the new trust root.
+        """
+        from registry.signer import key_id, load_public_key
+
+        if self.trusted_public_key is None:
+            raise RegistryError("A pinned publisher id requires a trusted public key")
+        try:
+            actual = key_id(load_public_key(self.trusted_public_key))
+        except SkillError as exc:
+            raise RegistryError(f"Cannot read the trust anchor: {exc}") from exc
+        if actual != expected_key_id:
+            raise RegistryError(
+                "Trust anchor does not match the pinned publisher id: expected "
+                f"{expected_key_id[:16]}, anchor holds {actual[:16]}")
+        return actual
 
     def discover(self) -> list[dict]:
         root = self.skills_dir
