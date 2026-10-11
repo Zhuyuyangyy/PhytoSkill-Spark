@@ -31,7 +31,8 @@ from evaluation.frozen import (DEFAULT_MANIFEST, assert_manifest,
                                frozen_from_manifest, load_manifest,
                                verify_manifest, write_manifest)
 from evaluation.metrics import risk_coverage_curve, stratify
-from evaluation.identity import DEFAULT_IDENTITY, load_identity_manifest, registered_images
+from evaluation.identity import (DEFAULT_IDENTITY, load_identity_manifest,
+                                 registered_images, verify_registration)
 from evaluation.predictions import (DEFAULT_PREDICTION_STORE,
                                     freeze_predictions, join_for_scoring)
 from evaluation.split import (DEFAULT_LEDGER, FreezeError, HoldoutLedger, ROLES,
@@ -161,6 +162,10 @@ def _freeze_predictions(args: argparse.Namespace) -> int:
     digest. Defaults come from the committed manifest, so the command cannot
     seal predictions against an identity nobody published.
     """
+    # The identity comes from the verified manifest — freeze_id, model and
+    # digest together. Reading freeze_id out of the wrong place (it lives at the
+    # manifest's top level, not inside the freeze object) is exactly the bug the
+    # default path had; going through frozen_from_manifest makes that impossible.
     manifest_path = Path(args.manifest)
     freeze_id, digest = args.freeze_id, args.model_digest
     if not (freeze_id and digest):
@@ -168,13 +173,18 @@ def _freeze_predictions(args: argparse.Namespace) -> int:
             raise FreezeError(
                 "no freeze manifest to read the identity from; pass --freeze-id "
                 "and --model-digest explicitly")
-        published = load_manifest(manifest_path)["freeze"]
-        freeze_id = freeze_id or published.get("freeze_id", "")
-        digest = digest or published.get("model_digest", "")
+        published = frozen_from_manifest(manifest_path)
+        freeze_id = freeze_id or published.freeze_id
+        digest = digest or published.model_digest
     if not digest:
         raise FreezeError(
             "no weight digest to seal against; the published manifest pins none — "
             "re-freeze with an observable model identity first")
+    if manifest_path.is_file() and args.model != frozen_from_manifest(manifest_path).model:
+        raise FreezeError(
+            f"--model {args.model!r} is not the model the published freeze names "
+            f"({frozen_from_manifest(manifest_path).model!r}); predictions for a "
+            "different model cannot be sealed against this freeze")
     record = freeze_predictions(Path(args.predictions), model=args.model,
                                 model_digest=digest, freeze_id=freeze_id,
                                 store=Path(args.prediction_store),
@@ -270,6 +280,10 @@ def _holdout(args: argparse.Namespace) -> int:
     frozen = frozen_from_manifest(manifest_path, model=args.model,
                                   quantization=args.quantization)
 
+    # Exclusions are parsed up front: they are recorded acts, and the formal
+    # path resolves them before the pairing requirement (see below).
+    exclusions = _parse_exclusions(args.exclude)
+
     # The holdout set is mandatory. Without an explicit list every entry would
     # default to the calibration role and then be scored as holdout anyway —
     # a "blind test" over data the prompts were developed against.
@@ -282,7 +296,6 @@ def _holdout(args: argparse.Namespace) -> int:
     # joining the two files. Hashing one file that already contains both sides
     # proves nothing about order; this does.
     joined = None
-    exclusions = _parse_exclusions(args.exclude)
     if args.predictions or args.labels:
         if not (args.predictions and args.labels):
             raise FreezeError(
@@ -290,36 +303,36 @@ def _holdout(args: argparse.Namespace) -> int:
                 "scores frozen predictions joined with independent labels")
         # The sealed predictions must belong to the freeze being scored: the
         # same freeze_id, the same model, the same weight digest.
-        joined = join_for_scoring(
-            Path(args.predictions), Path(args.labels), store=Path(args.prediction_store),
-            expected={"freeze_id": frozen.freeze_id, "model": frozen.model,
-                      "model_digest": frozen.model_digest})
-        entries = joined["entries"]
-        annotations_path = Path(args.predictions)
-
         # Admission and scoring are separate paths; this is the bridge. Every
-        # scored image must have been registered — with its source, batch and
-        # pre-assigned role — or the holdout is scoring data nobody vetted.
+        # scored image must be registered — same bytes, role holdout — or the
+        # holdout is scoring data nobody vetted, or a same-name substitution.
         if not args.identity:
             raise FreezeError(
                 "the formal blind test requires --identity: the registered-data "
                 "manifest every scored image must appear in")
         identity_manifest = load_identity_manifest(args.identity)
         registered = registered_images(identity_manifest)
-        scored_names = {entry["image"] for entry in entries}
-        unregistered = sorted(name for name in scored_names
-                              if Path(name).name not in registered)
-        if unregistered:
-            raise FreezeError(
-                f"scored images are not in the registered-data manifest: "
-                f"{unregistered[:5]}")
+        # Exclusions are resolved before the join: a damaged or unlabelled image
+        # is recorded as excluded, not left to fail the pairing check.
+        joined = join_for_scoring(
+            Path(args.predictions), Path(args.labels), store=Path(args.prediction_store),
+            expected={"freeze_id": frozen.freeze_id, "model": frozen.model,
+                      "model_digest": frozen.model_digest},
+            excluded=exclusions)
+        entries = joined["entries"]
+        # The full declared set (scored + excluded) drives the role split, so an
+        # excluded image stays "in the dataset" and the declared roles remain
+        # checkable.
+        all_entries = joined["all_entries"]
+        annotations_path = Path(args.predictions)
+        verified = verify_registration(entries, registered)
         admission = {
             "manifest": str(args.identity),
             "manifest_sha256": _sha256_file(Path(args.identity)),
             "source": identity_manifest.get("source", ""),
             "batch": identity_manifest.get("batch", ""),
-            "roles": {name: registered[Path(name).name].get("role", "")
-                      for name in sorted(scored_names)},
+            "roles": {identifier: verified[identifier].get("role", "")
+                      for identifier in sorted(verified)},
         }
 
         # The scored set must equal the pre-registered set. Freezing 100 images
@@ -337,14 +350,9 @@ def _holdout(args: argparse.Namespace) -> int:
         unknown = sorted(set(exclusions) - pre_registered)
         if unknown:
             raise FreezeError(f"--exclude names images outside the frozen set: {unknown}")
-        if exclusions:
-            # The denominator is the full frozen set; exclusions are recorded
-            # acts, and the split below sees every declared image so the
-            # reader can tell N of M and why.
-            all_entries = list(entries)
-            entries = [entry for entry in entries if entry["image"] not in exclusions]
-        else:
-            all_entries = list(entries)
+        # The join already applied the exclusions: ``entries`` is the scored set,
+        # ``all_entries`` the full declared set — so the split below sees every
+        # declared image and the reader can tell N of M and why.
         if not entries:
             raise FreezeError("every pre-registered image was excluded; nothing to score")
     else:
@@ -366,6 +374,18 @@ def _holdout(args: argparse.Namespace) -> int:
 
     ledger = HoldoutLedger.load(Path(args.ledger))
     metrics = stratify(entries, key="mode")
+    # The denominator must not shrink silently. The metrics skip entries with no
+    # reference, so a joined entry whose annotator_labels went missing would
+    # quietly reduce what was scored; the join now refuses that, and this check
+    # is the belt-and-braces assertion that what the metrics saw is what the
+    # report says was scored.
+    # The overall slice, not a sum over the per-mode slices: stratify reports
+    # both, and adding them counts every entry twice.
+    annotated = metrics["overall"].annotated
+    if annotated != len(entries):
+        raise FreezeError(
+            f"the metrics annotated {annotated} of {len(entries)} scored entries; "
+            "a silently shrunken denominator is a refusal, not a rounding detail")
     # The predictions are the artifact the numbers were computed from; their
     # hash is recorded so a later reader can tell which bytes were scored. On
     # the formal path the frozen record already carries it; the labels' hash
@@ -373,7 +393,11 @@ def _holdout(args: argparse.Namespace) -> int:
     inputs_sha256 = (joined["predictions_sha256"] if joined
                      else _sha256_file(annotations_path))
     payload = {
-        "scope": "holdout_evaluation",
+        # The formal path is a holdout evaluation; the legacy single-file path
+        # is a development evaluation, and says so — it does not require
+        # predictions, labels or a registered-data manifest, so it cannot claim
+        # the same guarantees.
+        "scope": "holdout_evaluation" if joined else "development_evaluation",
         "freeze": frozen.summary(),
         "split": split.to_dict(),
         "inputs_sha256": inputs_sha256,
@@ -384,6 +408,7 @@ def _holdout(args: argparse.Namespace) -> int:
         "excluded": [{"image": image, "reason": reason}
                      for image, reason in sorted(exclusions.items())],
         "scored_entries": len(entries),
+        "annotated_entries": annotated,
         "metrics": {name: evaluation.to_dict() for name, evaluation in metrics.items()},
     }
     # The ledger write is what enforces the one-shot rule; it happens after the

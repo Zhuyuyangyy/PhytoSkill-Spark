@@ -16,7 +16,9 @@ from evaluation.frozen import load_manifest, write_manifest
 from evaluation.identity import (NEAR_DUPLICATE_MAX_DISTANCE, assert_independent,
                                  cross_check, image_identity, load_identity_manifest,
                                  scan_directory, write_identity_manifest)
-from evaluation.predictions import freeze_predictions, join_for_scoring
+from evaluation.identity import _sha256
+from evaluation.predictions import (freeze_predictions, join_for_scoring,
+                                    load_frozen_predictions)
 
 PROJECT = None  # resolved in the fixture; keeps the imports above module-level
 
@@ -77,6 +79,12 @@ def _predictions(tmp_path):
          "model_image_usable": False},
     ]}, ensure_ascii=False), encoding="utf-8")
     return path
+
+
+def _digest_for(images, image):
+    """The digest _registered assigns: position-derived, so a test prediction
+    can carry the matching image_sha256."""
+    return f"{images.index(image):064x}"
 
 
 def _registered(tmp_path, images, *, source="unit-test", batch="batch-1"):
@@ -344,7 +352,8 @@ def test_scoring_a_subset_of_the_frozen_set_is_refused(tmp_path):
     predictions = tmp_path / "predictions.json"
     images = [f"img_{index:03}.jpg" for index in range(5)]
     predictions.write_text(json.dumps({"entries": [
-        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"]}
+        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"],
+         "image_sha256": _digest_for(images, image)}
         for image in images]}, ensure_ascii=False), encoding="utf-8")
     freeze_predictions(predictions, model="m", model_digest="a" * 64,
                        freeze_id=load_manifest(manifest)["freeze_id"],
@@ -387,7 +396,8 @@ def test_an_exclusion_is_recorded_with_its_reason_and_the_denominator(tmp_path):
     images = [f"img_{index:03}.jpg" for index in range(3)]
     predictions = tmp_path / "predictions.json"
     predictions.write_text(json.dumps({"entries": [
-        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"]}
+        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"],
+         "image_sha256": _digest_for(images, image)}
         for image in images]}, ensure_ascii=False), encoding="utf-8")
     freeze_predictions(predictions, model="m", model_digest="a" * 64,
                        freeze_id=load_manifest(manifest)["freeze_id"],
@@ -483,7 +493,8 @@ def test_the_formal_path_requires_the_registered_manifest(tmp_path):
     images = ["img_000.jpg", "img_001.jpg"]
     predictions = tmp_path / "predictions.json"
     predictions.write_text(json.dumps({"entries": [
-        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"]}
+        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"],
+         "image_sha256": _digest_for(images, image)}
         for image in images]}, ensure_ascii=False), encoding="utf-8")
     freeze_predictions(predictions, model="m", model_digest="a" * 64,
                        freeze_id=load_manifest(manifest)["freeze_id"],
@@ -511,7 +522,8 @@ def test_an_unregistered_scored_image_is_refused(tmp_path):
     images = ["img_000.jpg", "img_001.jpg"]
     predictions = tmp_path / "predictions.json"
     predictions.write_text(json.dumps({"entries": [
-        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"]}
+        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"],
+         "image_sha256": _digest_for(images, image)}
         for image in images]}, ensure_ascii=False), encoding="utf-8")
     freeze_predictions(predictions, model="m", model_digest="a" * 64,
                        freeze_id=load_manifest(manifest)["freeze_id"],
@@ -537,3 +549,179 @@ def test_an_unregistered_scored_image_is_refused(tmp_path):
     with contextlib.redirect_stderr(buffer):
         main(argv)
     assert "img_001.jpg" in buffer.getvalue()
+
+
+# ── R3-2 Preflight: the real CLI path, registered identity, label integrity ──
+
+
+def _formal_setup(tmp_path, images, *, roles=None):
+    """Manifest + sealed predictions + labels + registered manifest, as the
+    formal blind test assembles them."""
+    from evaluation.frozen import load_manifest, write_manifest
+    from evaluation.predictions import freeze_predictions
+
+    manifest = tmp_path / "frozen.json"
+    write_manifest(manifest, model="m", quantization="q4",
+                   model_digest="a" * 64, at="2026-10-11T00:00:00+00:00")
+    predictions = tmp_path / "predictions.json"
+    predictions.write_text(json.dumps({"entries": [
+        {"image": image, "mode": "leaf", "model_predicted": ["leaf_yellowing"],
+         "image_sha256": _digest_for(images, image)}
+        for image in images]}, ensure_ascii=False), encoding="utf-8")
+    freeze_predictions(predictions, model="m", model_digest="a" * 64,
+                       freeze_id=load_manifest(manifest)["freeze_id"],
+                       store=tmp_path / "store")
+    labels = tmp_path / "labels.json"
+    labels.write_text(json.dumps({"entries": [
+        {"image": image, "mode": "leaf", "annotator_labels": ["leaf_yellowing"]}
+        for image in images]}, ensure_ascii=False), encoding="utf-8")
+    registered = _registered(tmp_path, images)
+    if roles:
+        manifest_data = load_identity_manifest(registered)
+        manifest_data["roles"] = roles
+        registered.write_text(json.dumps(manifest_data, ensure_ascii=False, indent=2),
+                              encoding="utf-8")
+    return manifest, predictions, labels, registered
+
+
+def _formal_argv(tmp_path, manifest, predictions, labels, registered, images):
+    argv = ["holdout", str(predictions), "--model", "m", "--quantization", "q4",
+            "--ledger", str(tmp_path / "ledger.json"),
+            "--output", str(tmp_path / "out.json"),
+            "--manifest", str(manifest),
+            "--predictions", str(predictions), "--labels", str(labels),
+            "--prediction-store", str(tmp_path / "store"),
+            "--identity", str(registered)]
+    return argv + [token for image in images for token in ("--holdout", image)]
+
+
+def test_the_cli_default_path_seals_against_the_published_identity(tmp_path):
+    """The reviewer's P0: the default path read freeze_id from the wrong place
+    and produced an empty string, so a documented invocation was refused."""
+    from evaluation.__main__ import main
+
+    manifest, predictions, _, _ = _formal_setup(tmp_path, ["a.jpg", "b.jpg"])
+    store = tmp_path / "cli-store"
+    argv = ["freeze-predictions", str(predictions), "--model", "m",
+            "--manifest", str(manifest), "--prediction-store", str(store)]
+    assert main(argv) == 0
+    record = load_frozen_predictions(_sha256(predictions), store=store)
+    assert record["freeze_id"] == load_manifest(manifest)["freeze_id"]
+    assert record["model_digest"] == "a" * 64
+
+
+def test_the_cli_default_path_refuses_a_model_the_freeze_does_not_name(tmp_path):
+    from evaluation.__main__ import main
+
+    manifest, predictions, _, _ = _formal_setup(tmp_path, ["a.jpg"])
+    argv = ["freeze-predictions", str(predictions), "--model", "other-model",
+            "--manifest", str(manifest), "--prediction-store", str(tmp_path / "s2")]
+    assert main(argv) == 2
+
+
+def test_a_label_without_annotator_labels_is_refused_not_skipped(tmp_path):
+    """The metrics silently skip entries with no reference; the join refuses
+    them, so the denominator cannot shrink without a declaration."""
+    from evaluation.__main__ import main
+
+    manifest, predictions, labels, registered = _formal_setup(
+        tmp_path, ["a.jpg", "b.jpg"])
+    # b.jpg's label drops the annotation field.
+    data = json.loads(labels.read_text(encoding="utf-8"))
+    del data["entries"][1]["annotator_labels"]
+    labels.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    argv = _formal_argv(tmp_path, manifest, predictions, labels, registered,
+                        ["a.jpg", "b.jpg"])
+    assert main(argv) == 2
+    import contextlib
+    import io
+    buffer = io.StringIO()
+    with contextlib.redirect_stderr(buffer):
+        main(argv)
+    assert "annotator_labels" in buffer.getvalue()
+
+
+def test_an_excluded_image_may_lack_its_label(tmp_path):
+    """Exclusion is resolved before the pairing requirement: a damaged image is
+    recorded as excluded, not left to fail the join."""
+    from evaluation.__main__ import main
+
+    manifest, predictions, labels, registered = _formal_setup(
+        tmp_path, ["a.jpg", "b.jpg"])
+    data = json.loads(labels.read_text(encoding="utf-8"))
+    del data["entries"][1]["annotator_labels"]
+    labels.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    argv = _formal_argv(tmp_path, manifest, predictions, labels, registered,
+                        ["a.jpg", "b.jpg"])
+    argv += ["--exclude", "b.jpg=采集时镜头污损，标注缺失"]
+    assert main(argv) == 0
+    payload = json.loads((tmp_path / "out.json").read_text(encoding="utf-8"))
+    assert payload["scored_entries"] == 1
+    assert payload["annotated_entries"] == 1
+    assert payload["excluded"] == [{"image": "b.jpg", "reason": "采集时镜头污损，标注缺失"}]
+
+
+def test_scored_bytes_that_do_not_match_the_registered_digest_are_refused(tmp_path):
+    """A same-name different-bytes substitution: the prediction's image_sha256
+    must equal the registered digest, or the image was swapped."""
+    from evaluation.__main__ import main
+
+    images = ["a.jpg", "b.jpg"]
+    manifest, predictions, labels, registered = _formal_setup(tmp_path, images)
+    data = json.loads(predictions.read_text(encoding="utf-8"))
+    data["entries"][0]["image_sha256"] = "f" * 64  # the registered bytes differ
+    swapped = tmp_path / "swapped.json"
+    swapped.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    freeze_predictions(swapped, model="m", model_digest="a" * 64,
+                       freeze_id=load_manifest(manifest)["freeze_id"],
+                       store=tmp_path / "store")
+    argv = _formal_argv(tmp_path, manifest, swapped, labels, registered, images)
+    assert main(argv) == 2
+
+
+def test_a_registered_development_image_cannot_be_scored_as_holdout(tmp_path):
+    from evaluation.__main__ import main
+
+    images = ["a.jpg", "b.jpg"]
+    manifest, predictions, labels, registered = _formal_setup(
+        tmp_path, images, roles={"a.jpg": "development", "b.jpg": "holdout"})
+    argv = _formal_argv(tmp_path, manifest, predictions, labels, registered, images)
+    assert main(argv) == 2
+
+
+def test_a_basename_collision_in_the_registered_manifest_is_refused(tmp_path):
+    """Two registered images sharing a basename would let one stand in for the
+    other; the index refuses rather than silently overwriting."""
+    from evaluation.identity import registered_images
+
+    manifest = {
+        "images": [{"path": "leaves/a.jpg", "sha256": "1" * 64},
+                   {"path": "slices/a.jpg", "sha256": "2" * 64}],
+        "roles": {},
+    }
+    with pytest.raises(Exception, match="share the basename"):
+        registered_images(manifest)
+
+
+def test_the_legacy_path_is_labelled_a_development_evaluation(tmp_path):
+    """The old single-file entry stays usable for development work, but its
+    report says what it is: it does not require predictions, labels or a
+    registered-data manifest, so it cannot claim the formal guarantees."""
+    from evaluation.__main__ import main
+
+    manifest = tmp_path / "frozen.json"
+    write_manifest(manifest, model="m", quantization="q4",
+                   model_digest="a" * 64, at="2026-10-11T00:00:00+00:00")
+    annotations = tmp_path / "annotations.json"
+    annotations.write_text(json.dumps({"entries": [
+        {"image": "a.jpg", "mode": "leaf", "model_predicted": ["leaf_yellowing"],
+         "annotator_labels": ["leaf_yellowing"]},
+    ]}, ensure_ascii=False), encoding="utf-8")
+    argv = ["holdout", str(annotations), "--model", "m", "--quantization", "q4",
+            "--ledger", str(tmp_path / "ledger.json"),
+            "--output", str(tmp_path / "out.json"),
+            "--manifest", str(manifest), "--holdout", "a.jpg"]
+    assert main(argv) == 0
+    payload = json.loads((tmp_path / "out.json").read_text(encoding="utf-8"))
+    assert payload["scope"] == "development_evaluation"
+    assert payload["annotated_entries"] == payload["scored_entries"] == 1

@@ -29,7 +29,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
-from evaluation.split import FreezeError
+from evaluation.split import FreezeError, ROLE_HOLDOUT
 
 DEFAULT_IDENTITY = Path("artifacts/evaluations/development-identity.json")
 
@@ -242,25 +242,95 @@ def assert_independent(new: list[ImageIdentity], reference: dict, *,
     return report
 
 
+def image_id(name: str | Path) -> str:
+    """The one image id every stage speaks.
+
+    Windows and POSIX paths spell the same file differently, and a collector's
+    manifest may record ``leaves/01.jpg`` while a prediction records ``01.jpg``.
+    Everything downstream — registration, roles, predictions, labels, scoring —
+    keys on this id, so a separator can never silently split an image in two.
+    """
+    return str(name).replace("\\", "/").strip().lstrip("./")
+
+
 def registered_images(manifest: dict) -> dict[str, dict]:
-    """The registered image set, keyed by file name, for scoring-time checks.
+    """The registered image set, keyed by the unified image id.
 
     Admission (``identity --new``) and scoring are separate paths; this is the
     bridge: a formal holdout can require that every image it scores was
-    registered, with its source, batch and role, instead of trusting that the
+    registered — same bytes, role ``holdout`` — instead of trusting that the
     file names happen to match.
+
+    A basename collision is refused rather than silently overwritten: two
+    registered images whose ids differ but whose basenames match would let one
+    stand in for the other, and that is exactly the substitution a blind test
+    cannot survive.
     """
     registered: dict[str, dict] = {}
+    basenames: dict[str, str] = {}
     for image in manifest.get("images", []):
-        name = Path(image["path"]).name
-        registered[name] = {"sha256": image["sha256"], "texture": image.get("texture")}
+        identifier = image_id(image["path"])
+        registered[identifier] = {"sha256": image["sha256"],
+                                  "texture": image.get("texture")}
+        base = identifier.rsplit("/", 1)[-1]
+        if base in basenames and basenames[base] != identifier:
+            raise FreezeError(
+                f"registered images {basenames[base]!r} and {identifier!r} share "
+                "the basename; a basename lookup could substitute one for the "
+                "other — register them under distinct names")
+        basenames[base] = identifier
     for name, role in (manifest.get("roles") or {}).items():
-        if name in registered:
-            registered[name]["role"] = role
+        identifier = image_id(name)
+        if identifier in registered:
+            registered[identifier]["role"] = role
+        elif identifier.rsplit("/", 1)[-1] in basenames:
+            # Roles recorded under a bare basename still bind, through the
+            # unambiguous basename index.
+            registered[basenames[identifier.rsplit("/", 1)[-1]]]["role"] = role
     return registered
+
+
+def verify_registration(entries: list[dict], registered: dict[str, dict]) -> dict:
+    """Check scored entries against the registered set, entry by entry.
+
+    Three conditions per image, all required on the formal path:
+
+    * the image is **registered** — an id nobody admitted cannot be scored;
+    * its **bytes match** — the prediction carries ``image_sha256`` and it must
+      equal the registered digest, so a same-name different-bytes substitution
+      is refused rather than inherited;
+    * its **role is holdout** — a development or calibration image in a blind
+      test is the leak this whole apparatus exists to prevent.
+
+    A prediction without ``image_sha256`` is refused on the formal path: the
+    field is what makes "same bytes" checkable at all.
+    """
+    problems: list[str] = []
+    verified: dict[str, dict] = {}
+    for entry in entries:
+        identifier = image_id(entry.get("image", ""))
+        record = registered.get(identifier)
+        if record is None:
+            problems.append(f"{identifier}: not in the registered-data manifest")
+            continue
+        digest = entry.get("image_sha256")
+        if not digest:
+            problems.append(f"{identifier}: prediction carries no image_sha256")
+        elif digest != record["sha256"]:
+            problems.append(
+                f"{identifier}: image bytes do not match the registered digest "
+                f"({digest[:12]} != {record['sha256'][:12]})")
+        if record.get("role") != ROLE_HOLDOUT:
+            problems.append(f"{identifier}: registered role is "
+                            f"{record.get('role') or 'unset'!r}, not holdout")
+        verified[identifier] = record
+    if problems:
+        raise FreezeError("registered-data verification failed: " + "; ".join(problems))
+    return verified
 
 
 __all__ = ["DEFAULT_IDENTITY", "ImageIdentity", "LOW_TEXTURE_STDDEV",
            "NEAR_DUPLICATE_MAX_DISTANCE", "assert_independent", "cross_check",
-           "image_identity", "load_identity_manifest", "registered_images",
-           "scan_directory", "write_identity_manifest"]
+           "image_id", "image_identity", "load_identity_manifest",
+           "registered_images", "scan_directory", "verify_registration",
+           "write_identity_manifest"]

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "note": "The frozen evaluation configuration for the holdout blind test. Every listed input is pinned by SHA-256; verify-freeze recomputes them and the aggregate fingerprints and fails on any drift. Re-freezing is an explicit, reviewed act — never a side effect of a tuning edit.",
-  "frozen_at": "2026-10-11T14:00:27+00:00",
+  "frozen_at": "2026-10-11T14:45:50+00:00",
   "freeze": {
     "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
     "quantization": "Q4_K_M",
@@ -12,11 +12,11 @@
     "schema_hash": "4d0e785140b9e421dd1a83ae2ed3d7f39ce513172988b3938ead80e87f021d56",
     "auditor_hash": "c44494e3b0fd245bd8105e3c912568e5fec736caec6a3b3f2f7f0f31bf24e61b",
     "retriever_hash": "86d84c2ba90b1148f8cd29fc14f86a63bd387a7a12d6758d7d0e3f14b8eb2735",
-    "protocol_hash": "c19203e620163d4bba4c066a8de654159c12a368c7a4607b119084e3e1cee053",
+    "protocol_hash": "93038b8a1145b27d866ee834f7e318e9c45223cd74f021abd3b730e4e8f5e352",
     "model_digest": "95c9635e54b021f5dd0aa39efe97b26ac3c37ac550a3803f557de2f6a9904f74",
     "model_size_bytes": 33380567612
   },
-  "freeze_id": "28acc989631fc24031dcaa4c32cd38a5186f6df15285cda99295b06628ab0553",
+  "freeze_id": "a2f5315600d0cc0670eee3239470d0c90b310e86123e441d37b865a8572f3ed8",
   "weight_identity_source": "artifacts\\dgx\\vision-leaf-01.json",
   "inputs": [
     {
@@ -86,12 +86,12 @@
     },
     {
       "path": "evaluation/predictions.py",
-      "sha256": "deb1a9762be9211500f5fefc6f4fba9142327c1ea790cb5b63002317bb597ab1",
+      "sha256": "53afa1654023da3b7466b185029c422b56e8b666c1820e2b826b048818e6fea7",
       "role": "how frozen predictions and independent labels are joined into scoring entries"
     },
     {
       "path": "docs/evaluation.md",
-      "sha256": "c19203e620163d4bba4c066a8de654159c12a368c7a4607b119084e3e1cee053",
+      "sha256": "93038b8a1145b27d866ee834f7e318e9c45223cd74f021abd3b730e4e8f5e352",
       "role": "the protocol the run is held to"
     }
   ]

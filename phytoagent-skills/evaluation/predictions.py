@@ -32,9 +32,11 @@ from evaluation.identity import _sha256
 DEFAULT_PREDICTION_STORE = Path("artifacts/evaluations/predictions")
 
 # Fields a predictions file contributes, per image. A prediction without a
-# model verdict for an image is a hole, not a negative.
+# model verdict for an image is a hole, not a negative. ``image_sha256`` is the
+# image's own identity: it travels with the entry so scoring can check the
+# scored bytes against the registered bytes instead of trusting the file name.
 PREDICTION_FIELDS = ("model_predicted", "model_image_usable",
-                     "model_observation_count")
+                     "model_observation_count", "image_sha256")
 # Fields a labels file contributes, per image. These come from the annotators,
 # never from the model run.
 LABEL_FIELDS = ("annotator_labels", "candidate_labels", "annotator_agrees",
@@ -155,7 +157,8 @@ def verify_frozen_predictions(path: str | Path, record: dict) -> str:
 
 def join_for_scoring(predictions_path: str | Path, labels_path: str | Path, *,
                      store: str | Path = DEFAULT_PREDICTION_STORE,
-                     expected: dict | None = None) -> dict:
+                     expected: dict | None = None,
+                     excluded: dict[str, str] | None = None) -> dict:
     """Merge frozen predictions with independent labels, or refuse.
 
     The merge is the scoring input. It exists only when the predictions were
@@ -164,6 +167,15 @@ def join_for_scoring(predictions_path: str | Path, labels_path: str | Path, *,
     the two sides must cover exactly the same (image, mode) keys — a label for
     an image the model never saw under the freeze, or a frozen prediction with
     no label, is a refusal rather than a silent drop.
+
+    ``excluded`` names images removed from scoring *with their reasons*, and it
+    is applied **before** the pairing requirement: an image excluded because it
+    is damaged or unlabelled must not first fail the "every frozen key needs a
+    label" check — the exclusion is the record of that fact. For every scored
+    entry the labels must carry a real ``annotator_labels`` list (an empty list
+    is a valid "no phenotype observed"; a missing or null field is not), because
+    the metrics silently skip entries without one and the denominator would
+    shrink without anyone declaring it.
 
     What this proves: the bytes scored are the bytes sealed. What it does not
     prove: that the seal happened before the labels were written — that needs
@@ -190,8 +202,12 @@ def join_for_scoring(predictions_path: str | Path, labels_path: str | Path, *,
     label_entries = _entries(labels_path)
     predictions = _index(prediction_entries, "predictions")
     labels = _index(label_entries, "labels")
+    excluded = dict(excluded or {})
 
-    unlabelled = sorted(key for key in predictions if key not in labels)
+    # Exclusions are resolved first: a damaged or unlabelled image is recorded
+    # as excluded, not left to fail the pairing check below.
+    unlabelled = sorted(key for key in predictions
+                        if key not in labels and key[0] not in excluded)
     unpredicted = sorted(key for key in labels if key not in predictions)
     if unlabelled:
         raise FreezeError(f"frozen predictions without labels: {unlabelled}")
@@ -202,7 +218,7 @@ def join_for_scoring(predictions_path: str | Path, labels_path: str | Path, *,
 
     merged = []
     for key, prediction in sorted(predictions.items()):
-        label = labels[key]
+        label = labels[key] if key in labels else {}
         entry = {"image": key[0], "mode": key[1]}
         for field in PREDICTION_FIELDS:
             if field in prediction:
@@ -210,9 +226,24 @@ def join_for_scoring(predictions_path: str | Path, labels_path: str | Path, *,
         for field in LABEL_FIELDS:
             if field in label:
                 entry[field] = label[field]
+        if key[0] in excluded:
+            # Excluded: recorded, with its reason, outside the metrics. It still
+            # appears in the full set so the declared roles stay checkable.
+            merged.append(entry)
+            continue
+        # A scored entry must carry a real annotation. An empty list is a valid
+        # "nothing observed"; a missing or null field is a hole the metrics
+        # would silently skip, shrinking the denominator without a declaration.
+        if not isinstance(label.get("annotator_labels"), list):
+            raise FreezeError(
+                f"label for {key[0]!r} has no valid annotator_labels list; the "
+                "metrics would skip it and the denominator would shrink silently "
+                "— exclude it with a recorded reason, or supply the annotation")
         merged.append(entry)
+    scored = [entry for entry in merged if entry["image"] not in excluded]
     return {
-        "entries": merged,
+        "entries": scored,
+        "all_entries": merged,
         "predictions_sha256": digest,
         "labels_sha256": _sha256(labels_path),
         "frozen_at": record["frozen_at"],
@@ -220,6 +251,8 @@ def join_for_scoring(predictions_path: str | Path, labels_path: str | Path, *,
         "model_digest": record["model_digest"],
         "freeze_id": record.get("freeze_id", ""),
         "pre_registered": list(record.get("images", [])),
+        "excluded": [{"image": image, "reason": reason}
+                     for image, reason in sorted(excluded.items())],
     }
 
 
