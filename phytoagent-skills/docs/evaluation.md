@@ -171,6 +171,48 @@ prompt / parser / 词表 / 契约 / 审计规则 / 检索 / scorer / 协议，�
 
 ---
 
+## 五、数据独立性：身份清单、近重复核验、预测先冻结
+
+角色不重叠证明不了盲测独立——一份 annotations 文件内部的角色分配，无法说明
+这些图此前没进过 prompt 编写、校准或模型选择。独立性由数据**到达时**建立的
+事实支撑，工具在 `evaluation/identity.py` 与 `evaluation/predictions.py`。
+
+**1. 身份清单与交叉核验**（`python -m evaluation identity`）
+
+```bash
+python -m evaluation identity --build-dev case_workspace/annotate   # 开发集身份基线
+python -m evaluation identity --new <新图目录> --source <来源> --batch <植株/批次>
+```
+
+每张新图记录 SHA-256、尺寸与 64 位感知哈希（dHash），与开发集身份清单交叉
+核验：**字节级重复直接拒绝**；**重编码/裁剪/缩放的同一张照片**（感知哈希
+距离 ≤ 5 位）同样拒绝并指明参考图与距离。已在真实数据上验证：工作区的
+`case_workspace/leaves/` 与开发集字节级重复，注册即拒。清单还记录采集来源、
+植株/批次与**在看到任何模型输出之前**分配的角色——感知哈希抓得到"同一张
+照片换了个名字"，抓不到"同一植株的另一张照片"，后者靠采集者把来源和批次
+写下来。
+
+**2. 预测先冻结，标注后合并**（`python -m evaluation freeze-predictions`）
+
+对一份同时含预测和标签的文件做哈希，证明不了先后——写文件的人完全可能后写
+其中一侧。唯一结构化保证是时序：**预测先冻结**（字节哈希 + 条目数 + 模型
+身份 + 时间戳写入 `artifacts/evaluations/predictions/`），**独立标注后到**，
+评分时合并两个文件。合并拒绝三种情况：预测文件与冻结记录不符（冻结后被改）、
+标签对应不到任何已冻结预测（模型在该冻结下从未见过它——"预测产生于标注
+之后"的形状）、已冻结预测没有标签（无法评分，报告而非静默丢弃）。
+
+**3. 正式盲测路径**（`python -m evaluation holdout --predictions P --labels L`）
+
+正式评分走合并路径：清单校验、权重身份、一次性账本全部照旧，产物额外记录
+`labels_sha256` 与 `predictions_frozen_at`——两侧字节都可指认。正式运行前还
+需人工核验服务端**当前**模型身份与冻结的 digest 一致：digest 证明历史观测过，
+不证明盲测时加载的还是同一份权重。
+
+`evaluation/predictions.py`（合并逻辑）在冻结范围内；`identity.py` 是准入
+门禁而非评分路径，不在其内——它决定谁能进，不决定分怎么算。
+
+---
+
 ## 四、一次性 holdout 由账本强制
 
 规则：**同一个 `freeze_id` 的 holdout 只允许评估一次。**

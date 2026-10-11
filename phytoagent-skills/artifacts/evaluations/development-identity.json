@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "note": "The development and calibration images, identified. New holdout data is cross-checked against this list before registration.",
+  "written_at": "2026-10-11T07:47:45+00:00",
+  "count": 30,
+  "images": [
+    {
+      "path": "case_workspace\\annotate\\huangqi_01.jpg",
+      "sha256": "c1842b7ec2c4164efe5b3170d3a9d4b916c33e23b74d4b4944e5cbfd5af6b1f5",
+      "bytes": 62170,
+      "width": 800,
+      "height": 800,
+      "dhash": "00e2e29696cccd00"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_02.jpg",
+      "sha256": "0b75bffa5da40da9891252181c688fcfaff3d05ae834d68294eae24ba7f4ba32",
+      "bytes": 70615,
+      "width": 800,
+      "height": 800,
+      "dhash": "70f4fcdcccf4e070"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_03.jpg",
+      "sha256": "10991c35177da123f971348b10af01eb695c2def98ace5797fe68d2bc823838b",
+      "bytes": 93666,
+      "width": 800,
+      "height": 533,
+      "dhash": "123070e4c4e07030"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_04.jpg",
+      "sha256": "14d0afaf4c46dbf80a55d237cb4dade8fcc2144ceb2cb19e56c222cc4745cbde",
+      "bytes": 90020,
+      "width": 1200,
+      "height": 800,
+      "dhash": "3e274b1d71c96b9c"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_05.jpg",
+      "sha256": "59473bb33fcfc1afaf21f7665d405b515ce4001d79abd22ee6888133d92643c6",
+      "bytes": 628062,
+      "width": 3120,
+      "height": 3120,
+      "dhash": "9593e7ef1b174c70"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_06.jpg",
+      "sha256": "a493f8bf599d646cb245d1e05c979fa17334a10e49deaea90578bae58b6fad00",
+      "bytes": 170705,
+      "width": 800,
+      "height": 800,
+      "dhash": "f1e9ccd4d894e425"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_07.jpg",
+      "sha256": "f2e07e5c9870ac33ad9476cada72dda3c31976cee2c69d44b2c1f69d1bca7962",
+      "bytes": 102373,
+      "width": 800,
+      "height": 800,
+      "dhash": "1c1cddd7d656d2f0"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_08.jpg",
+      "sha256": "285cd09dc40fd703c772b6c9d3262b9da08b126c04f135fbf8b330b2d2a2c8b7",
+      "bytes": 618057,
+      "width": 1500,
+      "height": 1500,
+      "dhash": "ce0f0743131b8664"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_09.jpg",
+      "sha256": "601af230684ac2b1f30b86cfa4eb4cd2b13cec722f9cc74a6767dbab90ca080f",
+      "bytes": 95422,
+      "width": 800,
+      "height": 800,
+      "dhash": "1c1cece4f6cec4e0"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_10.jpg",
+      "sha256": "35ee10f656f6958313cc4c699f686adf7148634c6e5be0bfcea5f95cc29ff1d1",
+      "bytes": 251751,
+      "width": 599,
+      "height": 400,
+      "dhash": "0c3cf8e4dcf0f060"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_11.jpg",
+      "sha256": "43ea69d2947e4a13505943bb5d5a586e29e0439be2f49515092f3d2cad4ece15",
+      "bytes": 73277,
+      "width": 800,
+      "height": 533,
+      "dhash": "0008327070606010"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_12.jpg",
+      "sha256": "0b81ce03eb23883b5165ee105d5b83a6c8a3bdfac20d0e26e32408d21fe439c6",
+      "bytes": 246483,
+      "width": 800,
+      "height": 625,
+      "dhash": "1751d8a8d678693b"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_13.jpg",
+      "sha256": "3850f92809641327f98056a144af9bb5c7df268b22a2f61820b7a51755b4e2af",
+      "bytes": 116042,
+      "width": 800,
+      "height": 533,
+      "dhash": "0070d8d4d4e07010"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_14.jpg",
+      "sha256": "6082389c66dbf0dd3e18a00e193414c7b0eaec47a43f0a25e17cc31bff027f1c",
+      "bytes": 175749,
+      "width": 800,
+      "height": 800,
+      "dhash": "3174564268741181"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_15.jpg",
+      "sha256": "5999c157e30a1c1186ced48055cbcf3bbabf9f2511c455ac49f7e88d822772dd",
+      "bytes": 256681,
+      "width": 700,
+      "height": 1053,
+      "dhash": "e6e2b4be96d6c6ea"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_01.jpg",
+      "sha256": "964d7c08b574d64064fbe85643544378872a123dba546f58e148b4da0ddb488e",
+      "bytes": 38397,
+      "width": 478,
+      "height": 336,
+      "dhash": "8c8b8b83dba98b9b"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_02.jpg",
+      "sha256": "315eeb57bb92407d76975314a8d20e63d55180ddf1f79f4c5a9be827f6eaaaf6",
+      "bytes": 676456,
+      "width": 1920,
+      "height": 2560,
+      "dhash": "2f4a7359fcf97ad2"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_03.jpg",
+      "sha256": "7a94a4aae06f980a40583f725713662955ab82f15d551d057b816df4f1f6b5b0",
+      "bytes": 379949,
+      "width": 1616,
+      "height": 1152,
+      "dhash": "2b1b3dfa9c7567d3"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_04.jpg",
+      "sha256": "bbb633a6cc58c03d4682a7d0d734c085ba3bc3d8bba902cb084368ab61f92dea",
+      "bytes": 377261,
+      "width": 1024,
+      "height": 768,
+      "dhash": "8b37562f8d097191"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_05.jpg",
+      "sha256": "10334faccefae790456d0547f069bd2ff257ea160d39cb2f2878c7cce905485c",
+      "bytes": 64579,
+      "width": 600,
+      "height": 400,
+      "dhash": "8b9dbd8dbaddcc5a"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_06.jpg",
+      "sha256": "47b5f8e1a159ee70ff93ca0de3ea67dc4febb58d014ba8c1fb13d692e826be0b",
+      "bytes": 38280,
+      "width": 445,
+      "height": 315,
+      "dhash": "8b37162f8d8d55b1"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_07.jpg",
+      "sha256": "8e9e30f3f4b79ba70779c77895117f6480bc2791395e228b24d301d5ecf73ec7",
+      "bytes": 63629,
+      "width": 751,
+      "height": 500,
+      "dhash": "b24c0c0692c8c949"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_08.jpg",
+      "sha256": "684989e51e4127b83a41d64672abf1552880a6271ce49e1183cf078ceb25a2dc",
+      "bytes": 243365,
+      "width": 750,
+      "height": 500,
+      "dhash": "2e8f8e4e4a4bb336"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_09.jpg",
+      "sha256": "812860a9f656685f4cf8f8ef85bc2264c1d3237ac7d9bfbefc0e97a3e4979633",
+      "bytes": 84134,
+      "width": 406,
+      "height": 612,
+      "dhash": "3903999b1e9ada2e"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_10.jpg",
+      "sha256": "c5a78b62e2094a908d5a91c1902080924b785e5ed03aaa695a0a03fcba803393",
+      "bytes": 49015,
+      "width": 500,
+      "height": 620,
+      "dhash": "3332551b4c191b4d"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_11.jpg",
+      "sha256": "0bcacbc59a50968920c6bec0d70f4337c51c8a4ed5f0e222119bfa236f6888e6",
+      "bytes": 58885,
+      "width": 500,
+      "height": 375,
+      "dhash": "636276743242c6e5"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_12.jpg",
+      "sha256": "946734999f31802f21c6bdf43653f6250fa2ceb7c96f9c02156c75f7a9013806",
+      "bytes": 214832,
+      "width": 750,
+      "height": 500,
+      "dhash": "494e6c242f200124"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_13.jpg",
+      "sha256": "17f0eb4326db24a718eb71e025eced2bd778f95ae1a90bc5c64e37cf135e1a80",
+      "bytes": 45503,
+      "width": 475,
+      "height": 633,
+      "dhash": "86c7efd61d162687"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_14.jpg",
+      "sha256": "39b529e9331faa4855039a7991f86fa7a5329ea520eb4b518b0c58b297793a3d",
+      "bytes": 132127,
+      "width": 612,
+      "height": 406,
+      "dhash": "f4dec5e2e2a06041"
+    },
+    {
+      "path": "case_workspace\\annotate\\huangqi_leaf_15.jpg",
+      "sha256": "d4b9a297fd2b43103dd8a22f76b7512f2c93085ac6d2ddb5e4bd589ab06ae7b3",
+      "bytes": 253344,
+      "width": 1024,
+      "height": 682,
+      "dhash": "a8a4f171c3cca886"
+    }
+  ]
+}

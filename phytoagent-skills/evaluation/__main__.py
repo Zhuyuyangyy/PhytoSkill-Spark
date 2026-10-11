@@ -7,6 +7,10 @@
     verify-freeze [--manifest PATH]
                                   recompute and compare; non-zero on any drift
     holdout  <annotations.json> --model --quantization   guarded one-shot run
+            [--predictions P --labels L]   formal path: frozen predictions joined
+                                           with independent labels at scoring time
+    freeze-predictions <file> --model [--model-digest]  seal predictions first
+    identity --build-dev <dir> | --new <dir> [--source --batch --role]
     agree    <first.json> <second.json>                  inter-annotator agreement
 
 ``report`` and ``holdout`` write JSON under ``artifacts/evaluations/``. Nothing
@@ -27,6 +31,8 @@ from evaluation.frozen import (DEFAULT_MANIFEST, assert_manifest,
                                frozen_from_manifest, verify_manifest,
                                write_manifest)
 from evaluation.metrics import risk_coverage_curve, stratify
+from evaluation.identity import DEFAULT_IDENTITY
+from evaluation.predictions import freeze_predictions, join_for_scoring
 from evaluation.split import DEFAULT_LEDGER, FreezeError, HoldoutLedger, split_entries
 
 DEFAULT_ANNOTATION = Path("case_workspace/annotate/huangqi_annotated_results.json")
@@ -126,6 +132,63 @@ def _freeze(args: argparse.Namespace) -> int:
     return 0
 
 
+def _freeze_predictions(args: argparse.Namespace) -> int:
+    """Seal a predictions file before the independent labels exist."""
+    record = freeze_predictions(Path(args.predictions), model=args.model,
+                                model_digest=args.model_digest)
+    print(json.dumps({"frozen": record["predictions_sha256"],
+                      "entries": record["entries"],
+                      "model": record["model"],
+                      "model_digest": record["model_digest"][:16],
+                      "frozen_at": record["frozen_at"]}, ensure_ascii=False, indent=2))
+    return 0
+
+
+def _identity(args: argparse.Namespace) -> int:
+    """Build the development identity manifest, or register new data.
+
+    Registration is the R3-2 data-independence gate: every new image is
+    identified by SHA-256 and perceptual hash and cross-checked against the
+    development set — an exact duplicate or a near duplicate refuses, because
+    a blind test cannot contain an image the prompts were tuned on.
+    """
+    from evaluation.identity import (assert_independent, load_identity_manifest,
+                                     scan_directory, write_identity_manifest)
+
+    if args.build_dev:
+        identities = scan_directory(args.build_dev)
+        manifest = write_identity_manifest(
+            identities, args.manifest,
+            note="The development and calibration images, identified. New holdout "
+                 "data is cross-checked against this list before registration.")
+        print(json.dumps({"written": str(args.manifest), "count": manifest["count"]},
+                         ensure_ascii=False, indent=2))
+        return 0
+
+    if not args.new:
+        raise FreezeError("identity needs --build-dev <dir> or --new <dir>")
+    reference = load_identity_manifest(args.manifest)
+    identities = scan_directory(args.new)
+    report = assert_independent(identities, reference)
+    roles = args.role or ["holdout"] * len(identities)
+    if len(roles) != len(identities):
+        raise FreezeError("one role per image (--role, repeatable), or none at all")
+    manifest = write_identity_manifest(
+        identities, args.out,
+        note=f"Independent holdout data. source={args.source or 'unrecorded'} "
+             f"batch={args.batch or 'unrecorded'}; roles assigned before any model "
+             f"output was seen; cross-checked against {args.manifest} "
+             f"({report['checked']} checked, {report['reference_count']} reference).")
+    manifest["source"] = args.source or ""
+    manifest["batch"] = args.batch or ""
+    manifest["roles"] = {identity.path: role for identity, role in zip(identities, roles)}
+    Path(args.out).write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+                              encoding="utf-8")
+    print(json.dumps({"written": str(args.out), "count": manifest["count"],
+                      "cross_check": report}, ensure_ascii=False, indent=2))
+    return 0
+
+
 def _verify_freeze(args: argparse.Namespace) -> int:
     report = verify_manifest(Path(args.manifest))
     print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
@@ -162,7 +225,22 @@ def _holdout(args: argparse.Namespace) -> int:
         raise FreezeError(
             "a holdout run must name its holdout images (--holdout, repeatable); "
             "an undeclared holdout scores whatever it is given")
-    entries = _entries(Path(args.annotations))
+
+    # The formal path: predictions frozen before the labels existed, scored by
+    # joining the two files. Hashing one file that already contains both sides
+    # proves nothing about order; this does.
+    joined = None
+    if args.predictions or args.labels:
+        if not (args.predictions and args.labels):
+            raise FreezeError(
+                "--predictions and --labels go together: the formal blind test "
+                "scores frozen predictions joined with independent labels")
+        joined = join_for_scoring(Path(args.predictions), Path(args.labels))
+        entries = joined["entries"]
+        annotations_path = Path(args.predictions)
+    else:
+        entries = _entries(Path(args.annotations))
+        annotations_path = Path(args.annotations)
     holdout = tuple(args.holdout)
     split = split_entries(entries, holdout=holdout)
     entries = [entry for entry in entries if entry.get("image") in set(holdout)]
@@ -177,13 +255,18 @@ def _holdout(args: argparse.Namespace) -> int:
     ledger = HoldoutLedger.load(Path(args.ledger))
     metrics = stratify(entries, key="mode")
     # The predictions are the artifact the numbers were computed from; their
-    # hash is recorded so a later reader can tell which bytes were scored.
-    inputs_sha256 = _sha256_file(Path(args.annotations))
+    # hash is recorded so a later reader can tell which bytes were scored. On
+    # the formal path the frozen record already carries it; the labels' hash
+    # travels alongside, so both sides of the join are identifiable.
+    inputs_sha256 = (joined["predictions_sha256"] if joined
+                     else _sha256_file(annotations_path))
     payload = {
         "scope": "holdout_evaluation",
         "freeze": frozen.summary(),
         "split": split.to_dict(),
         "inputs_sha256": inputs_sha256,
+        "labels_sha256": joined["labels_sha256"] if joined else None,
+        "predictions_frozen_at": joined["frozen_at"] if joined else None,
         "scored_entries": len(entries),
         "metrics": {name: evaluation.to_dict() for name, evaluation in metrics.items()},
     }
@@ -240,6 +323,29 @@ def main(argv: list[str] | None = None) -> int:
     frozen.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     frozen.set_defaults(handler=_freeze)
 
+    predictions = commands.add_parser(
+        "freeze-predictions", help="seal predictions before the labels exist")
+    predictions.add_argument("predictions")
+    predictions.add_argument("--model", required=True)
+    predictions.add_argument("--model-digest", default="")
+    predictions.set_defaults(handler=_freeze_predictions)
+
+    identity = commands.add_parser(
+        "identity", help="build the development identity manifest, or register new data")
+    identity.add_argument("--build-dev", default="",
+                          help="directory of development/calibration images")
+    identity.add_argument("--new", default="",
+                          help="directory of new candidate images")
+    identity.add_argument("--source", default="",
+                          help="where the new images were collected")
+    identity.add_argument("--batch", default="",
+                          help="plant or batch identifier, for near-duplicate provenance")
+    identity.add_argument("--role", action="append", default=[],
+                          help="role per new image, assigned before any model output")
+    identity.add_argument("--manifest", default=str(DEFAULT_IDENTITY))
+    identity.add_argument("--out", default="artifacts/evaluations/new-data-identity.json")
+    identity.set_defaults(handler=_identity)
+
     verify = commands.add_parser("verify-freeze", help="recompute and compare the freeze")
     verify.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     verify.set_defaults(handler=_verify_freeze)
@@ -257,6 +363,10 @@ def main(argv: list[str] | None = None) -> int:
     holdout.add_argument("--output", default=str(HOLDOUT_PATH))
     holdout.add_argument("--supersede", action="store_true")
     holdout.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
+    holdout.add_argument("--predictions", default="",
+                         help="frozen predictions file (the formal blind-test path)")
+    holdout.add_argument("--labels", default="",
+                         help="independent labels file, joined at scoring time")
     holdout.set_defaults(handler=_holdout)
 
     agree = commands.add_parser("agree", help="inter-annotator agreement")

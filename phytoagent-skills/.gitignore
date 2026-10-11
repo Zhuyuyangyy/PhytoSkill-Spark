@@ -21,6 +21,12 @@ artifacts/vision-cache/
 # The interactive demo's workspace: regenerable by `python -m demo.v1_server`,
 # and it carries a generated demo keypair — never commit it.
 artifacts/demo-workspace/
+# Frozen prediction records are runtime artifacts of a blind-test run; the
+# development identity manifest beside them is the committed baseline.
+artifacts/evaluations/predictions/
+# Frozen prediction records are runtime artifacts of a blind-test run; the
+# development identity manifest beside them is the committed baseline.
+artifacts/evaluations/predictions/
 
 # Unrelated course work that was dropped into the annotation workspace.
 case_workspace/annotate/*.docx

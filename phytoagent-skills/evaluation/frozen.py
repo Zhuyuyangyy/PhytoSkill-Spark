@@ -47,6 +47,7 @@ FREEZE_INPUTS: tuple[tuple[str, str], ...] = (
     ("corpus/retriever.py", "the retrieval gate: what counts as a literal match"),
     ("corpus/ranking.py", "the ranking constants and field weights"),
     ("evaluation/metrics.py", "the metric definitions the report is computed from"),
+    ("evaluation/predictions.py", "how frozen predictions and independent labels are joined into scoring entries"),
     ("docs/evaluation.md", "the protocol the run is held to"),
 )
 
