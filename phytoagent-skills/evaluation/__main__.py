@@ -23,11 +23,11 @@ import sys
 from pathlib import Path
 
 from evaluation.agreement import multilabel_agreement, resolution_queue
-from evaluation.frozen import (DEFAULT_MANIFEST, assert_manifest, verify_manifest,
+from evaluation.frozen import (DEFAULT_MANIFEST, assert_manifest,
+                               frozen_from_manifest, verify_manifest,
                                write_manifest)
 from evaluation.metrics import risk_coverage_curve, stratify
-from evaluation.split import (DEFAULT_LEDGER, FreezeError, HoldoutLedger,
-                              freeze as make_freeze, split_entries)
+from evaluation.split import DEFAULT_LEDGER, FreezeError, HoldoutLedger, split_entries
 
 DEFAULT_ANNOTATION = Path("case_workspace/annotate/huangqi_annotated_results.json")
 REPORT_PATH = Path("artifacts/evaluations/dev30-report.json")
@@ -148,6 +148,12 @@ def _holdout(args: argparse.Namespace) -> int:
             f"no freeze manifest at {manifest_path}; the holdout gate is not "
             "optional — freeze first (python -m evaluation freeze ...)")
     assert_manifest(manifest_path, model=args.model, quantization=args.quantization)
+    # The scoring Freeze is the one the manifest published — same aggregates,
+    # same weight identity, same id. Re-fingerprinting here would produce a
+    # second experiment whose id nobody committed, and the ledger would then
+    # guard the wrong thing.
+    frozen = frozen_from_manifest(manifest_path, model=args.model,
+                                  quantization=args.quantization)
 
     # The holdout set is mandatory. Without an explicit list every entry would
     # default to the calibration role and then be scored as holdout anyway —
@@ -168,7 +174,6 @@ def _holdout(args: argparse.Namespace) -> int:
            for entry in entries):
         raise FreezeError("holdout entries overlap the development or calibration set")
 
-    frozen = make_freeze(model=args.model, quantization=args.quantization)
     ledger = HoldoutLedger.load(Path(args.ledger))
     metrics = stratify(entries, key="mode")
     # The predictions are the artifact the numbers were computed from; their

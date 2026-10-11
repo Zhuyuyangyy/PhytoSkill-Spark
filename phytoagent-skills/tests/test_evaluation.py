@@ -564,7 +564,6 @@ def test_the_freeze_covers_the_workflow_that_produces_the_verdict():
     assert "runtime/workflow.py" in paths
 
 
-
 def test_the_freeze_verifies_from_a_fresh_checkout(tmp_path):
     """The manifest must verify against the repository's own bytes, not just
     the machine that froze it.
@@ -597,3 +596,51 @@ def test_the_freeze_verifies_from_a_fresh_checkout(tmp_path):
     assert input_hashes(root)[victim] == input_hashes()[victim], (
         "line endings changed the hash; a fresh checkout would report drift")
 
+
+def test_the_holdout_report_the_manifest_and_the_ledger_name_one_experiment(tmp_path):
+    """The P0 the reviewer found, pinned: the holdout must score the freeze the
+    manifest *published*.
+
+    A second ``freeze()`` call inside the holdout command rebuilt the Freeze
+    without the weight identity, so the report and ledger recorded an
+    experiment id nobody committed — and the one-shot ledger guarded the wrong
+    fingerprint. All three names on a run must now be the same id.
+    """
+    from evaluation.__main__ import main
+    from evaluation.frozen import load_manifest, write_manifest
+    from evaluation.split import HoldoutLedger
+
+    manifest = tmp_path / "frozen.json"
+    written = write_manifest(manifest, model=MODEL, quantization=QUANTIZATION,
+                             model_digest="e" * 64)
+    ledger_path, output = tmp_path / "ledger.json", tmp_path / "holdout.json"
+    argv = ["holdout", str(ANNOTATION), "--model", MODEL, "--quantization", QUANTIZATION,
+            "--ledger", str(ledger_path), "--output", str(output),
+            "--manifest", str(manifest),
+            "--holdout", "huangqi_01.jpg", "--holdout", "huangqi_02.jpg"]
+    assert main(argv) == 0
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    published = load_manifest(manifest)["freeze_id"]
+    entry = HoldoutLedger.load(ledger_path).runs[-1]
+    assert entry["freeze_id"] == published
+    assert payload["freeze"]["freeze_id"] == published[:12]
+    assert entry["freeze"]["model_digest"] == written["freeze"]["model_digest"]
+    assert entry["freeze"]["model_digest"], "the scored freeze must carry the weight identity"
+
+
+def test_a_second_scoring_freeze_without_the_identity_is_refused(tmp_path):
+    """The failure mode, isolated: rebuilding the Freeze from the current tree
+    alone yields a different id, and frozen_from_manifest refuses rather than
+    letting the run record an unpublished experiment."""
+    from evaluation.frozen import frozen_from_manifest, load_manifest, write_manifest
+
+    manifest = tmp_path / "frozen.json"
+    write_manifest(manifest, model=MODEL, quantization=QUANTIZATION,
+                   model_digest="f" * 64)
+    scoring = frozen_from_manifest(manifest)
+    assert scoring.model_digest == "f" * 64
+    assert scoring.freeze_id == load_manifest(manifest)["freeze_id"]
+    # A freeze rebuilt the old way — no identity — is a different experiment.
+    from evaluation.split import freeze as make_freeze
+    naive = make_freeze(model=MODEL, quantization=QUANTIZATION)
+    assert naive.freeze_id != scoring.freeze_id

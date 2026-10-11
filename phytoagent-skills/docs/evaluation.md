@@ -150,6 +150,20 @@ prompt / parser / 词表 / 契约 / 审计规则 / 检索 / scorer / 协议，�
 `scored_entries`，账本记录 `output_sha256`（报告自身哈希，文件不能含自己的
 哈希，账本才是审计轨迹）——事后可以说清数字是哪份字节算出来的。
 
+**三方身份对账。** 评分用的 Freeze 不是重新算的，而是从**已校验的清单**重建的
+（`frozen_from_manifest`），并要求重建出的 `freeze_id` 等于清单顶层的
+`freeze_id`。于是 `holdout 报告 == frozen.json == 账本记录` 三处 freeze_id
+必然一致，且都带着权重身份。否则会出现「清单发布的是带权重身份的实验，报告
+和账本记的是另一个没人发布过的指纹」——一次性规则守错了对象。这条由回归测试
+钉住：`report.freeze_id == manifest.freeze_id == ledger_entry.freeze_id`。
+
+**三方身份对账。** 评分用的 Freeze 不是重新算的，而是从**已校验的清单**重建的
+（`frozen_from_manifest`），并要求重建出的 `freeze_id` 等于清单顶层的
+`freeze_id`。于是 `holdout 报告 == frozen.json == 账本记录` 三处 freeze_id
+必然一致，且都带着权重身份。否则会出现「清单发布的是带权重身份的实验，报告
+和账本记的是另一个没人发布过的指纹」——一次性规则守错了对象。这条由回归测试
+钉住：`report.freeze_id == manifest.freeze_id == ledger_entry.freeze_id`。
+
 当前正式冻结：模型 `modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest`，量化
 `Q4_K_M`，权重 digest `95c9635e…9904f74`（33,380,567,612 字节，观测自
 `artifacts/dgx/vision-leaf-01.json` 的 `gpu_ps` 记录），

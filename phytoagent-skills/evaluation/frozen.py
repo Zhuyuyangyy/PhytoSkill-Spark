@@ -165,6 +165,39 @@ def load_manifest(path: str | Path = DEFAULT_MANIFEST) -> dict:
     return manifest
 
 
+def frozen_from_manifest(path: str | Path = DEFAULT_MANIFEST, *,
+                         model: str | None = None,
+                         quantization: str | None = None) -> Freeze:
+    """The scoring Freeze, reconstructed from the verified manifest.
+
+    The holdout run must score the experiment the manifest *published* — not a
+    freshly fingerprinted one. A second ``freeze()`` call recomputes the
+    aggregates from the current tree; if the manifest pins a weight identity
+    (it must) and the fresh call does not carry it, the two freeze ids differ,
+    and the report and ledger would record an experiment nobody published.
+
+    So: verify first, then rebuild the Freeze from the manifest's own record,
+    then require the rebuilt id to equal the manifest's top-level id. The
+    caller passes this one object to the ledger and the report, so all three
+    names on the run are the same experiment.
+    """
+    manifest = load_manifest(path)
+    report = verify_manifest(path, model=model, quantization=quantization)
+    if not report.ok:
+        raise FreezeError("the tree no longer matches the freeze manifest; "
+                          "refusing to score a drifted configuration")
+    recorded = manifest["freeze"]
+    frozen = freeze(model=model or recorded["model"],
+                    quantization=quantization or recorded["quantization"],
+                    model_digest=recorded.get("model_digest", ""),
+                    model_size_bytes=recorded.get("model_size_bytes"))
+    if frozen.freeze_id != manifest["freeze_id"]:
+        raise FreezeError(
+            "the reconstructed freeze id does not match the manifest: "
+            f"{frozen.freeze_id[:12]} != {manifest['freeze_id'][:12]}")
+    return frozen
+
+
 def verify_manifest(path: str | Path = DEFAULT_MANIFEST,
                     *, model: str | None = None,
                     quantization: str | None = None) -> DriftReport:
@@ -265,4 +298,5 @@ def _aggregate(name: str) -> str:
 
 __all__ = ["AGGREGATE_TO_INPUT", "DEFAULT_MANIFEST", "DriftReport", "FREEZE_INPUTS",
            "aggregates_match_inputs", "assert_manifest", "build_manifest",
-           "input_hashes", "load_manifest", "verify_manifest", "write_manifest"]
+           "frozen_from_manifest", "input_hashes", "load_manifest",
+           "verify_manifest", "write_manifest"]
