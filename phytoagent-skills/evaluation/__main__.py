@@ -28,12 +28,14 @@ from pathlib import Path
 
 from evaluation.agreement import multilabel_agreement, resolution_queue
 from evaluation.frozen import (DEFAULT_MANIFEST, assert_manifest,
-                               frozen_from_manifest, verify_manifest,
-                               write_manifest)
+                               frozen_from_manifest, load_manifest,
+                               verify_manifest, write_manifest)
 from evaluation.metrics import risk_coverage_curve, stratify
-from evaluation.identity import DEFAULT_IDENTITY
-from evaluation.predictions import freeze_predictions, join_for_scoring
-from evaluation.split import DEFAULT_LEDGER, FreezeError, HoldoutLedger, split_entries
+from evaluation.identity import DEFAULT_IDENTITY, load_identity_manifest, registered_images
+from evaluation.predictions import (DEFAULT_PREDICTION_STORE,
+                                    freeze_predictions, join_for_scoring)
+from evaluation.split import (DEFAULT_LEDGER, FreezeError, HoldoutLedger, ROLES,
+                          split_entries)
 
 DEFAULT_ANNOTATION = Path("case_workspace/annotate/huangqi_annotated_results.json")
 REPORT_PATH = Path("artifacts/evaluations/dev30-report.json")
@@ -51,6 +53,26 @@ def _sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(65536), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _parse_exclusions(pairs: list[str] | None) -> dict[str, str]:
+    """--exclude image=reason pairs: an exclusion is a recorded act, not a silence.
+
+    A damaged image or a missing annotation may legitimately shrink what is
+    scored; the protocol requires the reason and the full denominator to travel
+    with the result, so the reader sees N of M and why.
+    """
+    exclusions: dict[str, str] = {}
+    for pair in pairs or []:
+        image, _, reason = pair.partition("=")
+        image, reason = image.strip(), reason.strip()
+        if not image or not reason:
+            raise FreezeError(
+                f"--exclude wants image=reason with a non-empty reason: {pair!r}")
+        if image in exclusions:
+            raise FreezeError(f"--exclude repeats {image}")
+        exclusions[image] = reason
+    return exclusions
 
 
 def _entries(path: Path) -> list[dict]:
@@ -133,9 +155,30 @@ def _freeze(args: argparse.Namespace) -> int:
 
 
 def _freeze_predictions(args: argparse.Namespace) -> int:
-    """Seal a predictions file before the independent labels exist."""
+    """Seal a predictions file before the independent labels exist.
+
+    The seal binds the published experiment: freeze_id, model and weight
+    digest. Defaults come from the committed manifest, so the command cannot
+    seal predictions against an identity nobody published.
+    """
+    manifest_path = Path(args.manifest)
+    freeze_id, digest = args.freeze_id, args.model_digest
+    if not (freeze_id and digest):
+        if not manifest_path.is_file():
+            raise FreezeError(
+                "no freeze manifest to read the identity from; pass --freeze-id "
+                "and --model-digest explicitly")
+        published = load_manifest(manifest_path)["freeze"]
+        freeze_id = freeze_id or published.get("freeze_id", "")
+        digest = digest or published.get("model_digest", "")
+    if not digest:
+        raise FreezeError(
+            "no weight digest to seal against; the published manifest pins none — "
+            "re-freeze with an observable model identity first")
     record = freeze_predictions(Path(args.predictions), model=args.model,
-                                model_digest=args.model_digest)
+                                model_digest=digest, freeze_id=freeze_id,
+                                store=Path(args.prediction_store),
+                                attest=args.attest)
     print(json.dumps({"frozen": record["predictions_sha256"],
                       "entries": record["entries"],
                       "model": record["model"],
@@ -167,9 +210,18 @@ def _identity(args: argparse.Namespace) -> int:
 
     if not args.new:
         raise FreezeError("identity needs --build-dev <dir> or --new <dir>")
+    if not args.source or not args.batch:
+        raise FreezeError(
+            "registering new data requires --source and --batch: the perceptual "
+            "gate catches the same photograph re-encoded, and only the collector's "
+            "record can say whether two images share a plant")
+    unknown_roles = sorted(set(args.role) - set(ROLES))
+    if unknown_roles:
+        raise FreezeError(f"unknown roles {unknown_roles}; the roles are {sorted(ROLES)}")
     reference = load_identity_manifest(args.manifest)
     identities = scan_directory(args.new)
-    report = assert_independent(identities, reference)
+    report = assert_independent(identities, reference,
+                                allow_manual_review=args.allow_manual_review)
     roles = args.role or ["holdout"] * len(identities)
     if len(roles) != len(identities):
         raise FreezeError("one role per image (--role, repeatable), or none at all")
@@ -230,22 +282,82 @@ def _holdout(args: argparse.Namespace) -> int:
     # joining the two files. Hashing one file that already contains both sides
     # proves nothing about order; this does.
     joined = None
+    exclusions = _parse_exclusions(args.exclude)
     if args.predictions or args.labels:
         if not (args.predictions and args.labels):
             raise FreezeError(
                 "--predictions and --labels go together: the formal blind test "
                 "scores frozen predictions joined with independent labels")
-        joined = join_for_scoring(Path(args.predictions), Path(args.labels))
+        # The sealed predictions must belong to the freeze being scored: the
+        # same freeze_id, the same model, the same weight digest.
+        joined = join_for_scoring(
+            Path(args.predictions), Path(args.labels), store=Path(args.prediction_store),
+            expected={"freeze_id": frozen.freeze_id, "model": frozen.model,
+                      "model_digest": frozen.model_digest})
         entries = joined["entries"]
         annotations_path = Path(args.predictions)
+
+        # Admission and scoring are separate paths; this is the bridge. Every
+        # scored image must have been registered — with its source, batch and
+        # pre-assigned role — or the holdout is scoring data nobody vetted.
+        if not args.identity:
+            raise FreezeError(
+                "the formal blind test requires --identity: the registered-data "
+                "manifest every scored image must appear in")
+        identity_manifest = load_identity_manifest(args.identity)
+        registered = registered_images(identity_manifest)
+        scored_names = {entry["image"] for entry in entries}
+        unregistered = sorted(name for name in scored_names
+                              if Path(name).name not in registered)
+        if unregistered:
+            raise FreezeError(
+                f"scored images are not in the registered-data manifest: "
+                f"{unregistered[:5]}")
+        admission = {
+            "manifest": str(args.identity),
+            "manifest_sha256": _sha256_file(Path(args.identity)),
+            "source": identity_manifest.get("source", ""),
+            "batch": identity_manifest.get("batch", ""),
+            "roles": {name: registered[Path(name).name].get("role", "")
+                      for name in sorted(scored_names)},
+        }
+
+        # The scored set must equal the pre-registered set. Freezing 100 images
+        # and scoring the 20 that looked best is a different experiment, and a
+        # smaller denominator nobody declared.
+        pre_registered = set(joined["pre_registered"])
+        scored = {entry["image"] for entry in entries}
+        declared = set(args.holdout)
+        if declared != pre_registered:
+            raise FreezeError(
+                "the formal holdout set must equal the pre-registered set: "
+                f"{len(pre_registered)} images were frozen, --holdout names "
+                f"{len(declared)}; missing={sorted(pre_registered - declared)[:5]}, "
+                f"extra={sorted(declared - pre_registered)[:5]}")
+        unknown = sorted(set(exclusions) - pre_registered)
+        if unknown:
+            raise FreezeError(f"--exclude names images outside the frozen set: {unknown}")
+        if exclusions:
+            # The denominator is the full frozen set; exclusions are recorded
+            # acts, and the split below sees every declared image so the
+            # reader can tell N of M and why.
+            all_entries = list(entries)
+            entries = [entry for entry in entries if entry["image"] not in exclusions]
+        else:
+            all_entries = list(entries)
+        if not entries:
+            raise FreezeError("every pre-registered image was excluded; nothing to score")
     else:
         entries = _entries(Path(args.annotations))
         annotations_path = Path(args.annotations)
+        all_entries = list(entries)
+        admission = None
     holdout = tuple(args.holdout)
-    split = split_entries(entries, holdout=holdout)
-    entries = [entry for entry in entries if entry.get("image") in set(holdout)]
-    if not entries:
-        raise FreezeError("no annotation entries matched the declared holdout set")
+    split = split_entries(all_entries, holdout=holdout)
+    if joined is None:
+        entries = [entry for entry in entries if entry.get("image") in set(holdout)]
+        if not entries:
+            raise FreezeError("no annotation entries matched the declared holdout set")
     # Development and calibration samples must never be scored as holdout: the
     # split already assigned them, and the metrics below cover the holdout only.
     if any(entry.get("image") in set(split.development) | set(split.calibration)
@@ -267,6 +379,10 @@ def _holdout(args: argparse.Namespace) -> int:
         "inputs_sha256": inputs_sha256,
         "labels_sha256": joined["labels_sha256"] if joined else None,
         "predictions_frozen_at": joined["frozen_at"] if joined else None,
+        "pre_registered": sorted(joined["pre_registered"]) if joined else [],
+        "admission": admission if joined else None,
+        "excluded": [{"image": image, "reason": reason}
+                     for image, reason in sorted(exclusions.items())],
         "scored_entries": len(entries),
         "metrics": {name: evaluation.to_dict() for name, evaluation in metrics.items()},
     }
@@ -327,7 +443,15 @@ def main(argv: list[str] | None = None) -> int:
         "freeze-predictions", help="seal predictions before the labels exist")
     predictions.add_argument("predictions")
     predictions.add_argument("--model", required=True)
-    predictions.add_argument("--model-digest", default="")
+    predictions.add_argument("--model-digest", default="",
+                             help="defaults to the digest the manifest pins")
+    predictions.add_argument("--freeze-id", default="",
+                             help="defaults to the manifest's freeze_id")
+    predictions.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
+    predictions.add_argument("--attest", default="",
+                             help="independent custodian's delivery record, if one exists")
+    predictions.add_argument("--prediction-store", default=str(DEFAULT_PREDICTION_STORE),
+                             help="where the frozen prediction records live")
     predictions.set_defaults(handler=_freeze_predictions)
 
     identity = commands.add_parser(
@@ -342,6 +466,8 @@ def main(argv: list[str] | None = None) -> int:
                           help="plant or batch identifier, for near-duplicate provenance")
     identity.add_argument("--role", action="append", default=[],
                           help="role per new image, assigned before any model output")
+    identity.add_argument("--allow-manual-review", action="store_true",
+                          help="accept flat-frame dHash hits a human has inspected")
     identity.add_argument("--manifest", default=str(DEFAULT_IDENTITY))
     identity.add_argument("--out", default="artifacts/evaluations/new-data-identity.json")
     identity.set_defaults(handler=_identity)
@@ -367,6 +493,12 @@ def main(argv: list[str] | None = None) -> int:
                          help="frozen predictions file (the formal blind-test path)")
     holdout.add_argument("--labels", default="",
                          help="independent labels file, joined at scoring time")
+    holdout.add_argument("--exclude", action="append", default=[],
+                         help="image=reason: a recorded exclusion from the frozen set")
+    holdout.add_argument("--prediction-store", default=str(DEFAULT_PREDICTION_STORE),
+                         help="where the frozen prediction records live")
+    holdout.add_argument("--identity", default="",
+                         help="registered-data manifest; required on the formal path")
     holdout.set_defaults(handler=_holdout)
 
     agree = commands.add_parser("agree", help="inter-annotator agreement")

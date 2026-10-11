@@ -57,32 +57,75 @@ def _key(entry: dict) -> tuple[str, str]:
     return (str(image), str(entry.get("mode", "")))
 
 
-def freeze_predictions(path: str | Path, *, model: str, model_digest: str = "",
-                       store: str | Path = DEFAULT_PREDICTION_STORE) -> dict:
-    """Seal a predictions file. An explicit, timestamped publisher act.
+def freeze_predictions(path: str | Path, *, model: str, model_digest: str,
+                       freeze_id: str,
+                       store: str | Path = DEFAULT_PREDICTION_STORE,
+                       attest: str = "") -> dict:
+    """Seal a predictions file against the published experiment identity.
 
-    The record is written under the file's own hash, so it can be found again
-    without a registry: the predictions are identified by their bytes.
+    Three things are bound at seal time, because each one is otherwise
+    swappable afterwards:
+
+    * the **model identity** — name *and* weight digest. A name alone is a
+      tag; the digest is the bytes. ``model_digest`` is required: sealing
+      against a tag lets the server silently serve different weights.
+    * the **freeze_id** of the published manifest — the predictions belong to
+      one frozen configuration, and scoring under a different one is refused.
+    * the **pre-registered image set** — the entries in this file are the
+      evaluation set; scoring a subset of them is a different experiment.
+
+    The record is content-addressed (written under the file's own hash) and
+    **first-seal-wins**: re-sealing the same bytes cannot move the timestamp,
+    so the earlier seal is the one that counts. That is auditable evidence of
+    order — not tamper-proof proof of it; proof needs an independent
+    custodian's delivery record, which ``attest`` names when there is one.
     """
     path = Path(path)
     if not path.is_file():
         raise FreezeError(f"predictions file not found: {path}")
+    if not model:
+        raise FreezeError("a predictions freeze must name the model")
+    if not model_digest:
+        raise FreezeError(
+            "a predictions freeze must pin the weight digest; a model name is a "
+            "tag, not an identity")
+    if not freeze_id:
+        raise FreezeError(
+            "a predictions freeze must name the published freeze_id it belongs to")
     digest = _sha256(path)
     entries = _entries(path)
+
+    # A predictions file that carries annotator fields is the shape of "the
+    # labels were seen first": the model's output and a human's answer do not
+    # belong in the same file at seal time.
+    contaminated = sorted({field for entry in entries for field in LABEL_FIELDS
+                           if field in entry})
+    if contaminated:
+        raise FreezeError(
+            f"predictions file carries annotator fields {contaminated}; predictions "
+            "must be sealed before any label exists, in a file of their own")
+
     images = sorted({str(entry.get("image")) for entry in entries if entry.get("image")})
     if len(images) != len(entries):
         raise FreezeError("predictions must hold exactly one entry per image")
+    target = Path(store) / f"{digest}.json"
+    if target.is_file():
+        # First seal wins: the timestamp of the earliest record is the one that
+        # counts, and a later re-seal cannot quietly replace it.
+        return json.loads(target.read_text(encoding="utf-8"))
     record = {
         "schema_version": 1,
         "predictions_sha256": digest,
         "frozen_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "model": model,
         "model_digest": model_digest,
+        "freeze_id": freeze_id,
         "entries": len(entries),
         "images": images,
         "source_file": str(path),
+        "sealed_before_labels": True,
+        "custodian_attestation": attest,
     }
-    target = Path(store) / f"{digest}.json"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n",
                       encoding="utf-8")
@@ -111,27 +154,45 @@ def verify_frozen_predictions(path: str | Path, record: dict) -> str:
 
 
 def join_for_scoring(predictions_path: str | Path, labels_path: str | Path, *,
-                     store: str | Path = DEFAULT_PREDICTION_STORE) -> dict:
+                     store: str | Path = DEFAULT_PREDICTION_STORE,
+                     expected: dict | None = None) -> dict:
     """Merge frozen predictions with independent labels, or refuse.
 
     The merge is the scoring input. It exists only when the predictions were
     frozen first: the frozen record's hash must match the file's current bytes,
-    every label must have a frozen prediction behind it, and every frozen
-    prediction must have a label — an unscoreable prediction is reported, not
-    silently dropped.
+    the sealed model identity must match the scoring freeze (``expected``), and
+    the two sides must cover exactly the same (image, mode) keys — a label for
+    an image the model never saw under the freeze, or a frozen prediction with
+    no label, is a refusal rather than a silent drop.
+
+    What this proves: the bytes scored are the bytes sealed. What it does not
+    prove: that the seal happened before the labels were written — that needs
+    an independent custodian's delivery record, named in the seal.
     """
     predictions_path, labels_path = Path(predictions_path), Path(labels_path)
     digest = _sha256(predictions_path)
     record = load_frozen_predictions(digest, store)
     verify_frozen_predictions(predictions_path, record)
 
-    predictions = {_key(entry): entry for entry in _entries(predictions_path)}
-    labels = {_key(entry): entry for entry in _entries(labels_path)}
+    # The sealed predictions belong to one published experiment. Scoring them
+    # under a different freeze — or with the model identity the seal never
+    # named — records one experiment's numbers against another's name.
+    if expected is not None:
+        for field in ("freeze_id", "model", "model_digest"):
+            wanted = expected.get(field, "")
+            sealed = record.get(field, "")
+            if wanted and wanted != sealed:
+                raise FreezeError(
+                    f"sealed predictions do not match the scoring freeze: "
+                    f"{field} is {sealed or 'unset'!r}, the freeze says {wanted!r}")
 
-    unlabelled = sorted(image for image, _ in predictions if image not in
-                        {image for image, _ in labels})
-    unpredicted = sorted(image for image, _ in labels if image not in
-                         {image for image, _ in predictions})
+    prediction_entries = _entries(predictions_path)
+    label_entries = _entries(labels_path)
+    predictions = _index(prediction_entries, "predictions")
+    labels = _index(label_entries, "labels")
+
+    unlabelled = sorted(key for key in predictions if key not in labels)
+    unpredicted = sorted(key for key in labels if key not in predictions)
     if unlabelled:
         raise FreezeError(f"frozen predictions without labels: {unlabelled}")
     if unpredicted:
@@ -157,7 +218,25 @@ def join_for_scoring(predictions_path: str | Path, labels_path: str | Path, *,
         "frozen_at": record["frozen_at"],
         "model": record["model"],
         "model_digest": record["model_digest"],
+        "freeze_id": record.get("freeze_id", ""),
+        "pre_registered": list(record.get("images", [])),
     }
+
+
+def _index(entries: list[dict], side: str) -> dict[tuple[str, str], dict]:
+    """Index entries by the full (image, mode) key, refusing duplicates.
+
+    The key is the pair, not the image alone: the same photograph scored in two
+    modes is two records, and a repeated key is a data error — not something a
+    later entry should silently win.
+    """
+    indexed: dict[tuple[str, str], dict] = {}
+    for entry in entries:
+        key = _key(entry)
+        if key in indexed:
+            raise FreezeError(f"{side} file repeats the (image, mode) key {key}")
+        indexed[key] = entry
+    return indexed
 
 
 __all__ = ["DEFAULT_PREDICTION_STORE", "PREDICTION_FIELDS", "LABEL_FIELDS",

@@ -39,6 +39,13 @@ DEFAULT_IDENTITY = Path("artifacts/evaluations/development-identity.json")
 NEAR_DUPLICATE_MAX_DISTANCE = 5
 
 
+# Standard deviation of the 9x8 grayscale reduction below which an image is
+# "flat": a blank or near-blank frame has no structure for a difference hash to
+# describe, and any dHash match it produces is noise. Those hits go to manual
+# review instead of an automatic refusal.
+LOW_TEXTURE_STDDEV = 6.0
+
+
 @dataclass(frozen=True)
 class ImageIdentity:
     """What one image is, independent of any annotation."""
@@ -49,10 +56,12 @@ class ImageIdentity:
     width: int | None
     height: int | None
     dhash: str
+    texture: float = 0.0
 
     def to_dict(self) -> dict:
         return {"path": self.path, "sha256": self.sha256, "bytes": self.bytes,
-                "width": self.width, "height": self.height, "dhash": self.dhash}
+                "width": self.width, "height": self.height, "dhash": self.dhash,
+                "texture": self.texture}
 
 
 def _sha256(path: Path) -> str:
@@ -82,7 +91,16 @@ def _dhash(path: Path) -> str:
             left = pixels[row * 9 + column]
             right = pixels[row * 9 + column + 1]
             bits.append("1" if left > right else "0")
-    return f"{int(''.join(bits), 2):016x}"
+    texture = _stddev(pixels)
+    return f"{int(''.join(bits), 2):016x}", texture
+
+
+def _stddev(pixels: bytes) -> float:
+    """Population standard deviation of the reduced grayscale."""
+    if not pixels:
+        return 0.0
+    mean = sum(pixels) / len(pixels)
+    return round((sum((value - mean) ** 2 for value in pixels) / len(pixels)) ** 0.5, 3)
 
 
 def image_identity(path: str | Path, *, root: Path | None = None) -> ImageIdentity:
@@ -98,10 +116,11 @@ def image_identity(path: str | Path, *, root: Path | None = None) -> ImageIdenti
             width, height = image.size
     except Exception:  # noqa: BLE001 - dimensions are informative, identity is the hash
         pass
+    dhash, texture = _dhash(path)
     return ImageIdentity(
         path=str(path.relative_to(root)) if root else str(path),
         sha256=_sha256(path), bytes=path.stat().st_size,
-        width=width, height=height, dhash=_dhash(path))
+        width=width, height=height, dhash=dhash, texture=texture)
 
 
 def _hamming(left: str, right: str) -> int:
@@ -148,16 +167,24 @@ def load_identity_manifest(path: str | Path) -> dict:
 
 def cross_check(new: list[ImageIdentity], reference: dict, *,
                 max_distance: int = NEAR_DUPLICATE_MAX_DISTANCE) -> dict:
-    """Compare new images against a reference identity manifest.
+    """Compare new images against a reference manifest **and against each other**.
 
-    Two independent gates, reported separately: an exact SHA-256 match is a
-    duplicate and always a refusal; a perceptual-hash match within
-    ``max_distance`` bits is a near duplicate and also refuses, naming the
-    reference image and the distance so a collector can judge.
+    Three independent gates, reported separately:
+
+    * an exact SHA-256 match — against the reference or *within the batch* — is
+      a duplicate and always a refusal. The intra-batch gate matters because a
+      hundred "new" images that are re-encodes of two photographs would pass a
+      reference-only check while carrying almost no independent information.
+    * a perceptual-hash match within ``max_distance`` bits is a near duplicate
+      and refuses, naming the counterpart and the distance.
+    * a near-duplicate hit where the new image is **flat** (no texture for a
+      difference hash to describe) is demoted to ``manual_review``: on a blank
+      frame the hash is noise, and refusing real data on noise is its own kind
+      of error. A human looks, and the flag says so.
     """
     by_hash = {image["sha256"]: image for image in reference.get("images", [])}
     by_dhash = [(image["dhash"], image) for image in reference.get("images", [])]
-    exact, near = [], []
+    exact, near, manual = [], [], []
     for identity in new:
         if identity.sha256 in by_hash:
             exact.append({"new": identity.path,
@@ -166,29 +193,74 @@ def cross_check(new: list[ImageIdentity], reference: dict, *,
         for reference_hash, image in by_dhash:
             distance = _hamming(identity.dhash, reference_hash)
             if distance <= max_distance:
-                near.append({"new": identity.path, "reference": image["path"],
-                             "distance": distance})
+                hit = {"new": identity.path, "reference": image["path"],
+                       "distance": distance, "texture": identity.texture}
+                (manual if identity.texture < LOW_TEXTURE_STDDEV else near).append(hit)
                 break
+    # Intra-batch: the same bytes or the same photograph twice in one delivery.
+    for index, identity in enumerate(new):
+        for other in new[index + 1:]:
+            if identity.sha256 == other.sha256:
+                exact.append({"new": identity.path, "reference": other.path,
+                              "scope": "within the batch"})
+            elif _hamming(identity.dhash, other.dhash) <= max_distance:
+                (manual if identity.texture < LOW_TEXTURE_STDDEV else near).append(
+                    {"new": identity.path, "reference": other.path, "scope": "within the batch",
+                     "distance": _hamming(identity.dhash, other.dhash),
+                     "texture": identity.texture})
     return {"exact_duplicates": exact, "near_duplicates": near,
-            "clean": not exact and not near,
+            "manual_review": manual,
+            "clean": not exact and not near and not manual,
             "checked": len(new),
             "reference_count": len(reference.get("images", []))}
 
 
 def assert_independent(new: list[ImageIdentity], reference: dict, *,
-                       max_distance: int = NEAR_DUPLICATE_MAX_DISTANCE) -> dict:
-    """cross_check, but any overlap raises. Registration refuses on collision."""
+                       max_distance: int = NEAR_DUPLICATE_MAX_DISTANCE,
+                       allow_manual_review: bool = False) -> dict:
+    """cross_check, but overlap refuses registration.
+
+    Flat-frame hits refuse too unless ``allow_manual_review``: the operator has
+    looked at the named pairs and accepts them. That is a human decision — the
+    hash cannot make it.
+    """
     report = cross_check(new, reference, max_distance=max_distance)
-    if not report["clean"]:
-        details = [f"{item['new']} == {item['reference']}" for item in report["exact_duplicates"]]
-        details += [f"{item['new']} ~ {item['reference']} (dHash {item['distance']} bits)"
+    if report["exact_duplicates"] or report["near_duplicates"] or (
+            report["manual_review"] and not allow_manual_review):
+        details = [f"{item['new']} == {item['reference']}"
+                   f"{' [' + item['scope'] + ']' if item.get('scope') else ''}"
+                   for item in report["exact_duplicates"]]
+        details += [f"{item['new']} ~ {item['reference']} (dHash {item['distance']} bits"
+                    f"{', ' + item['scope'] if item.get('scope') else ''})"
                     for item in report["near_duplicates"]]
+        details += [f"{item['new']} ~ {item['reference']} (flat frame, dHash "
+                    f"{item['distance']} bits — needs a human look)"
+                    for item in report["manual_review"]]
         raise FreezeError(
-            "new images overlap the development set; a blind test cannot contain "
-            f"them: {'; '.join(details)}")
+            "new images overlap the development set or each other; a blind test "
+            f"cannot contain them: {'; '.join(details)}")
     return report
 
 
-__all__ = ["DEFAULT_IDENTITY", "ImageIdentity", "NEAR_DUPLICATE_MAX_DISTANCE",
-           "assert_independent", "cross_check", "image_identity",
-           "load_identity_manifest", "scan_directory", "write_identity_manifest"]
+def registered_images(manifest: dict) -> dict[str, dict]:
+    """The registered image set, keyed by file name, for scoring-time checks.
+
+    Admission (``identity --new``) and scoring are separate paths; this is the
+    bridge: a formal holdout can require that every image it scores was
+    registered, with its source, batch and role, instead of trusting that the
+    file names happen to match.
+    """
+    registered: dict[str, dict] = {}
+    for image in manifest.get("images", []):
+        name = Path(image["path"]).name
+        registered[name] = {"sha256": image["sha256"], "texture": image.get("texture")}
+    for name, role in (manifest.get("roles") or {}).items():
+        if name in registered:
+            registered[name]["role"] = role
+    return registered
+
+
+__all__ = ["DEFAULT_IDENTITY", "ImageIdentity", "LOW_TEXTURE_STDDEV",
+           "NEAR_DUPLICATE_MAX_DISTANCE", "assert_independent", "cross_check",
+           "image_identity", "load_identity_manifest", "registered_images",
+           "scan_directory", "write_identity_manifest"]
