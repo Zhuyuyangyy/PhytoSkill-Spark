@@ -8,10 +8,14 @@ what they claim to show.
 
 from __future__ import annotations
 
+import os
+import time
+
 import pytest
 
 from demo.v1_cases import DEMO_CASES
-from demo.v1_pipeline import (BADGE_CACHE, BADGE_DETERMINISTIC, BADGE_NOT_EXECUTED,
+from demo.v1_pipeline import (BADGE_CACHE, BADGE_DETERMINISTIC,
+                              BADGE_EXECUTION_FAILED, BADGE_NOT_EXECUTED,
                               BADGE_REAL, BADGE_REPLAY, DemoWorkspace,
                               backend_status, cases_payload, run_case)
 
@@ -27,7 +31,8 @@ def test_every_case_runs_and_every_step_is_marked(workspace):
         assert result["steps"], f"{case['demo_id']} produced no steps"
         for step in result["steps"]:
             assert step["badge"] in (BADGE_REPLAY, BADGE_DETERMINISTIC, BADGE_REAL,
-                                     BADGE_CACHE, BADGE_NOT_EXECUTED)
+                                     BADGE_CACHE, BADGE_NOT_EXECUTED,
+                                     BADGE_EXECUTION_FAILED)
             assert step["badge_reason"].strip(), (
                 f"{case['demo_id']}/{step['provider']} has no badge reason")
         assert result["audit"] is not None
@@ -162,35 +167,6 @@ def test_the_api_runs_a_case_and_marks_every_step(workspace, monkeypatch):
 # ── the API contract, without a socket ──────────────────────────────────────
 
 
-def test_the_api_contract_validates_before_running():
-    from demo.v1_server import run_request
-
-    assert run_request({"mode": "fixture"})[0] == 400
-    assert run_request({"demo_id": "fixture-positive", "mode": "turbo"})[0] == 400
-    assert run_request("not a dict")[0] == 400
-    status, payload = run_request({"demo_id": "no-such-case"})
-    assert status == 404 and payload["error"] == "unknown case"
-
-
-def test_the_api_runs_a_case_and_marks_every_step(workspace, monkeypatch):
-    from demo.v1_server import run_request
-
-    # The server would use the persistent workspace; the test injects its own.
-    import demo.v1_pipeline as pipeline
-    original = pipeline.DemoWorkspace
-    pipeline.DemoWorkspace = lambda root=None: workspace
-    try:
-        monkeypatch.delenv("PHYTO_VISION_BACKEND", raising=False)
-        status, payload = run_request({"demo_id": "fixture-positive",
-                                       "mode": "fixture"})
-    finally:
-        pipeline.DemoWorkspace = original
-    assert status == 200
-    assert payload["audit"]["status"] == "success"
-    assert all(step["badge_reason"] for step in payload["steps"])
-    assert payload["any_real_inference"] is False
-
-
 # ── the badge is a statement about execution, never about intent ────────────
 
 
@@ -209,8 +185,12 @@ def test_a_live_request_whose_vision_leg_refuses_is_not_marked_real(workspace, m
     vision = next(step for step in result["steps"]
                   if step["provider"] == "plant_vision")
     assert vision["status"] == "failed"
-    assert vision["badge"] == BADGE_NOT_EXECUTED
-    assert "没有模型被调用" in vision["badge_reason"]
+    # An execution failure does not claim the model never ran: input
+    # validation precedes the call, output validation follows it, and the
+    # record cannot say which side this was.
+    assert vision["badge"] == BADGE_EXECUTION_FAILED
+    assert "无法确认模型是否已被调用" in vision["badge_reason"]
+    assert vision["badge"] != BADGE_REAL
 
 
 def test_the_replay_case_needs_no_environment(workspace, monkeypatch):
@@ -276,80 +256,73 @@ def test_every_badge_branch_names_its_evidence():
 # ── the badge is a statement about execution, never about intent ────────────
 
 
-def test_a_live_request_whose_vision_leg_refuses_is_not_marked_real(workspace, monkeypatch):
-    """The reviewer's counterexample, as a test.
+def test_a_door_refusal_is_the_only_kind_of_failure_that_claims_no_model():
+    """Only codes that provably precede any model call may say "not executed".
+    Everything else started, and the record cannot say which side of the
+    model call it failed on."""
+    from demo.v1_pipeline import PRE_EXECUTION_CODES, _step_marking
 
-    ``fixture-positive`` asks for ``live`` with a backend configured: the
-    vision Skill refuses the ``fixture://`` path, so no model ever runs. The
-    step must be marked *not executed* and the banner must not claim real
-    inference — a badge derived from the request would lie here.
-    """
-    monkeypatch.setenv("PHYTO_VISION_BACKEND",
-                       "replay@artifacts/dgx/vision-runs.json")
-    result = run_case("fixture-positive", mode="live", workspace=workspace)
-    assert result["any_real_inference"] is False
-    vision = next(step for step in result["steps"]
-                  if step["provider"] == "plant_vision")
-    assert vision["status"] == "failed"
-    assert vision["badge"] == BADGE_NOT_EXECUTED
-    assert "没有模型被调用" in vision["badge_reason"]
-
-
-def test_the_replay_case_needs_no_environment(workspace, monkeypatch):
-    """Zero configuration: the case declares its own recorded-observations
-    source, so a real-record replay runs with nothing set up."""
-    monkeypatch.delenv("PHYTO_VISION_BACKEND", raising=False)
-    result = run_case("replay-real-quality-gate", mode="live", workspace=workspace)
-    assert result.get("error") is None, result.get("error")
-    assert result["any_real_inference"] is False
-    vision = next(step for step in result["steps"]
-                  if step["provider"] == "plant_vision")
-    assert vision["badge"] == BADGE_REPLAY
-    assert "vision-runs.json" in vision["badge_reason"]
+    for code in sorted(PRE_EXECUTION_CODES):
+        badge, reason = _step_marking({"status": "failed", "provider_skill": "plant_vision",
+                                       "detail": code})
+        assert badge == BADGE_NOT_EXECUTED, code
+        assert "没有模型被调用" in reason
+    for code in ("ContractError", "SkillExecutionError", "ExecutionBoundaryError"):
+        badge, reason = _step_marking({"status": "failed", "provider_skill": "plant_vision",
+                                       "detail": code})
+        assert badge == BADGE_EXECUTION_FAILED, code
+        assert "无法确认" in reason
 
 
-def test_the_replay_refusal_names_the_models_own_verdict(workspace, monkeypatch):
-    """The quality-gate evidence chain: the recorded observation says
-    ``image_usable: false``, and the refusal is attributed to that flag —
-    not to the file name, and not to an absence of claims."""
-    monkeypatch.delenv("PHYTO_VISION_BACKEND", raising=False)
-    result = run_case("replay-real-quality-gate", mode="live", workspace=workspace)
-    audit = result["audit"]
-    assert audit["status"] == "refused"
-    assert audit["trust_level"] == "INSUFFICIENT"
-    assert "image_usable=false" in audit["image_usability_basis"]
-    assert "vision provider" in audit["image_usability_basis"]
-
-
-def test_a_cache_hit_is_its_own_badge(workspace, monkeypatch):
-    """A cached observation is real data that this run did not compute: it
-    gets its own badge rather than borrowing 'real' or 'replay'."""
-    from demo.v1_pipeline import BADGE_CACHE, _step_marking
-
-    step = {"status": "success", "provider_skill": "plant_vision",
-            "provenance": {"observation_cache": "hit",
-                           "backend_kind": "local_cpu"}}
-    badge, reason = _step_marking(step)
-    assert badge == BADGE_CACHE
-    assert "缓存" in reason and "本次没有调用模型" in reason
-
-
-def test_every_badge_branch_names_its_evidence():
-    """Each badge's reason must say where the output came from; a reason that
-    only restates the request is the bug this guards against."""
+def test_a_skipped_step_never_started():
+    """A step skipped for a missing input provably never ran."""
     from demo.v1_pipeline import _step_marking
 
-    cases = [
-        ({"status": "failed", "provider_skill": "plant_vision", "detail": "X"},),
-        ({"status": "success", "provider_skill": "plant_vision",
-          "provenance": {"observation_cache": "replay", "backend_endpoint": "src.json"}},),
-        ({"status": "success", "provider_skill": "plant_vision",
-          "provenance": {"data_origin": "synthetic_fixture"}},),
-        ({"status": "success", "provider_skill": "growth_risk", "provenance": {}},),
-        ({"status": "success", "provider_skill": "plant_vision",
-          "provenance": {"observation_cache": "miss", "backend_endpoint": "http://x"}},),
-    ]
-    for (step,) in cases:
-        badge, reason = _step_marking(step)
-        assert badge != BADGE_NOT_EXECUTED or "未执行" in reason
-        assert reason.strip()
+    badge, reason = _step_marking({"status": "skipped", "provider_skill": "plant_vision",
+                                   "detail": "required input missing; recorded, not fabricated"})
+    assert badge == BADGE_NOT_EXECUTED
+    assert "没有模型被调用" in reason
+
+
+def test_the_declared_backend_cannot_leak_into_a_concurrent_run(workspace, monkeypatch):
+    """The reviewer's race, pinned: the case-declared backend is process-wide
+    state, so runs are serialised and a concurrent run cannot observe another
+    case's declaration."""
+    import threading
+
+    from demo.v1_pipeline import _RUN_LOCK, run_case
+
+    monkeypatch.delenv("PHYTO_VISION_BACKEND", raising=False)
+    seen = []
+
+    def run_replay():
+        run_case("replay-real-quality-gate", mode="live", workspace=workspace)
+        seen.append(os.environ.get("PHYTO_VISION_BACKEND"))
+
+    # Hold the lock the way a long-running request would, then start another
+    # run: it must wait rather than observe the held declaration.
+    with _RUN_LOCK:
+        worker = threading.Thread(target=run_replay)
+        worker.start()
+        time.sleep(0.2)
+        inside = os.environ.get("PHYTO_VISION_BACKEND")
+        assert worker.is_alive(), "a second run started while the lock was held"
+    worker.join(timeout=240)
+    assert not worker.is_alive()
+    assert inside is None, "the declared backend leaked outside the run"
+    assert seen == [None], "the declaration was not restored after the run"
+
+
+def test_runs_are_serialised_end_to_end(workspace, monkeypatch):
+    """Two real runs through the engine, back to back: each sees its own
+    backend and neither inherits the other's."""
+    monkeypatch.delenv("PHYTO_VISION_BACKEND", raising=False)
+    first = run_case("fixture-positive", mode="fixture", workspace=workspace)
+    second = run_case("replay-real-quality-gate", mode="live", workspace=workspace)
+    assert first["any_real_inference"] is False
+    assert second["any_real_inference"] is False
+    assert os.environ.get("PHYTO_VISION_BACKEND") is None
+    replay = next(step for step in second["steps"]
+                  if step["provider"] == "plant_vision")
+    assert replay["badge"] == BADGE_REPLAY
+    assert "vision-runs.json" in replay["badge_reason"]

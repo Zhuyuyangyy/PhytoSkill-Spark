@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import threading
 from contextlib import contextmanager
 from pathlib import Path
 from time import perf_counter
@@ -127,7 +128,8 @@ BADGE_REPLAY = "replay"                  # sealed synthetic, or a recorded obser
 BADGE_DETERMINISTIC = "deterministic"    # real computation, no model call
 BADGE_REAL = "real"                      # a model actually ran for this call
 BADGE_CACHE = "cache"                    # a cached observation: real, but not this run's
-BADGE_NOT_EXECUTED = "not_executed"      # refused or failed at the door
+BADGE_NOT_EXECUTED = "not_executed"      # provably never started
+BADGE_EXECUTION_FAILED = "execution_failed"  # started, and failed; the model state is unknown
 
 BADGE_LABELS = {
     BADGE_REPLAY: "回放",
@@ -135,7 +137,23 @@ BADGE_LABELS = {
     BADGE_REAL: "真实推理",
     BADGE_CACHE: "缓存命中",
     BADGE_NOT_EXECUTED: "未执行",
+    BADGE_EXECUTION_FAILED: "执行失败",
 }
+
+# Error codes that provably precede any model call: the backend could not be
+# resolved, the mode was refused, or the door refused the call. Everything
+# else — a contract violation, an execution error, a boundary kill — may have
+# happened on either side of the model call, and the record does not say
+# which. Claiming "no model was called" for those would be a guess dressed as
+# a measurement.
+PRE_EXECUTION_CODES = frozenset({
+    "BackendUnavailable",     # nothing to call: the backend could not be resolved
+    "UnsupportedModeError",   # the mode was refused before the Skill ran
+    "PermissionViolation",    # the door refused the call
+    "BudgetExceeded",         # the door refused the call
+    "TraceError",             # the door refused the call
+    "ShieldError",            # registry verification refused the call
+})
 
 # Providers whose output is deterministic computation by construction: no
 # model is involved in any mode, and the provenance block says so.
@@ -149,10 +167,24 @@ def _step_marking(step: dict) -> tuple[str, str]:
     ``WorkflowRunner._step_provenance``), so this is a statement about what
     happened, not about what was asked for. Every branch names its evidence.
     """
-    if step.get("status") != "success":
+    if step.get("status") == "skipped":
+        # A skipped step never started: its required input was missing, and
+        # the pipeline recorded that instead of fabricating one.
         return BADGE_NOT_EXECUTED, (
-            f"本步未执行（{step.get('detail') or step.get('status', 'failed')}）；"
+            f"本步未执行（{step.get('detail') or '所需输入缺失'}）；"
             "没有模型被调用，也没有产生任何数据")
+    if step.get("status") != "success":
+        code = step.get("detail") or "failed"
+        if code in PRE_EXECUTION_CODES:
+            return BADGE_NOT_EXECUTED, (
+                f"本步在调用开始前被拒绝（{code}）；没有模型被调用，"
+                "也没有产生任何数据")
+        # The step started and failed. Input validation runs before the model
+        # call and output validation after it, so the record alone cannot say
+        # which side this was — asserting either would be a guess.
+        return BADGE_EXECUTION_FAILED, (
+            f"本步执行失败（{code}）；记录无法确认模型是否已被调用——"
+            "输入校验在调用前、输出校验在调用后，此处不断言")
 
     provenance = step.get("provenance") or {}
     provider = step.get("provider_skill", "")
@@ -175,7 +207,19 @@ def _step_marking(step: dict) -> tuple[str, str]:
         model = provenance.get("model")
         suffix = f"（模型 {model}）" if model else ""
         return BADGE_REAL, f"真实推理：本次调用由后端 {endpoint} 执行{suffix}"
-    return BADGE_NOT_EXECUTED, "输出未声明执行来源；按未执行处理，不猜测"
+    return BADGE_EXECUTION_FAILED, "输出未声明执行来源；无法确认是否发生推理，不猜测"
+
+
+# One run at a time. The case-declared backend is applied by setting the
+# environment variable the Skill resolves at call time, and an environment
+# variable is process-wide state: with a ThreadingHTTPServer, two concurrent
+# runs would otherwise read each other's backend — visitor B's "real
+# inference" could silently execute against the replay source visitor A's
+# case declared. Serialising runs makes the declaration atomic. The proper
+# fix is to make the backend a per-call parameter instead of ambient
+# configuration; until the Skill takes one, this lock is what keeps the
+# marking honest under concurrency.
+_RUN_LOCK = threading.Lock()
 
 
 @contextmanager
@@ -184,7 +228,8 @@ def _declared_backend(spec: str | None):
 
     The declaration is the case's own statement of where its observations come
     from; the environment still wins for every other case, and is restored the
-    moment the run ends.
+    moment the run ends. Held under ``_RUN_LOCK`` by ``run_case`` so the
+    declaration cannot leak into a concurrent run.
     """
     if not spec:
         yield
@@ -211,7 +256,7 @@ def run_case(demo_id: str, *, mode: str = "fixture",
     # the recorded-observations file, so a real-record replay needs no
     # environment setup at all. Without one, the environment decides.
     declared = case.get("backend")
-    with _declared_backend(declared):
+    with _RUN_LOCK, _declared_backend(declared):
         return _run_case(case, demo_id, mode, workspace)
 
 

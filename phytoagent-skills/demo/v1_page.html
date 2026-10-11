@@ -47,6 +47,7 @@
   .badge.real { color: var(--real); background: var(--real-bg); }
   .badge.cache { color: var(--deterministic); background: var(--deterministic-bg); }
   .badge.not_executed { color: var(--muted); background: #eef1f5; }
+  .badge.execution_failed { color: var(--warn); background: var(--warn-bg); }
   .badge.ok { color: var(--ok); background: var(--ok-bg); }
   .badge.bad { color: var(--bad); background: var(--bad-bg); }
   .badge.warn { color: var(--warn); background: var(--warn-bg); }
@@ -119,7 +120,8 @@
 const state = { cases: [], selected: null, backend: null };
 
 const BADGE_TEXT = { replay: "回放", deterministic: "确定性", real: "真实推理",
-                     cache: "缓存命中", not_executed: "未执行" };
+                     cache: "缓存命中", not_executed: "未执行",
+                     execution_failed: "执行失败" };
 const STATUS_TEXT = { success: "成功", failed: "失败", skipped: "跳过",
                       refused: "拒绝", no_conclusion: "无结论" };
 

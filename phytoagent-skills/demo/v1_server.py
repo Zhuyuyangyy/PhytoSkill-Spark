@@ -104,6 +104,11 @@ class DemoHandler(BaseHTTPRequestHandler):
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Runs are serialised inside the engine (demo.v1_pipeline._RUN_LOCK): the
+    # server is threaded, but a run mutates process-wide backend configuration
+    # for the duration of a case that declares one, so two concurrent runs must
+    # not interleave. A visitor waits for the previous run instead of silently
+    # borrowing its backend — the marking stays true under concurrency.
     import argparse
 
     parser = argparse.ArgumentParser(description="PhytoForge Demo V1")
