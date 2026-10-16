@@ -8,6 +8,19 @@
 
 Skill 是交付物，模型负责规划与报告生成。**硬件是配置，不是身份**：推理可跑在本机 CPU、CUDA 工作站、租用 GPU 实例、经 SSH 的远程节点，或完全离线地回放已记录观察。DGX Spark 是其中一种后端，不是前提。
 
+## 先了解项目
+
+| 层次 | 已提供的能力 | 从哪里看 |
+| --- | --- | --- |
+| Skill 构建 | 基于受约束目录组合声明式工作流，而不是任意代码生成 | [Compiler](phytoagent-skills/compiler/) |
+| 执行治理 | 包校验、签名 Registry、运行时策略拦截与执行 Trace | [架构说明](phytoagent-skills/docs/phytoforge-architecture.md) |
+| 专业流程 | 植物视觉观察、知识检索、证据融合、审计 | [Skills](phytoagent-skills/skills/) |
+| 质量评估 | Fixture 契约、单元测试与实验产物 | [评估说明](phytoagent-skills/docs/evaluation.md) |
+
+**30 秒导航：** [离线 Demo 与快速开始](#快速开始) · [完整开发文档](phytoagent-skills/README.md) · [真实模型 Harness](phytoagent-skills/docs/harness.md) · [DGX 实测](phytoagent-skills/docs/dgx-spark.md) · [参与贡献](CONTRIBUTING.md)。
+
+> **范围说明：** 离线演示不代表每次都发生了真实模型推理；签名与 Runtime 约束也不等同于操作系统沙箱。Dev-30 单人标注实验中的整体 Recall 仅 **0.1864**，尚缺盲测泛化证据。本项目是研究与工程原型，不是可直接用于真实农业诊断的系统。详细数据和限制见下文，数字不应脱离评测口径引用。
+
 ## 仓库结构
 
 ```text
