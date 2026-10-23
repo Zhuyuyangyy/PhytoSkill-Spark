@@ -65,6 +65,16 @@ MANIFEST_SCHEMA = {
                 "filesystem": {"type": "array", "uniqueItems": True, "minItems": 1,
                                "items": {"type": "string", "minLength": 1, "maxLength": 64}},
                 "network": {"enum": ["deny", "allow"]},
+                # The Skill never holds network access itself; a package that
+                # needs model inference declares it here and the runtime routes
+                # it through the backend broker (token ``backend_broker:inference``),
+                # still subject to the host policy and the task grants.
+                "backend_broker": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["inference"],
+                    "properties": {"inference": {"type": "boolean"}},
+                },
             },
         },
     },

@@ -451,6 +451,15 @@
                 "corpus_version": {
                   "type": "string",
                   "minLength": 1
+                },
+                "bm25_score": {
+                  "type": "number",
+                  "description": "BM25 relevance score that ranks this record for the query; a ranking score, not a probability and not a measure of factual certainty."
+                },
+                "corpus_digest": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$",
+                  "description": "SHA-256 of the corpus index build this record came from — the same digest the output provenance reports as corpus_sha256, attached per record so a citation stays reproducible without its envelope."
                 }
               }
             }

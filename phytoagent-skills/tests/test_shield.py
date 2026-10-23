@@ -143,7 +143,7 @@ def test_the_trace_collects_evidence_ids(runtime):
 def test_the_runtime_report_states_what_it_did_not_do(runtime):
     report = runtime.report()
     assert report["agent_model_called"] is False
-    assert report["dgx_hardware_used"] is False
+    assert report["gpu_observed"] is False
     assert report["nvidia_verified"] is False
 
 

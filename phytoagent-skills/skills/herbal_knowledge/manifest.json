@@ -23,15 +23,15 @@
   "files": {
     "BENCHMARK.md": "95a5d51dc04a703234f9d42f23aba0d8dc0c1bcfe468a89e530b8d28346e0414",
     "SKILL.md": "718347a0a9d366d08c681f486b00d9af0acb3d94606138589a48497408c8869b",
-    "evals/evals.json": "e1771f708bb8dbf293aed4df9434bba89f28094d5e7f704e87dc4934e78b8396",
+    "evals/evals.json": "8b641d5b0ac61b01b7c30db1415d05bb9611b0e7817bc3bd039fb5bb09271329",
     "examples/request.json": "a8879ce18be7aacc87b4906e8e8d1a05618f60afdad40d624831e6191a43e752",
-    "fixture.json": "0dcfffaea7e329a9cd530e61ed39679d1c82b63092c019ab8509f1230fbd7fdd",
-    "metadata.json": "6a167bfb7e3653e44b2afaef638a71e94fa1d4ed37bf28f45ae3a25d9d1b0083",
+    "fixture.json": "7114c61a7bb484ebf6f79e84e33eb41a743c03bfacb172b21f931d102aead32b",
+    "metadata.json": "893b26c1b1e72955cff2eb4b35b7eb6713a707c12ae34fbf81ca3444d19d7389",
     "references/contract.md": "51494f111e2f590196f9e1cff87fe19f78bba06137298a8e0b6f832433bbacd6",
-    "schema.json": "664e923b4f390ba379d56df77b3c303ead9dbf3836ffc87c641bea2878befdf0",
+    "schema.json": "fb77d7a4a12eb78107058b5fcfa479e96b162a31ca979d267e08c0fe2b12f59b",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "47ed2d7530fdeb4e5e1ddd0d5689ac8367d8f3089ce36ad59423b3eaeb00468b",
     "skill.py": "fc4b0cec064eee87bb749e35368cd726b47233e422abae74a1ea725c684870b4"
   },
-  "manifest_sha256": "b4f26ed8920b9b71ff40b443cfd146cb44981afa1bd625d468990fc73234ff8b"
+  "manifest_sha256": "0ab46e7bdadda4b7442977fec81e0f953236488794844528adc77e3011a738fd"
 }

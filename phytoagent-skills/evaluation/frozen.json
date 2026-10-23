@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "note": "The frozen evaluation configuration for the holdout blind test. Every listed input is pinned by SHA-256; verify-freeze recomputes them and the aggregate fingerprints and fails on any drift. Re-freezing is an explicit, reviewed act — never a side effect of a tuning edit.",
-  "frozen_at": "2026-10-11T14:45:50+00:00",
+  "frozen_at": "2026-10-23T14:28:48+00:00",
   "freeze": {
     "model": "modelscope.cn/unsloth/Qwen3.8-27B-GGUF:latest",
     "quantization": "Q4_K_M",
@@ -9,15 +9,15 @@
     "parser_hash": "efc57e0a068bd4af1389bb4595d6cbbc6a56851c16aca156bd05fa3ac1c31fa2",
     "ontology_hash": "d9bf13f25de67b99ab8c7c607c6dd009fbe50fd87897d6bc4b706736a36cda8f",
     "scorer_hash": "32c1fa6b120893ebd7ee1ec1b622f550700b26411c8f19f10e2d151e762aa6d1",
-    "schema_hash": "4d0e785140b9e421dd1a83ae2ed3d7f39ce513172988b3938ead80e87f021d56",
+    "schema_hash": "96ab1898aabf00782f59d89f7e0e690d75aea5eacbefabf5ae31bb080eb6693e",
     "auditor_hash": "c44494e3b0fd245bd8105e3c912568e5fec736caec6a3b3f2f7f0f31bf24e61b",
     "retriever_hash": "86d84c2ba90b1148f8cd29fc14f86a63bd387a7a12d6758d7d0e3f14b8eb2735",
     "protocol_hash": "93038b8a1145b27d866ee834f7e318e9c45223cd74f021abd3b730e4e8f5e352",
     "model_digest": "95c9635e54b021f5dd0aa39efe97b26ac3c37ac550a3803f557de2f6a9904f74",
     "model_size_bytes": 33380567612
   },
-  "freeze_id": "a2f5315600d0cc0670eee3239470d0c90b310e86123e441d37b865a8572f3ed8",
-  "weight_identity_source": "artifacts\\dgx\\vision-leaf-01.json",
+  "freeze_id": "e265f79a86de9c97bb45ac51908ff2dba921be5c02e700a6d4c3b833c34b7114",
+  "weight_identity_source": "artifacts/dgx/vision-leaf-01.json",
   "inputs": [
     {
       "path": "vision/prompts.py",
@@ -51,7 +51,7 @@
     },
     {
       "path": "skills/evidence_fusion/schema.json",
-      "sha256": "80c352afaefe818de6b71ea72904deaa9b9619704289a0f2275f61315f66459d",
+      "sha256": "5b27b7f42d89dddcd4bcd3d9aceef9753e7ac077a9d41e96a7536411b52a49d1",
       "role": "the fusion contract: how legs are combined"
     },
     {

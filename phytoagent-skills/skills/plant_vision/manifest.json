@@ -19,7 +19,10 @@
     "filesystem": [
       "case_workspace:read"
     ],
-    "network": "deny"
+    "network": "deny",
+    "backend_broker": {
+      "inference": true
+    }
   },
   "live_requirements": {
     "dgx": "SSH access to a DGX Spark node via PHYTO_DGX_* credentials",
@@ -34,15 +37,15 @@
   "files": {
     "BENCHMARK.md": "c4a256ccf968b381736d81e6915ebc493074d5459aef4ccca694ef3ee87879a5",
     "SKILL.md": "024f2f4807cb1dc00b94b66a7f983b9019982e2ed69647b2b270d2ac705154ba",
-    "evals/evals.json": "1baae8a3ece63f0b0739efbd6041d9bc55b151a52c0d88caae4d51e0e36596e3",
+    "evals/evals.json": "dc6b69477d8fcf63dc40deb54a22cba62695733c00c4b872bfbba1ede067fcd0",
     "examples/request.json": "5773ff1816f2f7fd07a05040f160fd3d7dd81a0b56ef774ffb744e141a126df4",
     "fixture.json": "bcf6b3ea96343b90e8f7e519f4b95b4634513290546cccc05d02e187041c628d",
-    "metadata.json": "f0095eafa3ddbc3ec860d5df0f340c1c6644251922114bee1b13f28bd8c69e3a",
+    "metadata.json": "a9ec69b1d30ee97c6f39b0d907cc12d9c361db8a1b23c0a9b8d6f7d61c978063",
     "references/contract.md": "ae94958f9a892bf8601ad7421c050270ee77c93629ba542b40b69ab1cc4988ab",
-    "schema.json": "89b71492263196d7e9bae1b529d24ddb6f050de8543db5ea3446b286b8541dbf",
+    "schema.json": "80e2ae127c9a5e219ffbaebd6155b49d822688cbdb6ff0b816e65c6eb19dc8fd",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "f1771e1d3bafd26f3fb949eea72d3dadb0ed2134469e3bf38053ea8e1dd672ab",
-    "skill.py": "c9f67a6f09548db4ecc0bda8da2850d62355886aa1f55ccc229956e7d69f2fec"
+    "skill.py": "f84d6995958734396d17be078baacd07d2c29b23a1cfaaf2694faf7eca107f7f"
   },
-  "manifest_sha256": "4cc46b9fab89f330ef001c50cf4f75ed09d43c92507c22915b5b07ff92961bcf"
+  "manifest_sha256": "eb4ae0785e9c5c85722a73a942ef180fd453fd1ea1a130a8faa811cbab5c2e85"
 }

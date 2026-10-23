@@ -1,3 +1,11 @@
+# Skill packages are sealed with byte-exact SHA-256 hashes (sdk/manifest.py).
+# Force LF in every working tree (incl. Git for Windows with core.autocrlf=true)
+# so the hashed bytes are identical on every platform. Kept above the binary
+# rules so *.png etc. inside packages stay binary.
+phytoagent-skills/skills/**                     text=auto eol=lf
+phytoagent-skills/artifacts/generated-skills/** text=auto eol=lf
+phytoagent-skills/examples/**                   text=auto eol=lf
+
 # 声明为二进制，避免 Git for Windows 的文本转换器让 diff/status 直接报错
 *.zip     binary
 *.whl     binary

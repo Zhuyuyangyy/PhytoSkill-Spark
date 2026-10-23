@@ -22,14 +22,14 @@
   "files": {
     "BENCHMARK.md": "28c02c2958f14f51916ee4a77cc87c6fe9c287b786d9bfc832d77ac5a677364c",
     "SKILL.md": "f0f8e181ce45ad885d91710ea43597c497d3a4898e93b50dd4d43576d59dcd20",
-    "evals/evals.json": "4c6caf64b8fb015b9e5a0f4c5465c5d4749f0db998edb7eb182c1d9b6dcbcff6",
+    "evals/evals.json": "7912e98113d43e6343ea233911d3431427b1a864f5b9ba878d1ef154864e599b",
     "examples/request.json": "ad4d742ed591b94050baafd759b261beb2f8146170fa8a87bf7809ac762cf237",
     "metadata.json": "60f9656e2d70718dfbc2cf3b3b5f066f543714519d752eea852e28e1d81c0ff6",
     "references/contract.md": "280c7a4318948b53667fd0e571fd30c5277b1c6c93c64ddfea8a2676769955f6",
     "schema.json": "8bc62d829074f9375dcd074d2c072e88d4c821e6727b330d13f20cfc9642e2e1",
     "scripts/run.py": "497f6e5d05f9a83629a7bbcabdaf6d68e02216ba8833f0bf3d65f2d974ccbbf1",
     "skill-card.md": "e7e08c2595f5835ac50defa64bd6b4d3e4efed1f0d5dfbe553db5ed652646a55",
-    "skill.py": "5a25fa0a5c88a616acc48641483f71b15917c54ac523420a991d04ca8bea2daa"
+    "skill.py": "8034617272f3f2b9af800a5dc274854057190d8fe8fcb677974f115b3c490ab3"
   },
-  "manifest_sha256": "dfa400407f5a56aabc6f1b5606b48e4305302ec46e93d1db0785448d7236f636"
+  "manifest_sha256": "1a6f4a86be627f46b7fe8b199aa2e6599a2a143ab956e47e410c85fae59102bf"
 }

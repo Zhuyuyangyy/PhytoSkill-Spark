@@ -240,13 +240,21 @@ def test_a_posix_timeout_terminates_the_whole_process_tree(tmp_path):
     """
     marker = tmp_path / "grandchild-survived.txt"
     tree = tmp_path / "tree.py"
+    # Build the helper's source first and embed it with repr(), so the marker
+    # path's own quotes can never collide with the surrounding -c literal.
+    helper = f"import time; time.sleep(10); open({str(marker)!r}, 'w').write('x')"
     tree.write_text(
         "import subprocess, sys, time\n"
-        f"subprocess.Popen([sys.executable, '-c',\n"
-        f"               'import time; time.sleep(10); open({str(marker)!r}, \"w\").write(\"x\")'])\n"
+        f"subprocess.Popen([sys.executable, '-c', {helper!r}])\n"
         "time.sleep(120)\n", encoding="utf-8")
+    # RLIMIT_NPROC counts every process of the real uid, so for a non-root
+    # user the default quota of two refuses the grandchild's fork outright and
+    # there is no tree left to kill. This test is about the timeout, so it keeps
+    # the uid's own process ceiling; the quota itself is not under test here.
+    import resource
+    nproc = resource.getrlimit(resource.RLIMIT_NPROC)[1]
     result = run_bounded([sys.executable, str(tree)],
-                         limits=ResourceLimits(timeout_seconds=3))
-    assert result.timed_out
+                         limits=ResourceLimits(timeout_seconds=3, max_processes=nproc))
+    assert result.timed_out, result.stderr
     time.sleep(13)  # long enough for the helper's own sleep to have elapsed
     assert not marker.exists(), "the timed-out process tree outlived the boundary"
