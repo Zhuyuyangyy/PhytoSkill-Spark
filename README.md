@@ -1,5 +1,7 @@
 # PhytoSkill-Spark
 
+[![XERJ Corpus Hub contributor](https://hub.xerj.org/contributors/Zhuyuyangyy/badge.svg)](https://hub.xerj.org/contributors/Zhuyuyangyy)
+
 面向中药药用植物异常研判的**可组合 Agent Skills** 工程，并在此之上收敛出一个产品形态：**PhytoForge** —— 把专业研判需求编译成可执行、可审计、可评测、可复用的 Agent Skill。
 
 一句话：
