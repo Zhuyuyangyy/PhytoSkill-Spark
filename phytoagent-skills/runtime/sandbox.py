@@ -38,7 +38,7 @@ from __future__ import annotations
 
 import ctypes
 import os
-import subprocess
+import subprocess  # nosec B404: used only with shell=False (default) and a list argv
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -148,7 +148,10 @@ def _run_windows(argv: list[str], limits: ResourceLimits, cwd, env,
     kernel32, job = _create_limited_job(limits)
     process = None
     try:
-        process = subprocess.Popen(argv, cwd=cwd, env=env,
+        # nosec B603: argv is an internal list ([sys.executable, "-m",
+        # "runtime.worker"] from executor), shell is never enabled, and the
+        # child is placed in a resource-limited job object.
+        process = subprocess.Popen(argv, cwd=cwd, env=env,  # nosec B603
                                    stdin=subprocess.PIPE,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # Assign immediately: the caps apply from here on. The milliseconds
@@ -207,7 +210,9 @@ def _terminate_process_group(process: subprocess.Popen) -> None:
 
 def _run_posix(argv: list[str], limits: ResourceLimits, cwd, env,
                input_bytes: bytes | None) -> BoundedResult:
-    process = subprocess.Popen(argv, cwd=cwd, env=env,
+    # nosec B603: same internal argv as above, shell never enabled,
+    # child runs under setrlimit caps in its own process group.
+    process = subprocess.Popen(argv, cwd=cwd, env=env,  # nosec B603
                                stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                preexec_fn=_posix_preexec(limits),

@@ -84,7 +84,9 @@ def main() -> int:
         if hashlib.sha256(source).hexdigest() != request["entrypoint_sha256"]:
             raise ValueError("Entrypoint changed between verification and execution")
         namespace = {"__name__": "phyto_skill_bounded", "__file__": str(source_path)}
-        exec(compile(source, str(source_path), "exec"), namespace)
+        # nosec B102: entrypoint sha256 is re-checked in this child
+        # immediately above; this executes a verified Skill entrypoint.
+        exec(compile(source, str(source_path), "exec"), namespace)  # nosec B102
         skill_type = namespace.get(class_name)
         if not isinstance(skill_type, type) or not issubclass(skill_type, BaseSkill):
             raise ValueError("Entrypoint must be a BaseSkill subclass")

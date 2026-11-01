@@ -109,7 +109,10 @@ class SkillExecutor:
         namespace = {"__name__": f"phyto_skill_{name}", "__file__": str(source_path)}
         # Compile the verified source, not an unverified .pyc. Fixture mode is
         # trusted synthetic data; every other mode runs behind the boundary.
-        exec(compile(source, str(source_path), "exec"), namespace)
+        # nosec B102: source is hash-checked against the registry manifest
+        # immediately above; this executes a verified Skill entrypoint, not
+        # arbitrary input.
+        exec(compile(source, str(source_path), "exec"), namespace)  # nosec B102
         skill_type = namespace.get(class_name)
         if not isinstance(skill_type, type) or not issubclass(skill_type, BaseSkill):
             raise ManifestError("Entrypoint must be a BaseSkill subclass")
