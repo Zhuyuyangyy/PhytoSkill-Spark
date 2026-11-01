@@ -8,7 +8,7 @@ PhytoSkill-Spark 把药用植物异常研判拆成四个可独立发现、调用
 
 **0.3.0 新增：Skill Compiler（`compiler/`）、AgentShield 编译门禁（`shield/gate.py`）、AgentShield Runtime 中间件与 Claim-Evidence 审计（`runtime/shield.py`）、工作流 Skill 执行器（`runtime/workflow.py`）、可调用审计 Skill（`skills/agentshield_audit/`）、本地语料检索（`corpus/`）与三分钟演示（`demo/phytoforge_demo.py`）。**
 
-测试 **387 项，全部离线通过**。契约评测 **28/28**。
+测试 **558 项，全部离线通过**。契约评测 **28/28**。
 
 **推理不再绑定某一台机器**：`backends/` 把「在哪儿跑」变成配置。本机 ollama、CUDA 工作站、租用 GPU、经 SSH 的远程节点、离线回放五种后端共用同一套提示词与解析器，`PHYTO_VISION_BACKEND` 一个变量切换；未配置则报错而非猜测。DGX Spark 是其中一种，不是前提。
 
@@ -220,7 +220,7 @@ phytoagent-skills/
 ├── evals/                 包内fixture契约评测器
 ├── scripts/seal_skills.py 发布者显式封包
 ├── dgx/                   SSH 传输实现 + 叶片/药材视觉提示词与解析器（可选后端之一）
-└── tests/                 387 项全离线测试
+└── tests/                 558 项全离线测试
 ```
 
 ## 治理与评测的实际范围
