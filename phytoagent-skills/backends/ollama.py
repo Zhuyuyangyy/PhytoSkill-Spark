@@ -45,7 +45,9 @@ def default_poster(url: str, payload: dict, timeout: float) -> dict:
         url, data=json.dumps(payload).encode("utf-8"), method="POST",
         headers={"Content-Type": "application/json"})
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        # nosec B310: endpoint is operator-configured (env or localhost
+        # default), not skill/user data; POSTs only to the ollama API.
+        with urllib.request.urlopen(request, timeout=timeout) as response:  # nosec B310
             return json.load(response)
     except urllib.error.HTTPError as error:
         body = error.read().decode("utf-8", "replace")[:600]
@@ -58,7 +60,9 @@ def default_poster(url: str, payload: dict, timeout: float) -> dict:
 def default_getter(url: str, timeout: float):
     """GET JSON from an ollama endpoint. Returns None when unavailable."""
     try:
-        with urllib.request.urlopen(url, timeout=timeout) as response:
+        # nosec B310: url is the operator-configured ollama endpoint
+        # (see default_getter caller); GETs only the ollama /api/ps probe.
+        with urllib.request.urlopen(url, timeout=timeout) as response:  # nosec B310
             return json.load(response)
     except Exception:  # noqa: BLE001 - a probe failure is not an inference failure
         return None
