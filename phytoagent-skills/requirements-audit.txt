@@ -1,0 +1,9 @@
+# Project dependencies only, for pip-audit in CI.
+# Auditing the whole CI environment would fail on runner tooling (e.g. pip
+# itself) that is not a project dependency, so this file is the audit scope.
+jsonschema>=4.22,<5
+cryptography>=48,<51
+PyYAML>=6,<7
+pytest>=8,<10
+Pillow>=13,<14
+paramiko>=5,<6

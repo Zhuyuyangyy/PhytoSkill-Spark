@@ -7,14 +7,14 @@ name = "phytoagent-skills"
 version = "0.3.0"
 description = "Medicinal-plant Skill packages, contracts and local registry"
 requires-python = ">=3.11"
-dependencies = ["jsonschema>=4.22,<5", "cryptography>=42,<47", "PyYAML>=6,<7"]
+dependencies = ["jsonschema>=4.22,<5", "cryptography>=48,<51", "PyYAML>=6,<7"]
 
 # The default install needs no SSH library. A local ollama server, a CUDA box
 # with an exposed ollama port, and an offline replay of recorded observations all
 # work out of the box; only reaching a node over SSH needs more.
 [project.optional-dependencies]
-test = ["pytest>=8,<10", "Pillow>=10,<12"]
-ssh = ["paramiko>=3,<5"]
+test = ["pytest>=8,<10", "Pillow>=13,<14"]
+ssh = ["paramiko>=5,<6"]
 
 [project.scripts]
 phyto-registry = "registry.__main__:main"
