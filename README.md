@@ -96,7 +96,7 @@ python -m harness ab --repeat 1 --output artifacts/agent-ab.json
 
 | 项目 | 证据 |
 |---|---|
-| 558项测试全离线通过 | `pytest -q` |
+| 558 项测试全离线通过 | `pytest -q` |
 | StepFun 真实 tool calling | `artifacts/preflight.json`：可达性、鉴权、工具调用三项通过；22 次采样模型身份一致（`step-5-preview`） |
 | 真实视觉推理 | `artifacts/dgx/`：30 张图全链路跑通，79 个观察、139 条 supported claims、0 refused；机型 `gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0） |
 | 30 张图人工标注与评分 | `artifacts/dgx/annotation-score.json`、`baseline-v1.json` |
