@@ -48,7 +48,7 @@ Skill 是交付物，模型负责规划与报告生成。**硬件是配置，不
     │                           evidence_fusion / agentshield_audit
     ├── demo/                   phytoforge_demo（三分钟闭环）、四 Skill 组合、SDK 示例
     ├── evals/                  包内 fixture 契约评测器
-    ├── tests/                  387 项，全离线
+    ├── tests/                  558 项，全离线
     ├── artifacts/              pytest 结果、契约评测、真实链路与标注产物、发布包
     └── docs/                   开发日志、分轮范围、Harness 与 DGX 运行手册
 ```
@@ -96,7 +96,7 @@ python -m harness ab --repeat 1 --output artifacts/agent-ab.json
 
 | 项目 | 证据 |
 |---|---|
-| 387 项测试全离线通过 | `pytest -q` |
+| 558项测试全离线通过 | `pytest -q` |
 | StepFun 真实 tool calling | `artifacts/preflight.json`：可达性、鉴权、工具调用三项通过；22 次采样模型身份一致（`step-5-preview`） |
 | 真实视觉推理 | `artifacts/dgx/`：30 张图全链路跑通，79 个观察、139 条 supported claims、0 refused；机型 `gx10-9ec6`（aarch64 / NVIDIA GB10 / CUDA 13.0） |
 | 30 张图人工标注与评分 | `artifacts/dgx/annotation-score.json`、`baseline-v1.json` |
