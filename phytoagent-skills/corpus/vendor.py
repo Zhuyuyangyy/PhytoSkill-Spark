@@ -71,11 +71,14 @@ def _stable_id(source_file: str, ordinal: int) -> str:
     return f"corpus-{digest}"
 
 
-def build_chunks(source_dir: Path) -> list[dict]:
+def build_chunks(source_dir: Path, *, exclude_path: Path | None = None) -> list[dict]:
     """Turn each YAML/JSON record into one retrievable, locatable chunk."""
     chunks: list[dict] = []
+    excluded_path = exclude_path.resolve() if exclude_path is not None else None
     for path in sorted(source_dir.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in (".yaml", ".yml", ".json"):
+            continue
+        if excluded_path is not None and path.resolve() == excluded_path:
             continue
         relative = path.relative_to(source_dir).as_posix()
         if path.suffix.lower() == ".json":
@@ -191,7 +194,7 @@ def _chunk(source_file: str, source_kind: str, ordinal: int, title: str, content
 
 
 def vendor(source_dir: Path, output: Path = INDEX_PATH) -> dict:
-    chunks = build_chunks(source_dir)
+    chunks = build_chunks(source_dir, exclude_path=output)
     index = {
         "corpus_version": CORPUS_VERSION,
         "source": {"kind": "tcm-mind-rag", "path": str(source_dir),
