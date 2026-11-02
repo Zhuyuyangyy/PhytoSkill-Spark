@@ -18,10 +18,10 @@ PhytoSkill-Spark 把药用植物异常研判拆成四个可独立发现、调用
 
 ## 立即运行
 
-需要 Python 3.11+，PowerShell 示例：
+需要 Python 3.11+。以下 PowerShell 命令请从仓库根目录运行：
 
 ```powershell
-Set-Location 'D:\DRX SPARK\phytoagent-skills'
+Set-Location phytoagent-skills
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e '.[test]'
 .\.venv\Scripts\python.exe -m demo.phytoforge_demo      # 三分钟完整闭环
