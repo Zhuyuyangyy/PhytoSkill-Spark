@@ -226,6 +226,27 @@ def test_stable_ids_are_deterministic():
     assert _stable_id("syndromes.yaml", 1) != _stable_id("syndromes.yaml", 2)
 
 
+def test_nested_same_name_source_files_have_unique_ids_and_locations(tmp_path):
+    from corpus.vendor import build_chunks
+
+    files = {
+        tmp_path / "same.json": "root record",
+        tmp_path / "chapter-a" / "same.json": "chapter A record",
+        tmp_path / "chapter-b" / "same.json": "chapter B record",
+    }
+    for path, title in files.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps([{"syndrome": title}], ensure_ascii=False),
+                        encoding="utf-8")
+
+    chunks = build_chunks(tmp_path)
+
+    assert {chunk["source_file"] for chunk in chunks} == {
+        "same.json", "chapter-a/same.json", "chapter-b/same.json"
+    }
+    assert len({chunk["evidence_id"] for chunk in chunks}) == len(files)
+
+
 def test_the_vendored_index_is_valid_json_with_a_version():
     document = json.loads((CORPUS_DIR / "index.json").read_text(encoding="utf-8"))
     assert document["corpus_version"] == CORPUS_VERSION
