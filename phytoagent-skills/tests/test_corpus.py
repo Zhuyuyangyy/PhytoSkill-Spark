@@ -100,6 +100,32 @@ def test_a_species_filter_excludes_other_species(corpus):
         assert "甘草" in record["content"] or "甘草" in record["source_title"]
 
 
+def test_a_species_filter_excludes_chunks_without_species_tags(tmp_path):
+    """Unknown scope must not be treated as a match for an explicit species."""
+    chunks = [
+        {"evidence_id": "untagged", "source_file": "interactions.yaml",
+         "source_kind": "herb_interactions", "title": "乌头与半夏",
+         "content": "乌头与半夏配伍禁忌", "line_start": 1, "line_end": 1,
+         "species_tags": [], "phenotype_tags": []},
+        {"evidence_id": "huangqi", "source_file": "interactions.yaml",
+         "source_kind": "herb_interactions", "title": "黄芪与乌头",
+         "content": "黄芪、乌头与半夏的配伍记录", "line_start": 2, "line_end": 2,
+         "species_tags": ["黄芪"], "phenotype_tags": []},
+    ]
+    index = {"corpus_version": "test", "chunks": chunks}
+    (tmp_path / "index.json").write_text(
+        json.dumps(index, ensure_ascii=False), encoding="utf-8")
+    corpus = LocalCorpus(tmp_path)
+
+    filtered_ids = {item["evidence_id"]
+                    for item in corpus.search("乌头 半夏", species="黄芪", limit=5)}
+    unfiltered_ids = {item["evidence_id"]
+                      for item in corpus.search("乌头 半夏", limit=5)}
+
+    assert filtered_ids == {"huangqi"}
+    assert unfiltered_ids == {"untagged", "huangqi"}
+
+
 def test_an_empty_query_is_refused(corpus):
     with pytest.raises(ValueError, match="non-empty"):
         corpus.search("   ")

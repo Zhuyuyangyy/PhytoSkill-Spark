@@ -187,7 +187,9 @@ class LocalCorpus:
         digest = self.digest()
         candidates: list[tuple[float, int, CorpusChunk]] = []
         for position, chunk in enumerate(self.chunks):
-            if species and chunk.species_tags and species not in chunk.species_tags:
+            # Missing tags mean the species is unknown, not that the chunk is
+            # a wildcard match for every explicitly requested species.
+            if species and species not in chunk.species_tags:
                 continue
             if wanted and not wanted.intersection(chunk.phenotype_tags):
                 continue
