@@ -41,6 +41,26 @@ def test_the_corpus_is_reproducible(tmp_path):
     assert first["index_sha256"] == corpus_digest()
 
 
+def test_vendoring_inside_source_is_stable_across_three_builds(tmp_path):
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    (source_dir / "records.json").write_text(
+        json.dumps([{"name": "黄芪", "description": "补气"}], ensure_ascii=False) + "\n",
+        encoding="utf-8")
+    output = source_dir / "generated" / "index.json"
+
+    results = []
+    payloads = []
+    for _ in range(3):
+        results.append(vendor(source_dir, output))
+        payloads.append(output.read_bytes())
+
+    assert [result["chunks"] for result in results] == [1, 1, 1]
+    assert [result["source_files"] for result in results] == [["records.json"]] * 3
+    assert payloads[0] == payloads[1] == payloads[2]
+    assert len({result["index_sha256"] for result in results}) == 1
+
+
 def corpus_digest() -> str:
     import hashlib
     return hashlib.sha256((CORPUS_DIR / "index.json").read_bytes()).hexdigest()
