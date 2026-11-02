@@ -77,7 +77,7 @@ def build_chunks(source_dir: Path) -> list[dict]:
     for path in sorted(source_dir.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in (".yaml", ".yml", ".json"):
             continue
-        relative = path.name
+        relative = path.relative_to(source_dir).as_posix()
         if path.suffix.lower() == ".json":
             try:
                 document = json.loads(path.read_text(encoding="utf-8"))
