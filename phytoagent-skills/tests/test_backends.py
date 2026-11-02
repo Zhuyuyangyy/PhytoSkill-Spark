@@ -160,6 +160,37 @@ def test_replay_returns_a_recorded_observation():
     assert record["replay"]["latency_is_replayed"] is True
 
 
+def test_replay_matches_the_requested_mode_and_rejects_mode_less_records(tmp_path):
+    image = b"same image, two observation vocabularies"
+    (tmp_path / "same.png").write_bytes(image)
+    records = [
+        {"image_file": "same.png", "model": MODEL, "mode": "live",
+         "regions": [{"phenotype": "leaf_yellowing"}]},
+        {"image_file": "same.png", "model": MODEL, "mode": "herb",
+         "regions": [{"phenotype": "cut_surface_powder"}]},
+    ]
+    backend = ReplayBackend(records=records, image_dir=tmp_path)
+
+    def run(mode):
+        return backend.run_vision(image_bytes=image, species="黄芪", model=MODEL,
+                                  mode=mode)
+
+    assert run("live")["regions"][0]["phenotype"] == "leaf_yellowing"
+    assert run("herb")["regions"][0]["phenotype"] == "cut_surface_powder"
+
+    mode_less = [{"image_file": "same.png", "model": MODEL, "regions": []}]
+    with pytest.raises(BackendUnavailable, match="record 0 has no valid mode"):
+        ReplayBackend(records=mode_less, image_dir=tmp_path)
+
+
+def test_bundled_live_replay_refuses_a_herb_request():
+    backend = ReplayBackend()
+    image = (PROJECT_ROOT / "artifacts/dgx/synthetic-leaf-01.png").read_bytes()
+    with pytest.raises(ReplayMiss, match="mode 'herb'"):
+        backend.run_vision(image_bytes=image, species="黄芪", model=MODEL,
+                           mode="herb")
+
+
 def test_replay_refuses_an_image_it_has_never_seen():
     """A replay miss must be a hard failure, never a nearest-neighbour guess."""
     backend = ReplayBackend()

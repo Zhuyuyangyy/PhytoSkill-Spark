@@ -23,6 +23,7 @@
           }
         ]
       },
+      "mode": "live",
       "image_file": "synthetic-leaf-01.png"
     },
     {
@@ -47,6 +48,7 @@
           }
         ]
       },
+      "mode": "live",
       "image_file": "synthetic-leaf-02.png"
     },
     {
@@ -71,6 +73,7 @@
           }
         ]
       },
+      "mode": "live",
       "image_file": "synthetic-leaf-03.png"
     },
     {
@@ -95,6 +98,7 @@
           }
         ]
       },
+      "mode": "live",
       "image_file": "synthetic-noise-01.png"
     }
   ]

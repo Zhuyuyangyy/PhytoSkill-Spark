@@ -264,6 +264,8 @@ SDK 使用 Draft 2020-12，只允许本地 JSON Pointer 引用；拒绝非有限
 
 未实现的模式明确失败，不回退 fixture。会发起网络请求的只有两处：`harness/`（模型端点）与后端层（ollama HTTP 或 SSH），两者都必须显式配置端点与密钥（`.env`、`.dgx.env` 已被 gitignore），缺失直接报错而不是退回 fixture。密钥不入库。离线回放后端不发任何请求。
 
+回放源文件的每条记录都必须标明 `mode: "live"` 或 `mode: "herb"`；模式会与图像内容和模型一起参与匹配。缺少或无效的模式会被拒绝，不会猜测。旧的 mode-less 记录须按其原始观测词汇补上字段；仓库自带的 `artifacts/dgx/vision-runs.json` 已标为 `live`。
+
 A/B 已真实运行，但 `repeat=1`、17 个任务，样本量不足以支撑统计显著性；报告里 `significance_test` 是 `none`，差值只能当方向性观察。免费额度 10 RPM，`harness/transport.py` 因此有请求间隔节流；跑更多轮次受限于配额。
 
 本仓库代码以 Apache-2.0 授权，见仓库根 `LICENSE`。Skill 包内 Skill Card 仍标 `NOASSERTION`：包内文件受 Manifest 哈希与 Ed25519 签名保护，改动后需重新封包并重签，因此许可尚未随源码同步，属已知遗留项。
