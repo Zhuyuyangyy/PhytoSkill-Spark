@@ -22,6 +22,7 @@ from harness.agent import AgentHarness
 from harness.config import HarnessConfig
 from harness.errors import AuthError, ConfigError, HarnessError, PreflightError
 from harness.tasks import build_tasks
+from harness.task_selection import add_ab_task_selection_arguments, build_ab_tasks
 from harness.transport import Transport
 
 EXIT_OK = 0
@@ -136,18 +137,13 @@ def main(argv: list[str] | None = None) -> int:
     smoke.add_argument("--task", default=None, help="task_id; defaults to the first positive trigger")
 
     ab = sub.add_parser("ab", help="run the full interleaved A/B")
-    ab.add_argument("--kind", action="append", help="restrict to a task kind")
+    add_ab_task_selection_arguments(ab)
     ab.add_argument("--repeat", type=int, default=1)
     ab.add_argument("--output", type=Path, default=Path("artifacts/agent-ab.json"))
     ab.add_argument("--baseline-prompt-tokens", type=int, default=6000,
                     help="per-task prompt tokens used for the cost estimate")
     ab.add_argument("--baseline-completion-tokens", type=int, default=600,
                     help="per-task completion tokens used for the cost estimate")
-    ab.add_argument("--real-images", action="store_true",
-                    help="run only the real-photograph tasks. Each carries its own "
-                         "mode (live/herb) and needs the images on disk plus a "
-                         "reachable DGX Spark node. Not mixable with the fixture "
-                         "set, whose inputs every real mode refuses by design.")
     ab.add_argument("--tool-mode", default="fixture", choices=["fixture", "live", "herb"],
                     help="default mode for tasks that do not specify one. Real-image "
                          "tasks always carry their own.")
@@ -211,15 +207,11 @@ def main(argv: list[str] | None = None) -> int:
             _print(report["comparison"])
             return EXIT_OK
 
-        tasks = build_tasks()
-        if args.kind:
-            tasks = [task for task in tasks if task.kind in args.kind]
+        tasks = build_ab_tasks(build_tasks, kinds=args.kind,
+                               real_images=args.real_images)
         if not tasks:
             print("no task matched", file=sys.stderr)
             return EXIT_CONFIG
-        from harness.tasks import build_tasks as _build
-        if getattr(args, "real_images", False):
-            tasks = _build(only_real_images=True)
         runner = AbRunner(config, tasks=tasks, tool_mode=args.tool_mode,
                           progress=lambda message: print(message, file=sys.stderr))
         runner._baseline_prompt_tokens = args.baseline_prompt_tokens
