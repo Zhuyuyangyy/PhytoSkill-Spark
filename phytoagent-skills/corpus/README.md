@@ -30,6 +30,7 @@ python -m corpus.vendor --source "D:/ZYY Project/TCM-Mind-RAG/backend/data"
 - 评分是**确定性字符二元组重合度**，范围 [0, 1]。没有 Embedding 模型，没有向量库，没有 cuVS。
 - `min_score` 默认 0.05：重合度为零的 chunk 不是匹配，返回它就是编造引用。
 - `species` / `phenotypes` 过滤基于 chunk 标签，标签由 vendor 阶段从文本提取。
+- 显式传入 `species` 时，只返回标记了该物种的 chunk；无标签表示物种未知，不会被当作适用于所有物种。
 - 空查询、`limit < 1`、`min_score` 越界都是 `ValueError`。
 
 `retrieval_score` **只反映字面重合度**，不表示事实确定性。
