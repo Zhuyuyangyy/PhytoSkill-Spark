@@ -14,7 +14,10 @@ from sdk.schema import read_json
 def run_package_cli(package: Path) -> int:
     parser = argparse.ArgumentParser(description="Execute one Phyto Skill with an explicit input and mode")
     parser.add_argument("--input", type=Path, required=True)
-    parser.add_argument("--mode", choices=["fixture", "replay", "live"], required=True)
+    # Mode names are package-specific; SkillExecutor validates the request
+    # against this package's registered manifest before executing its code.
+    parser.add_argument("--mode", required=True,
+                        help="Execution mode declared by this Skill's manifest")
     trust = parser.add_mutually_exclusive_group(required=True)
     trust.add_argument("--public-key", type=Path)
     trust.add_argument("--allow-unsigned", action="store_true")

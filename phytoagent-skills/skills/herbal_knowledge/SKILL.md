@@ -10,7 +10,7 @@ license: NOASSERTION
 
 1. 确认检索问题、物种与证据用途；临床用药需求不进入植物研判流程。
 2. 参照 [契约说明](references/contract.md) 返回证据ID及来源，检索不到时返回空证据。
-3. 本版fixture只返回明确标注的合成条目，不能将其引用为真实文献。
+3. `fixture` 只返回明确标注的合成条目，不能将其引用为真实文献；`corpus` 查询随包分发的本地语料，不调用 Embedding 模型或向量库，未命中时返回空证据。
 4. 将证据及限制交回调用方，不自行规划其他Skill或补写虚构出处。
 
 ## 执行
@@ -22,7 +22,7 @@ python scripts/run.py --input examples/request.json --mode fixture --public-key 
 ```
 
 开发调试可显式改用 `--allow-unsigned`；不能把该状态称为签名验证通过。
-本版 `live` / `replay` 会明确失败，不能回退fixture回答真实输入。
+`--mode` 只接受本 Skill manifest 声明的 `fixture` 或 `corpus`；`live` / `replay` 不属于本 Skill 支持的执行模式，且不会回退到 fixture。
 
 ## 边界
 

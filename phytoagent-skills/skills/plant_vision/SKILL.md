@@ -10,7 +10,7 @@ license: NOASSERTION
 
 1. 确认图片路径和物种；缺少任一项先澄清，不猜测植物名称。
 2. 需要字段细节时读取 [契约说明](references/contract.md)。
-3. 选择真实执行模式前检查可用适配器。本版只支持显式合成fixture。
+3. 按输入对象选择 manifest 声明的模式：`fixture` 用于精确匹配的合成案例，`live` 用于田间植株/叶片，`herb` 用于干燥药材切片。真实模式需要可用的视觉后端，不会回退到 fixture。
 4. 调用脚本，保留 observation_id、归一化坐标、面积分母、模型分数和来源标记。
 
 ## 执行
@@ -22,7 +22,7 @@ python scripts/run.py --input examples/request.json --mode fixture --public-key 
 ```
 
 开发调试可显式改用 `--allow-unsigned`；不能把该状态称为签名验证通过。
-本版 `live` / `replay` 会明确失败，不能回退fixture回答真实输入。
+`--mode` 只接受本 Skill manifest 声明的执行模式；`replay` 是后端类型，不是此 Skill 的执行模式。
 
 ## 边界
 
