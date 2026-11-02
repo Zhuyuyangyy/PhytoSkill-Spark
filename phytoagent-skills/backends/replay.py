@@ -46,8 +46,8 @@ class ReplayBackend(VisionBackend):
         self._source = Path(source) if source is not None else DEFAULT_SOURCE
         self._image_dir = Path(image_dir) if image_dir is not None else DEFAULT_IMAGE_DIR
         self._records = records if records is not None else self._load()
-        self._by_digest: dict[tuple[str, str], dict] = {}
-        self._by_name: dict[tuple[str, str], dict] = {}
+        self._by_digest: dict[tuple[str, str, str], dict] = {}
+        self._by_name: dict[tuple[str, str, str], dict] = {}
         self._index()
 
     # ── loading ───────────────────────────────────────────────────────────
@@ -62,21 +62,27 @@ class ReplayBackend(VisionBackend):
         return runs
 
     def _index(self) -> None:
-        """Key each record by image content, falling back to file name.
+        """Key each record by image content, model, and observation mode.
 
         Content is the reliable key. The name fallback exists because a recorded
         run may reference an image that is no longer on disk; that record stays
         reachable by name but can never be matched by content, which is the
         honest outcome.
         """
-        for record in self._records:
+        for index, record in enumerate(self._records):
             model = str(record.get("model") or "")
+            mode = record.get("mode")
+            if not isinstance(mode, str) or mode.strip() not in ("live", "herb"):
+                raise BackendUnavailable(
+                    f"replay record {index} has no valid mode; records must name "
+                    "their observation vocabulary (live or herb)")
+            mode = mode.strip()
             image_file = record.get("image_file")
             if image_file:
-                self._by_name[(str(image_file), model)] = record
+                self._by_name[(str(image_file), model, mode)] = record
                 path = self._image_dir / str(image_file)
                 if path.is_file():
-                    self._by_digest[(_sha256(path.read_bytes()), model)] = record
+                    self._by_digest[(_sha256(path.read_bytes()), model, mode)] = record
 
     # ── identity ──────────────────────────────────────────────────────────
 
@@ -94,20 +100,21 @@ class ReplayBackend(VisionBackend):
     def run_vision(self, *, image_bytes: bytes, species: str, model: str,
                    mode: str, timeout: int = 600, prompt: str | None = None) -> dict:
         digest = _sha256(image_bytes)
-        record = self._by_digest.get((digest, model))
+        record = self._by_digest.get((digest, model, mode))
         matched_by = "image_sha256"
         if record is None:
             # The caller may have passed the recorded file under a new path.
-            for (name, rec_model), candidate in self._by_name.items():
+            for (name, rec_model, rec_mode), candidate in self._by_name.items():
                 path = self._image_dir / name
-                if rec_model == model and path.is_file() and _sha256(path.read_bytes()) == digest:
+                if (rec_model == model and rec_mode == mode and path.is_file()
+                        and _sha256(path.read_bytes()) == digest):
                     record = candidate
                     matched_by = "image_sha256"
                     break
         if record is None:
             raise ReplayMiss(
                 f"no recorded observation for image sha256 {digest[:12]}… "
-                f"with model {model!r}; replay will not invent one")
+                f"with model {model!r} and mode {mode!r}; replay will not invent one")
 
         served = {key: value for key, value in record.items()
                   if key not in ("image_file",)}
