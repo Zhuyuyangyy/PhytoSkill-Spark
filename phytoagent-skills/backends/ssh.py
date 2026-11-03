@@ -81,7 +81,7 @@ class SshOllamaBackend(VisionBackend):
         try:
             with DgxClient(credentials) as client:
                 record = runner(client, image_bytes=image_bytes, species=species,
-                                model=model, timeout=timeout)
+                                model=model, timeout=timeout, prompt=prompt)
         except ModuleNotFoundError as exc:
             raise BackendUnavailable(str(exc)) from exc
 

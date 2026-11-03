@@ -285,16 +285,18 @@ def _image_size(image_bytes: bytes) -> tuple[int, int] | None:
 
 
 def run_vision(client: DgxClient, *, image_bytes: bytes, species: str,
-               model: str, timeout: int = 600) -> dict:
+               model: str, timeout: int = 600,
+               prompt: str | None = None) -> dict:
     """Run one real vision inference on the node and return a parsed record.
 
     The image's own dimensions are read here and passed to the parser, so a model
     that answers in pixels can be rescaled against the true canvas instead of a
     guessed one.
+    A supplied ``prompt`` is used verbatim; otherwise the mode default is rendered.
     """
     image_size = _image_size(image_bytes)
     image_b64 = base64.b64encode(image_bytes).decode("ascii")
-    prompt = build_prompt(species=species)
+    prompt = prompt if prompt is not None else build_prompt(species=species)
     script = build_remote_script(model=model, image_b64=image_b64,
                                  species=species, prompt=prompt)
     result = client.run_script(script, timeout=timeout)
