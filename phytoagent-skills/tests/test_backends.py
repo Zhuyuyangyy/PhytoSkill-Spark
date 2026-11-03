@@ -143,6 +143,51 @@ def test_the_backend_identity_travels_with_the_result():
         endpoint="http://127.0.0.1:11434", gpu_observed=False).to_dict()
 
 
+@pytest.mark.parametrize("mode", ["live", "herb"])
+def test_the_ssh_backend_sends_the_cached_prompt_to_the_dgx_runner(monkeypatch, mode):
+    """The cache key and the text sent for inference must be the same prompt."""
+    from types import SimpleNamespace
+
+    from backends import ssh as ssh_module
+
+    class StubClient:
+        def __init__(self, credentials):
+            self.script = None
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_exc):
+            pass
+
+        def run_script(self, source, *, timeout):
+            self.script = source
+            return {"status": 0, "stderr": "", "stdout": json.dumps({
+                "response": json.dumps({"image_usable": True, "regions": []}),
+            })}
+
+        def gpu_state(self):
+            return SimpleNamespace(to_dict=lambda: {"name": "stub"})
+
+    clients = []
+
+    def make_stub_client(credentials):
+        client = StubClient(credentials)
+        clients.append(client)
+        return client
+
+    monkeypatch.setattr(ssh_module, "DgxClient", make_stub_client)
+    prompt = f"custom-{mode}-prompt-must-reach-the-model"
+    backend = ssh_module.SshOllamaBackend(
+        credentials={"host": "node", "port": 22, "user": "user",
+                     "password": "stub"})
+
+    backend.run_vision(image_bytes=b"not a real image", species="黄芪",
+                       model=MODEL, mode=mode, prompt=prompt)
+
+    assert prompt in clients[0].script
+
+
 # ── replay backend ──────────────────────────────────────────────────────────
 
 
