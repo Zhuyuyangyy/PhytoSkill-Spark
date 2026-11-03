@@ -218,6 +218,43 @@ def test_the_ssh_library_is_only_required_when_connecting(monkeypatch):
         client.connect()
 
 
+@pytest.mark.parametrize("failure_kind", ["socket", "ssh"])
+def test_ssh_connection_errors_are_reported_as_backend_unavailable(
+        monkeypatch, failure_kind):
+    """Transport and Paramiko failures obey the backend error contract offline."""
+    import backends.ssh as ssh_module
+
+    class StubSSHException(Exception):
+        pass
+
+    class StubParamiko:
+        SSHException = StubSSHException
+
+    error = (OSError("connection refused") if failure_kind == "socket" else
+             StubSSHException("SSH negotiation failed"))
+
+    class FailingDgxClient:
+        def __init__(self, credentials):
+            pass
+
+        def __enter__(self):
+            raise error
+
+        def __exit__(self, *_exc):
+            return None
+
+    monkeypatch.setattr(ssh_module, "paramiko", StubParamiko, raising=False)
+    monkeypatch.setattr(ssh_module, "DgxClient", FailingDgxClient)
+    backend = ssh_module.SshOllamaBackend(
+        credentials={"host": "example.invalid", "port": 22,
+                     "user": "test", "password": "not-used"})
+
+    with pytest.raises(BackendUnavailable, match="SSH backend connection failed") as exc:
+        backend.run_vision(image_bytes=b"stub", species="黄芪", model=MODEL,
+                           mode="live")
+    assert exc.value.__cause__ is error
+
+
 def test_the_ollama_backend_imports_without_the_ssh_library(monkeypatch):
     """Simulates a machine with no paramiko installed."""
     import dgx.client as client_module

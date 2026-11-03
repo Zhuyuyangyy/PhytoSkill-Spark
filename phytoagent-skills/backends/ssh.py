@@ -20,7 +20,7 @@ from pathlib import Path
 from backends.base import (BackendIdentity, BackendUnavailable, VisionBackend,
                            annotate)
 from backends.base import KIND_DGX_SPARK, KIND_REMOTE_GPU
-from dgx.client import DgxClient, load_credentials
+from dgx.client import DgxClient, load_credentials, paramiko
 
 
 class SshOllamaBackend(VisionBackend):
@@ -78,12 +78,17 @@ class SshOllamaBackend(VisionBackend):
             raise BackendUnavailable(f"ssh backend does not support mode {mode!r}")
 
         credentials = self._resolve()
+        connection_errors = (OSError,)
+        if paramiko is not None:
+            connection_errors += (paramiko.SSHException,)
         try:
             with DgxClient(credentials) as client:
                 record = runner(client, image_bytes=image_bytes, species=species,
                                 model=model, timeout=timeout)
         except ModuleNotFoundError as exc:
             raise BackendUnavailable(str(exc)) from exc
+        except connection_errors as exc:
+            raise BackendUnavailable(f"SSH backend connection failed: {exc}") from exc
 
         identity = BackendIdentity(
             name=self._name, kind=self._kind,
