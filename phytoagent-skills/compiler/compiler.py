@@ -387,6 +387,10 @@ def render_evals(spec: dict) -> dict:
                     "note": item["expect"]}}
         for item in spec["negative_evals"]
     ]
+    if "telemetry" not in spec["inputs"]:
+        positive["input"].pop("telemetry", None)
+        for case in negative:
+            case["input"].pop("telemetry", None)
     return {
         "schema_version": 1,
         "scope": "compiler_generated_workflow_specification",
@@ -418,7 +422,7 @@ def render_metadata(spec: dict) -> dict:
 
 
 def render_schema(spec: dict) -> dict:
-    return {
+    schema = {
         "input": {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
             "type": "object",
@@ -504,6 +508,11 @@ def render_schema(spec: dict) -> dict:
             },
         },
     }
+    # question is read by the fixed executor for refusal handling, even when
+    # herbal_knowledge is not part of the selected workflow.
+    if "telemetry" not in spec["inputs"]:
+        schema["input"]["properties"].pop("telemetry")
+    return schema
 
 
 def validate_spec(spec: dict) -> dict:
