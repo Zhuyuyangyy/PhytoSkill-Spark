@@ -102,6 +102,23 @@ def estimate_cost(*, tasks: int, arms: int, prompt_tokens: int,
     }
 
 
+def _mode_report_fields(tasks: list[Task], default_tool_mode: str) -> dict:
+    """Summarise the effective Skill mode, not just the configured fallback.
+
+    ``task_tool_modes`` preserves each task's effective mode. ``skill_mode``
+    is that mode when uniform, or ``mixed`` when tasks use different modes.
+    """
+    task_tool_modes = {
+        task.task_id: (task.tool_mode or default_tool_mode)
+        for task in tasks
+    }
+    modes = set(task_tool_modes.values())
+    skill_mode = next(iter(modes)) if len(modes) == 1 else "mixed"
+    if not modes:
+        skill_mode = default_tool_mode
+    return {"skill_mode": skill_mode, "task_tool_modes": task_tool_modes}
+
+
 class AbRunner:
     def __init__(self, config: HarnessConfig, *, poster=None, registry_factory=fixture_registry,
                  tasks: list[Task] | None = None, progress=None,
@@ -198,8 +215,7 @@ class AbRunner:
                 "single_variable": "Skill 指令是否出现在 system prompt 中",
                 "tool_mode": self.tool_mode,
                 "cost_estimate": self._cost_estimate(),
-                "task_tool_modes": {task.task_id: (task.tool_mode or self.tool_mode)
-                                    for task in self.tasks},
+                **_mode_report_fields(self.tasks, self.tool_mode),
                 "held_constant": ["model", "endpoint", "sampling_parameters", "tool_definitions",
                                   "task_set", "harness_code", "max_turns", "turn_loop",
                                   "tool_call_governance"],
@@ -221,7 +237,6 @@ class AbRunner:
                 "scored": scored,
                 "runs": runs,
                 "agent_model_called": True,
-                "skill_mode": "fixture",
                 "dgx_hardware_used": False,
                 "trust": {"signature_format": "project_ed25519",
                           "demo_key_generated_this_run": True,

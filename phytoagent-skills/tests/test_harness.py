@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 from demo.fixture_workspace import SKILL_NAMES, fixture_registry
-from harness.ab import AbRunner
+from harness.ab import AbRunner, _mode_report_fields
 from harness.agent import BASE_SYSTEM_PROMPT, AgentHarness
 from harness.config import (HarnessConfig, parse_dotenv)
 from harness.errors import AuthError, ConfigError, TransportError
@@ -741,6 +741,33 @@ class TestTaskSet:
                     context={"case_id": "demo-huangqi-001", "species": "黄芪"})
         message = task.user_message()
         assert "研判" in message and "demo-huangqi-001" in message and "黄芪" in message
+
+
+class TestModeReportFields:
+    def test_serialized_mode_summary_matches_effective_task_modes(self):
+        tasks = [
+            Task(task_id="herb", prompt="x", kind="end_to_end", source="test",
+                 tool_mode="herb"),
+            Task(task_id="live", prompt="x", kind="end_to_end", source="test",
+                 tool_mode="live"),
+        ]
+
+        fields = _mode_report_fields(tasks, default_tool_mode="fixture")
+        serialized = json.loads(json.dumps(fields))
+
+        assert serialized == {
+            "skill_mode": "mixed",
+            "task_tool_modes": {"herb": "herb", "live": "live"},
+        }
+
+    def test_uniform_task_modes_report_the_effective_mode(self):
+        task = Task(task_id="herb", prompt="x", kind="end_to_end", source="test",
+                    tool_mode="herb")
+
+        assert _mode_report_fields([task], default_tool_mode="fixture") == {
+            "skill_mode": "herb",
+            "task_tool_modes": {"herb": "herb"},
+        }
 
 
 class TestAbRunner:
