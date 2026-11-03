@@ -46,7 +46,8 @@ def _build_skill(skill_type: type, package: Path, request: dict):
     parameters = inspect.signature(skill_type.__init__).parameters
     required = [name for name, parameter in parameters.items()
                 if parameter.default is inspect.Parameter.empty
-                and parameter.kind in (inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                and parameter.kind in (inspect.Parameter.POSITIONAL_ONLY,
+                                       inspect.Parameter.POSITIONAL_OR_KEYWORD,
                                        inspect.Parameter.KEYWORD_ONLY)]
     if required not in (["self"], ["self", "package_dir"]):
         raise ManifestError("A Skill entrypoint may not require constructor arguments the executor cannot supply")

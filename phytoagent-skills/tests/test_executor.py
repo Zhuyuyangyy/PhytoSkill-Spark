@@ -21,6 +21,27 @@ def test_executor_validates_before_import(package_factory, tmp_path):
     assert not marker.exists()
 
 
+@pytest.mark.parametrize("boundary_modes", [(), ("fixture",)], ids=["in_process", "bounded"])
+def test_executor_accepts_positional_only_package_dir(package_factory, boundary_modes):
+    source = '''from sdk import BaseSkill
+class ContractProbeSkill(BaseSkill):
+    def __init__(self, package_dir, /):
+        super().__init__(package_dir)
+    def run(self, payload: dict, *, mode: str) -> dict:
+        return {"status": "success", "mode": mode, "echo": payload["message"],
+                "data_origin": "synthetic_fixture"}
+'''
+    package = package_factory(source=source)
+    registry = SkillRegistry(package.parent, require_signature=False)
+    registry.register(package)
+
+    result = SkillExecutor(registry, boundary_modes=boundary_modes).execute(
+        package.name, {"message": "ok"})
+
+    assert result == {"status": "success", "mode": "fixture", "echo": "ok",
+                     "data_origin": "synthetic_fixture"}
+
+
 def test_executor_rechecks_signed_package_before_import(package, keys):
     sign_package(package, keys[0])
     registry = SkillRegistry(package.parent, trusted_public_key=keys[1])
