@@ -237,6 +237,18 @@ def test_the_fusion_step_maps_the_provider_result_slots(tmp_path):
         "vision": "$.vision", "environment": "$.environment", "knowledge": "$.knowledge"}
 
 
+def test_a_single_capability_bundle_schema_excludes_unconsumed_telemetry(tmp_path):
+    result = compile_request("创建一个黄芪叶片图片评估Skill。", tmp_path)
+    workflow = read_json(result.package_dir / "workflow.json")
+    schema = read_json(result.package_dir / "schema.json")["input"]
+
+    assert result.spec["inputs"] == ["image"]
+    assert workflow["inputs"] == ["image"]
+    assert schema["required"] == ["case_id", "species"]
+    assert set(schema["properties"]) == {"case_id", "species", "image", "question"}
+    assert schema["additionalProperties"] is False
+
+
 def test_the_compiled_schema_matches_the_provider_contracts(tmp_path):
     """The generated request schema must accept exactly what providers accept."""
     result = compile_request(HUANGQI_REQUEST, tmp_path)
