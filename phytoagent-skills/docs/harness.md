@@ -282,6 +282,8 @@ python -m harness ab --real-images --repeat 1 --output artifacts/agent-ab-real.j
 | `real_vision:leaf_phenotype` | `live` | 观察叶片表型及其位置 |
 | `real_vision:leaf_healthy_is_empty` | `live` | **负向**：要求指出不存在的黄化区域 |
 
+报告中的 `tool_mode` 是运行级默认模式；`task_tool_modes` 记录每个任务实际使用的模式。`skill_mode` 汇总实际模式：所有任务一致时为该模式，不同时为 `mixed`。
+
 第三个是负向任务，而且它针对的是一个已知健康的叶片图（`huangqi_leaf_01`，
 模型确认无可报告区域）。它在测量模型会不会为了迎合指令而编造区域。
 
