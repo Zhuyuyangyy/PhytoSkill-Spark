@@ -6,8 +6,8 @@
     "nlip_sdk": "0.1.3",
     "nlip_server": "0.1.3",
     "cryptography": "50.0.2",
-    "base_commit": "9593491a2257be620d6f4f82efe7e8a152f15974",
-    "run_at_utc": "2026-11-18T14:09:46Z"
+    "base_commit": "5ba401a0f6b03692baa621611dcaaaa6be4c3ca6",
+    "run_at_utc": "2026-11-18T14:17:53Z"
   },
   "attacks": {
     "rows": [
@@ -649,8 +649,8 @@
           "observed": ""
         },
         "se_without_pop": {
-          "attack_succeeded": false,
-          "observed": "agentshield:delegation:expired"
+          "attack_succeeded": true,
+          "observed": ""
         },
         "se_without_injection_screen": {
           "attack_succeeded": false,
@@ -893,7 +893,7 @@
         },
         "replay": {
           "attacks": 6,
-          "succeeded": 5
+          "succeeded": 6
         },
         "leakage": {
           "attacks": 3,
@@ -901,7 +901,7 @@
         },
         "total": {
           "attacks": 33,
-          "succeeded": 8
+          "succeeded": 9
         }
       },
       "se_without_injection_screen": {
@@ -1043,34 +1043,34 @@
   "latency": {
     "ingress_depth1_tool": {
       "n": 300,
-      "median_us": 598.6,
-      "p95_us": 661.3
+      "median_us": 607.8,
+      "p95_us": 690.0
     },
     "ingress_depth2_tool": {
       "n": 300,
-      "median_us": 863.7,
-      "p95_us": 932.5
+      "median_us": 872.5,
+      "p95_us": 937.2
     },
     "egress_clean": {
       "n": 300,
-      "median_us": 63.1,
-      "p95_us": 71.5
+      "median_us": 65.1,
+      "p95_us": 83.9
     },
     "ingress_blocked_injection": {
       "n": 300,
-      "median_us": 607.2,
-      "p95_us": 669.9
+      "median_us": 617.5,
+      "p95_us": 685.0
     },
     "http_roundtrip_no_se": {
       "n": 300,
-      "median_us": 91488.7,
-      "p95_us": 92680.4
+      "median_us": 92714.9,
+      "p95_us": 95836.4
     },
     "http_roundtrip_agentshield_se": {
       "n": 300,
-      "median_us": 93263.0,
-      "p95_us": 94699.3
+      "median_us": 93852.8,
+      "p95_us": 98625.3
     },
-    "injection_scan_per_text_us": 37.1
+    "injection_scan_per_text_us": 34.1
   }
 }
