@@ -329,7 +329,9 @@ def rep_stale(h):
     w = h.world
     msg = request(w)
     h.send(msg)
-    w.advance(3600)
+    # 10 minutes: far outside the 30 s freshness window, well inside the
+    # 1 h delegation lifetime, so only the freshness check can stop it.
+    w.advance(600)
     reply, _ = h.send(NLIP_Message(**json.loads(msg.to_json())))
     return tool_succeeded(reply, "plant_vision"), reason_of(reply)
 
