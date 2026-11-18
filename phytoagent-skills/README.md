@@ -269,3 +269,22 @@ SDK 使用 Draft 2020-12，只允许本地 JSON Pointer 引用；拒绝非有限
 A/B 已真实运行，但 `repeat=1`、17 个任务，样本量不足以支撑统计显著性；报告里 `significance_test` 是 `none`，差值只能当方向性观察。免费额度 10 RPM，`harness/transport.py` 因此有请求间隔节流；跑更多轮次受限于配额。
 
 本仓库代码以 Apache-2.0 授权，见仓库根 `LICENSE`。Skill 包内 Skill Card 仍标 `NOASSERTION`：包内文件受 Manifest 哈希与 Ed25519 签名保护，改动后需重新封包并重签，因此许可尚未随源码同步，属已知遗留项。
+
+## NLIP Security Extension (NDSS SafeOSE '27 hackathon)
+
+AgentShield also runs as a pluggable Security Extension in front of any
+[NLIP](https://nlip-project.org/) agent built on `nlip_server`: it checks every
+incoming and outgoing NLIP message, verifies signed, attenuating delegation
+chains between agents, and passes the intersected authority
+(delegation chain ∩ host ceiling ∩ sealed Skill manifest) to the existing
+`ShieldRuntime`. Design, ECMA-434 mapping and limitations:
+[docs/safeose-nlip.md](docs/safeose-nlip.md).
+
+One command reproduces the tests, the evaluation and the demo:
+
+```bash
+cd phytoagent-skills
+bash scripts/run_safeose.sh
+```
+
+Results are written to `artifacts/safeose/nlip-eval.md` and `.json`.

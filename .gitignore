@@ -27,3 +27,6 @@ dist/
 phytoagent-skills/case_workspace/annotate/herbal-ai/
 phytoagent-skills/case_workspace/annotate/.tmp_*.json
 reasonix.toml
+
+# SafeOSE NLIP SE reproduction venv
+phytoagent-skills/.venv-safeose/
